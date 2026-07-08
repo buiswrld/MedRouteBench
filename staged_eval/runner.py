@@ -15,6 +15,7 @@ from .prompts import (
     build_user_prompt,
 )
 from .llm import call_json as _default_call_json
+from .oracle import expected_action
 
 
 def run_case(
@@ -52,27 +53,40 @@ def run_case(
     prior_output: Optional[dict] = None
 
     for stage in range(total):
+        is_final = stage == total - 1
+        expected = expected_action(
+            is_final=is_final,
+            gt_label=gt_label,
+            prior_answer=(prior_output or {}).get("answer"),
+        )
         user = build_user_prompt(case, stage, total, prior_output)
         raw = _call(_system, user)
         parsed_raw, _ = safe_json_loads(raw)
-        parsed, err = validate(parsed_raw)
+        parsed, err = validate(parsed_raw, is_final=is_final)
         parse_error = False
 
         if err:  # one repair attempt
             raw2 = _call(_system, _repair.format(ERROR=err, ORIGINAL=user))
             parsed_raw2, _ = safe_json_loads(raw2)
-            parsed, err2 = validate(parsed_raw2)
+            parsed, err2 = validate(parsed_raw2, is_final=is_final)
             raw = raw2
             if err2:
-                parsed = AgentOutput(
-                    "ABSTAIN", None, 0.0,
-                    f"parse_error: {err2}", None,
-                )
+                if is_final:
+                    parsed = AgentOutput(
+                        "ABSTAIN", None, 0.0,
+                        f"parse_error: {err2}", "valid structured JSON output",
+                    )
+                else:
+                    parsed = AgentOutput(
+                        "RETRIEVE_EVIDENCE", None, 0.0,
+                        f"parse_error: {err2}", "valid structured JSON output",
+                    )
                 parse_error = True
 
         trace["stages"].append({
             "stage": stage,
-            "is_final": stage == total - 1,
+            "is_final": is_final,
+            "expected_action": expected,
             "revealed_labels": [lbl for lbl, _ in revealed_pairs(case, stage)],
             "raw": raw,
             "parsed": asdict(parsed),

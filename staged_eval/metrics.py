@@ -1,31 +1,37 @@
 """
 Evaluation metrics for staged reasoning traces.
 """
-from collections import Counter
 from typing import Dict, List, Optional
 
-from .schema import FINAL_ALLOWED, NONFINAL_ALLOWED
+from .oracle import FINAL_ANSWERS, expected_action_for_trace
+
+
+def _gt_for_trace(trace: dict, gt: Optional[dict]) -> Optional[str]:
+    if gt is not None:
+        return gt.get(trace["pmid"], trace.get("gt"))
+    return trace.get("gt")
 
 
 # ── individual metrics ───────────────────────────────────────────────────────
 
-def action_accuracy_by_stage(traces: List[dict]) -> dict:
+def action_accuracy_by_stage(traces: List[dict], gt: Optional[dict] = None) -> dict:
     """
     Returns two views:
       by_absolute_stage: stage index → accuracy (cases that reached that index).
       by_role:           "nonfinal" / "final" → accuracy.
-    Oracle: nonfinal → NONFINAL_ALLOWED; final → FINAL_ALLOWED.
+    Oracle: nonfinal -> RETRIEVE_EVIDENCE; final -> ANSWER,
+    REVISE_ANSWER, or ABSTAIN depending on gold label and prior answer.
     """
     per_abs: Dict[int, List[int]] = {}
     per_role: Dict[str, List[int]] = {"nonfinal": [0, 0], "final": [0, 0]}
     for t in traces:
-        for s in t["stages"]:
+        for i, s in enumerate(t["stages"]):
             role = "final" if s["is_final"] else "nonfinal"
-            allowed = FINAL_ALLOWED if role == "final" else NONFINAL_ALLOWED
+            expected = expected_action_for_trace(t, i, gt)
             per_abs.setdefault(s["stage"], [0, 0])
             per_abs[s["stage"]][1] += 1
             per_role[role][1]      += 1
-            if s["parsed"]["action"] in allowed:
+            if s["parsed"]["action"] == expected:
                 per_abs[s["stage"]][0] += 1
                 per_role[role][0]      += 1
     return {
@@ -38,9 +44,10 @@ def final_answer_accuracy(traces: List[dict], gt: dict) -> dict:
     correct = total = 0
     for t in traces:
         ans = t["stages"][-1]["parsed"]["answer"]
-        if ans in {"yes", "no", "maybe"}:
+        gt_label = _gt_for_trace(t, gt)
+        if ans in FINAL_ANSWERS:
             total += 1
-            if ans == gt.get(t["pmid"]):
+            if ans == gt_label:
                 correct += 1
     return {
         "accuracy": (correct / total if total else 0.0),
@@ -56,22 +63,23 @@ def revision_correctness(traces: List[dict], gt: dict) -> dict:
     """
     rev = corr = 0
     for t in traces:
+        gt_label = _gt_for_trace(t, gt)
         for i in range(1, len(t["stages"])):
             prev_a = t["stages"][i - 1]["parsed"]["answer"]
             new_a  = t["stages"][i]["parsed"]["answer"]
             if prev_a and new_a and prev_a != new_a:
                 rev += 1
-                if new_a == gt.get(t["pmid"]):
+                if new_a == gt_label:
                     corr += 1
     return {"correctness": (corr / rev if rev else None), "n_revisions": rev}
 
 
 def premature_answer_rate(traces: List[dict], gt: dict) -> float:
-    """Fraction of cases where the agent committed a wrong answer at a non-final stage."""
+    """Fraction of cases where the agent finalized with ANSWER before the final stage."""
     prem = 0
     for t in traces:
         for s in t["stages"][:-1]:
-            if s["parsed"]["action"] == "ANSWER" and s["parsed"]["answer"] != gt.get(t["pmid"]):
+            if s["parsed"]["action"] == "ANSWER":
                 prem += 1
                 break
     return prem / len(traces) if traces else 0.0
@@ -79,19 +87,20 @@ def premature_answer_rate(traces: List[dict], gt: dict) -> float:
 
 def missed_revision_rate(traces: List[dict], gt: dict) -> dict:
     """
-    Eligible = final stage had a wrong penultimate answer.
-    Missed   = agent did not use REVISE_ANSWER (or kept the same answer).
+    Eligible = the final-stage oracle expects REVISE_ANSWER.
+    Missed   = agent did not revise to the gold answer.
     """
     missed = eligible = 0
     for t in traces:
         stages = t["stages"]
         if len(stages) < 2:
             continue
-        prev = stages[-2]["parsed"]["answer"]
+        gt_label = _gt_for_trace(t, gt)
         final = stages[-1]["parsed"]
-        if prev and prev != gt.get(t["pmid"]):
+        expected = expected_action_for_trace(t, len(stages) - 1, gt)
+        if expected == "REVISE_ANSWER":
             eligible += 1
-            if final["action"] != "REVISE_ANSWER" or final["answer"] == prev:
+            if final["action"] != "REVISE_ANSWER" or final["answer"] != gt_label:
                 missed += 1
     return {"rate": (missed / eligible if eligible else None), "n_eligible": eligible}
 
@@ -115,7 +124,7 @@ def build_report(
         "model": model,
         "n_cases": len(traces),
         "sample_label_counts": sample_counts,
-        "action_accuracy_by_stage": action_accuracy_by_stage(traces),
+        "action_accuracy_by_stage": action_accuracy_by_stage(traces, gt),
         "final_answer_accuracy":    final_answer_accuracy(traces, gt),
         "revision_correctness":     revision_correctness(traces, gt),
         "premature_answer_rate":    premature_answer_rate(traces, gt),

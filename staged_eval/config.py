@@ -22,7 +22,12 @@ _data_env = os.environ.get("PUBMEDQA_DATA_DIR")
 DATA_DIR = Path(_data_env) if _data_env else REPO_ROOT / "pubmedqa" / "data"
 
 TEST_SET_PATH     = DATA_DIR / "test_set.json"
+ORI_PQAL_PATH     = DATA_DIR / "ori_pqal.json"
 GROUND_TRUTH_PATH = DATA_DIR / "test_ground_truth.json"
+
+FIXTURE_DATA_DIR = PACKAGE_DIR / "fixtures" / "pubmedqa"
+FIXTURE_TEST_SET_PATH = FIXTURE_DATA_DIR / "test_set.json"
+FIXTURE_GROUND_TRUTH_PATH = FIXTURE_DATA_DIR / "test_ground_truth.json"
 
 RUNS_DIR = PACKAGE_DIR / "runs"
 

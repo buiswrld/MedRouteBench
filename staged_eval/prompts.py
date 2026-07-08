@@ -13,22 +13,22 @@ At every stage you MUST respond with a SINGLE JSON object and NOTHING else — n
 prose, no markdown, no code fences.
 
 Required keys:
-  "action": one of ["FOLLOW_UP","REVISE_ANSWER","ANSWER","ABSTAIN"]
+  "action": one of ["RETRIEVE_EVIDENCE","REVISE_ANSWER","ANSWER","ABSTAIN"]
   "answer": "yes" | "no" | "maybe" | null
   "confidence": float in [0.0, 1.0]
   "reason_for_action": short string (<= 240 chars)
   "needed_information": short string or null
 
 Action semantics:
-- FOLLOW_UP: you need the next case LABEL revealed
+- RETRIEVE_EVIDENCE: you need the next case LABEL revealed
 - REVISE_ANSWER: change your prior answer based on new information
 - ANSWER: give an answer
 - ABSTAIN: refuse when evidence is genuinely insufficient
 
 Stage-gated action rules (STRICT):
-- On any NON-FINAL stage, FOLLOW_UP, REVISE_ANSWER, and ANSWER are allowed. If you choose FOLLOW_UP, you must leave "answer" as null. Use REVISE_ANSWER only when your prior stage's answer differs from your new answer; otherwise use ANSWER. ABSTAIN is FORBIDDEN until the final stage.
+- On any NON-FINAL stage, RETRIEVE_EVIDENCE, REVISE_ANSWER, and ANSWER are allowed. If you choose RETRIEVE_EVIDENCE, you must leave "answer" as null and fill "needed_information". Use REVISE_ANSWER only when your prior stage's answer differs from your new answer; otherwise use ANSWER. ABSTAIN is FORBIDDEN until the final stage.
 - On the FINAL stage (all case LABELs revealed) you MUST choose exactly one of
-  {ANSWER, REVISE_ANSWER, ABSTAIN}. If you choose ANSWER or REVISE_ANSWER, the "answer" key MUST be filled with "yes", "no", or "maybe". If you choose ABSTAIN, you must leave the key as null. FOLLOW_UP is FORBIDDEN on the final stage.
+  {ANSWER, REVISE_ANSWER, ABSTAIN}. If you choose ANSWER or REVISE_ANSWER, the "answer" key MUST be filled with "yes", "no", or "maybe". If you choose ABSTAIN, you must leave the key as null. RETRIEVE_EVIDENCE is FORBIDDEN on the final stage.
 """
 
 
@@ -57,7 +57,7 @@ def build_user_prompt(
         lines.append(
             "THIS IS THE FINAL STAGE. You MUST choose action ∈ "
             "{ANSWER, REVISE_ANSWER, ABSTAIN}. If not ABSTAIN, `answer` MUST be "
-            '"yes", "no", or "maybe" — never null. FOLLOW_UP is FORBIDDEN now.'
+            '"yes", "no", or "maybe" — never null. RETRIEVE_EVIDENCE is FORBIDDEN now.'
         )
     lines.append("Respond with the required JSON object only.")
     return "\n\n".join(lines)

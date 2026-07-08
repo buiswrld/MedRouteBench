@@ -6,8 +6,7 @@ Run with:  cd MedRouteBench && python -m pytest staged_eval/tests -q
 import pytest
 
 from staged_eval.schema import (
-    ACTIONS, NONFINAL_ALLOWED, FINAL_ALLOWED,
-    AgentOutput, safe_json_loads, validate,
+    ACTIONS, AgentOutput, safe_json_loads, validate,
 )
 from staged_eval.data import (
     load_cases, load_ground_truth,
@@ -74,9 +73,37 @@ def test_validate_normalises_case():
 def test_validate_confidence_clamp():
     out, err = validate({
         "action": "ABSTAIN", "answer": None, "confidence": 1.5,
-        "reason_for_action": "overshoot", "needed_information": None,
+        "reason_for_action": "overshoot", "needed_information": "more evidence",
     })
     assert err is None and out.confidence == 1.0
+
+
+def test_validate_action_ontology_matches_note():
+    assert ACTIONS == ["RETRIEVE_EVIDENCE", "REVISE_ANSWER", "ANSWER", "ABSTAIN"]
+
+
+def test_validate_retrieve_requires_null_answer():
+    _, err = validate({
+        "action": "RETRIEVE_EVIDENCE", "answer": "yes", "confidence": 0.5,
+        "reason_for_action": "need more", "needed_information": "results",
+    })
+    assert err is not None and "answer null" in err
+
+
+def test_validate_answer_requires_answer():
+    _, err = validate({
+        "action": "ANSWER", "answer": None, "confidence": 0.5,
+        "reason_for_action": "ready", "needed_information": None,
+    })
+    assert err is not None and "requires answer" in err
+
+
+def test_validate_stage_rules():
+    _, err = validate({
+        "action": "RETRIEVE_EVIDENCE", "answer": None, "confidence": 0.1,
+        "reason_for_action": "need final context", "needed_information": "results",
+    }, is_final=True)
+    assert err is not None and "forbidden on final" in err
 
 
 def test_safe_json_loads_good():
@@ -118,8 +145,9 @@ def test_revealed_pairs_stage1_one_pair():
 def test_stratified_sample_size_and_diversity():
     cases = load_cases()
     gt = load_ground_truth()
-    sample = stratified_sample(cases, gt, 15)
-    assert len(sample) == 15
+    n = min(6, len(cases))
+    sample = stratified_sample(cases, gt, n)
+    assert len(sample) == n
     labels = {gt.get(c["pmid"]) for c in sample}
     assert len(labels) > 1, "stratified sample should cover multiple labels"
 
@@ -139,7 +167,7 @@ def test_prompt_final_marker_present():
     c, total = cases[0], n_stages(cases[0])
     p = build_user_prompt(c, total - 1, total, None)
     assert "FINAL STAGE" in p
-    assert "FOLLOW_UP is FORBIDDEN" in p
+    assert "RETRIEVE_EVIDENCE is FORBIDDEN" in p
 
 
 def test_prompt_reveals_labels():
@@ -155,7 +183,7 @@ _TOY = [{
     "pmid": "TEST", "gt": "yes", "n_stages": 3, "n_contexts": 2,
     "stages": [
         {"stage": 0, "is_final": False, "revealed_labels": [],
-         "parsed": {"action": "FOLLOW_UP", "answer": None, "confidence": 0.3,
+         "parsed": {"action": "RETRIEVE_EVIDENCE", "answer": None, "confidence": 0.3,
                     "reason_for_action": "need context", "needed_information": "results"},
          "parse_error": False, "raw": ""},
         {"stage": 1, "is_final": False, "revealed_labels": ["BACKGROUND"],
@@ -171,10 +199,11 @@ _TOY = [{
 _TOY_GT = {"TEST": "yes"}
 
 
-def test_action_accuracy_all_correct():
+def test_action_accuracy_uses_exact_oracle():
     r = action_accuracy_by_stage(_TOY)
-    assert r["by_role"]["nonfinal"] == 1.0
+    assert r["by_role"]["nonfinal"] == 0.5
     assert r["by_role"]["final"] == 1.0
+    assert r["by_absolute_stage"][1] == 0.0
 
 
 def test_final_answer_accuracy():
@@ -218,9 +247,9 @@ def test_build_report_keys():
 def _stub_responses():
     """Cyclic stub: returns valid JSON strings for each stage call."""
     _bank = [
-        '{"action":"FOLLOW_UP","answer":null,"confidence":0.0,"reason_for_action":"need more","needed_information":"background"}',
+        '{"action":"RETRIEVE_EVIDENCE","answer":null,"confidence":0.0,"reason_for_action":"need more","needed_information":"background"}',
         '{"action":"ANSWER","answer":"yes","confidence":0.7,"reason_for_action":"partial evidence","needed_information":null}',
-        '{"action":"FOLLOW_UP","answer":null,"confidence":0.0,"reason_for_action":"want results","needed_information":"results"}',
+        '{"action":"RETRIEVE_EVIDENCE","answer":null,"confidence":0.0,"reason_for_action":"want results","needed_information":"results"}',
         '{"action":"ANSWER","answer":"yes","confidence":0.85,"reason_for_action":"clear results","needed_information":null}',
         '{"action":"ANSWER","answer":"yes","confidence":0.75,"reason_for_action":"all data reviewed","needed_information":null}',
         '{"action":"ANSWER","answer":"yes","confidence":0.8,"reason_for_action":"comprehensive","needed_information":null}',
@@ -243,6 +272,7 @@ def test_run_case_mocked_structure():
     assert trace["pmid"] == case["pmid"]
     assert len(trace["stages"]) == n_stages(case)
     assert trace["stages"][-1]["is_final"] is True
+    assert trace["stages"][0]["expected_action"] == "RETRIEVE_EVIDENCE"
 
 
 def test_run_case_mocked_no_parse_errors():

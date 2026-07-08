@@ -6,13 +6,28 @@ from collections import Counter
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from .config import TEST_SET_PATH, GROUND_TRUTH_PATH
+from .config import (
+    TEST_SET_PATH,
+    ORI_PQAL_PATH,
+    GROUND_TRUTH_PATH,
+    FIXTURE_TEST_SET_PATH,
+    FIXTURE_GROUND_TRUTH_PATH,
+)
+
+
+def _load_path(path, candidate_paths, fixture_path: Path) -> Path:
+    if path:
+        return Path(path)
+    for p in candidate_paths:
+        if p.exists():
+            return p
+    return fixture_path
 
 
 # ── loaders ──────────────────────────────────────────────────────────────────
 def load_cases(path=None, limit: Optional[int] = None) -> List[dict]:
     """Load test_set.json → list of case dicts (each has a 'pmid' key injected)."""
-    p = Path(path) if path else TEST_SET_PATH
+    p = _load_path(path, [TEST_SET_PATH, ORI_PQAL_PATH], FIXTURE_TEST_SET_PATH)
     with open(p) as f:
         raw = json.load(f)
     items = [{"pmid": pmid, **case} for pmid, case in raw.items()]
@@ -21,7 +36,7 @@ def load_cases(path=None, limit: Optional[int] = None) -> List[dict]:
 
 def load_ground_truth(path=None) -> dict:
     """Load test_ground_truth.json → {pmid: label} dict."""
-    p = Path(path) if path else GROUND_TRUTH_PATH
+    p = _load_path(path, [GROUND_TRUTH_PATH], FIXTURE_GROUND_TRUTH_PATH)
     with open(p) as f:
         return json.load(f)
 
