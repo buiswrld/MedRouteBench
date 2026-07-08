@@ -1,15 +1,28 @@
 """
 Groq LLM client with exponential-backoff retry and JSON mode.
 """
-from tenacity import retry, wait_exponential, stop_after_attempt
-from groq import Groq
+from typing import Any
+
+try:
+    from tenacity import retry, wait_exponential, stop_after_attempt
+except ImportError:  # pragma: no cover - exercised only in minimal envs
+    def retry(*_args, **_kwargs):
+        def decorator(fn):
+            return fn
+        return decorator
+
+    def wait_exponential(*_args, **_kwargs):
+        return None
+
+    def stop_after_attempt(*_args, **_kwargs):
+        return None
 
 from .config import GROQ_API_KEY, GROQ_MODEL, TEMPERATURE, MAX_TOKENS
 
-_client: Groq | None = None
+_client: Any = None
 
 
-def get_client() -> Groq:
+def get_client():
     global _client
     if _client is None:
         if not GROQ_API_KEY:
@@ -17,6 +30,13 @@ def get_client() -> Groq:
                 "GROQ_API_KEY is not set. "
                 "Add it to MedRouteBench/.env or export it in your shell."
             )
+        try:
+            from groq import Groq
+        except ImportError as exc:  # pragma: no cover - exercised only in minimal envs
+            raise RuntimeError(
+                "The `groq` package is not installed. "
+                "Install MedRouteBench requirements before running the online pipeline."
+            ) from exc
         _client = Groq(api_key=GROQ_API_KEY)
     return _client
 

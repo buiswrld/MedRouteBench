@@ -1,124 +1,123 @@
 """
-Evaluation metrics for staged reasoning traces.
+Evaluation metrics for the fixed two-stage revision experiment.
 """
-from collections import Counter
-from typing import Dict, List, Optional
-
-from .schema import FINAL_ALLOWED, NONFINAL_ALLOWED
+from typing import List, Optional
 
 
-# ── individual metrics ───────────────────────────────────────────────────────
+def _rate(count: int, total: int) -> Optional[float]:
+    return count / total if total else None
 
-def action_accuracy_by_stage(traces: List[dict]) -> dict:
-    """
-    Returns two views:
-      by_absolute_stage: stage index → accuracy (cases that reached that index).
-      by_role:           "nonfinal" / "final" → accuracy.
-    Oracle: nonfinal → NONFINAL_ALLOWED; final → FINAL_ALLOWED.
-    """
-    per_abs: Dict[int, List[int]] = {}
-    per_role: Dict[str, List[int]] = {"nonfinal": [0, 0], "final": [0, 0]}
-    for t in traces:
-        for s in t["stages"]:
-            role = "final" if s["is_final"] else "nonfinal"
-            allowed = FINAL_ALLOWED if role == "final" else NONFINAL_ALLOWED
-            per_abs.setdefault(s["stage"], [0, 0])
-            per_abs[s["stage"]][1] += 1
-            per_role[role][1]      += 1
-            if s["parsed"]["action"] in allowed:
-                per_abs[s["stage"]][0] += 1
-                per_role[role][0]      += 1
+
+def _completed_cases(traces: List[dict]) -> List[dict]:
+    return [trace for trace in traces if trace.get("completed")]
+
+
+def _stage1_eligible(traces: List[dict]) -> List[dict]:
+    return [trace for trace in traces if trace.get("stage1_valid")]
+
+
+def stage1_answer_accuracy(traces: List[dict]) -> dict:
+    eligible = _stage1_eligible(traces)
+    correct = sum(
+        1 for trace in eligible
+        if trace["stage1_model_output"]["answer"] == trace["gold_label"]
+    )
     return {
-        "by_absolute_stage": {k: (c / n if n else None) for k, (c, n) in sorted(per_abs.items())},
-        "by_role":           {k: (c / n if n else None) for k, (c, n) in per_role.items()},
+        "accuracy": _rate(correct, len(eligible)),
+        "n_valid": len(eligible),
+        "n_total": len(traces),
     }
 
 
-def final_answer_accuracy(traces: List[dict], gt: dict) -> dict:
-    correct = total = 0
-    for t in traces:
-        ans = t["stages"][-1]["parsed"]["answer"]
-        if ans in {"yes", "no", "maybe"}:
-            total += 1
-            if ans == gt.get(t["pmid"]):
-                correct += 1
+def final_answer_accuracy(traces: List[dict]) -> dict:
+    completed = _completed_cases(traces)
+    correct = sum(1 for trace in completed if trace["final_answer"] == trace["gold_label"])
     return {
-        "accuracy": (correct / total if total else 0.0),
-        "committed": total,
-        "n": len(traces),
+        "accuracy": _rate(correct, len(completed)),
+        "n_completed": len(completed),
+        "n_total": len(traces),
     }
 
 
-def revision_correctness(traces: List[dict], gt: dict) -> dict:
-    """
-    A 'revision' occurs when consecutive stages have different non-null answers.
-    Correctness = fraction of revisions that moved the answer closer to GT.
-    """
-    rev = corr = 0
-    for t in traces:
-        for i in range(1, len(t["stages"])):
-            prev_a = t["stages"][i - 1]["parsed"]["answer"]
-            new_a  = t["stages"][i]["parsed"]["answer"]
-            if prev_a and new_a and prev_a != new_a:
-                rev += 1
-                if new_a == gt.get(t["pmid"]):
-                    corr += 1
-    return {"correctness": (corr / rev if rev else None), "n_revisions": rev}
+def successful_revision_rate(traces: List[dict]) -> dict:
+    completed = [
+        trace for trace in _completed_cases(traces)
+        if trace["stage1_model_output"]["answer"] != trace["gold_label"]
+    ]
+    count = sum(1 for trace in completed if trace["label"] == "successful_revision")
+    return {"rate": _rate(count, len(completed)), "n_eligible": len(completed)}
 
 
-def premature_answer_rate(traces: List[dict], gt: dict) -> float:
-    """Fraction of cases where the agent committed a wrong answer at a non-final stage."""
-    prem = 0
-    for t in traces:
-        for s in t["stages"][:-1]:
-            if s["parsed"]["action"] == "ANSWER" and s["parsed"]["answer"] != gt.get(t["pmid"]):
-                prem += 1
-                break
-    return prem / len(traces) if traces else 0.0
+def missed_revision_rate(traces: List[dict]) -> dict:
+    completed = [
+        trace for trace in _completed_cases(traces)
+        if trace["stage1_model_output"]["answer"] != trace["gold_label"]
+    ]
+    count = sum(1 for trace in completed if trace["label"] == "missed_revision")
+    return {"rate": _rate(count, len(completed)), "n_eligible": len(completed)}
 
 
-def missed_revision_rate(traces: List[dict], gt: dict) -> dict:
-    """
-    Eligible = final stage had a wrong penultimate answer.
-    Missed   = agent did not use REVISE_ANSWER (or kept the same answer).
-    """
-    missed = eligible = 0
-    for t in traces:
-        stages = t["stages"]
-        if len(stages) < 2:
-            continue
-        prev = stages[-2]["parsed"]["answer"]
-        final = stages[-1]["parsed"]
-        if prev and prev != gt.get(t["pmid"]):
-            eligible += 1
-            if final["action"] != "REVISE_ANSWER" or final["answer"] == prev:
-                missed += 1
-    return {"rate": (missed / eligible if eligible else None), "n_eligible": eligible}
+def overreaction_rate(traces: List[dict]) -> dict:
+    completed = [
+        trace for trace in _completed_cases(traces)
+        if trace["stage1_model_output"]["answer"] == trace["gold_label"]
+    ]
+    count = sum(1 for trace in completed if trace["label"] == "overreaction")
+    return {"rate": _rate(count, len(completed)), "n_eligible": len(completed)}
 
 
-def abstention_rate(traces: List[dict]) -> float:
-    if not traces:
-        return 0.0
-    return sum(1 for t in traces if t["stages"][-1]["parsed"]["action"] == "ABSTAIN") / len(traces)
+def kept_correct_rate(traces: List[dict]) -> dict:
+    completed = [
+        trace for trace in _completed_cases(traces)
+        if trace["stage1_model_output"]["answer"] == trace["gold_label"]
+    ]
+    count = sum(1 for trace in completed if trace["label"] == "kept_correct")
+    return {"rate": _rate(count, len(completed)), "n_eligible": len(completed)}
 
 
-# ── report builder ────────────────────────────────────────────────────────────
+def final_abstention_rate(traces: List[dict]) -> dict:
+    completed = _completed_cases(traces)
+    count = sum(
+        1 for trace in completed
+        if trace["stage2_model_output"]["action"] == "ABSTAIN"
+    )
+    return {"rate": _rate(count, len(completed)), "n_completed": len(completed)}
+
+
+def maintenance_rate(traces: List[dict]) -> dict:
+    completed = [
+        trace for trace in _completed_cases(traces)
+        if trace["stage2_model_output"]["action"] != "ABSTAIN"
+    ]
+    count = sum(
+        1 for trace in completed
+        if trace["stage1_model_output"]["answer"] == trace["final_answer"]
+    )
+    return {"rate": _rate(count, len(completed)), "n_eligible": len(completed)}
+
 
 def build_report(
     traces: List[dict],
-    gt: dict,
+    *,
     model: str,
     sample_counts: Optional[dict] = None,
+    split_counts: Optional[dict] = None,
+    n_skipped_ineligible: int = 0,
 ) -> dict:
     """Assemble the full metrics report dict."""
     return {
         "model": model,
         "n_cases": len(traces),
+        "n_completed": len(_completed_cases(traces)),
+        "n_skipped_ineligible": n_skipped_ineligible,
         "sample_label_counts": sample_counts,
-        "action_accuracy_by_stage": action_accuracy_by_stage(traces),
-        "final_answer_accuracy":    final_answer_accuracy(traces, gt),
-        "revision_correctness":     revision_correctness(traces, gt),
-        "premature_answer_rate":    premature_answer_rate(traces, gt),
-        "missed_revision_rate":     missed_revision_rate(traces, gt),
-        "abstention_rate":          abstention_rate(traces),
+        "split_strategy_counts": split_counts,
+        "stage1_answer_accuracy": stage1_answer_accuracy(traces),
+        "final_answer_accuracy": final_answer_accuracy(traces),
+        "successful_revision_rate": successful_revision_rate(traces),
+        "missed_revision_rate": missed_revision_rate(traces),
+        "overreaction_rate": overreaction_rate(traces),
+        "kept_correct_rate": kept_correct_rate(traces),
+        "final_abstention_rate": final_abstention_rate(traces),
+        "maintenance_rate": maintenance_rate(traces),
     }

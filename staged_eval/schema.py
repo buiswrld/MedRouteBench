@@ -6,11 +6,9 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 
 # ── ontology ─────────────────────────────────────────────────────────────────
-ACTIONS = ["FOLLOW_UP", "REVISE_ANSWER", "ANSWER", "ABSTAIN"]
-
-# Permissive action oracle used by metrics:
-NONFINAL_ALLOWED = {"FOLLOW_UP", "REVISE_ANSWER", "ANSWER"}  # ABSTAIN forbidden non-final
-FINAL_ALLOWED    = {"REVISE_ANSWER", "ANSWER", "ABSTAIN"}     # FOLLOW_UP forbidden final
+ACTIONS = ["ANSWER", "KEEP_ANSWER", "REVISE_ANSWER", "ABSTAIN"]
+STAGE1_ALLOWED = {"ANSWER"}
+STAGE2_ALLOWED = {"KEEP_ANSWER", "REVISE_ANSWER", "ABSTAIN"}
 
 VALID_ANSWERS = {"yes", "no", "maybe", None}
 
@@ -22,7 +20,6 @@ class AgentOutput:
     answer: Optional[str]
     confidence: float
     reason_for_action: str
-    needed_information: Optional[str]
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -34,11 +31,16 @@ def safe_json_loads(s: str) -> Tuple[Optional[dict], Optional[str]]:
         return None, f"json_parse: {exc}"
 
 
-def validate(raw) -> Tuple[Optional[AgentOutput], Optional[str]]:
+def validate(
+    raw,
+    *,
+    stage: int,
+    prior_answer: Optional[str] = None,
+) -> Tuple[Optional[AgentOutput], Optional[str]]:
     """Return (AgentOutput, None) on success or (None, error_str) on failure. Never raises."""
     if not isinstance(raw, dict):
         return None, "root is not object"
-    required = ["action", "answer", "confidence", "reason_for_action", "needed_information"]
+    required = ["action", "answer", "confidence", "reason_for_action"]
     for k in required:
         if k not in raw:
             return None, f"missing key '{k}'"
@@ -58,7 +60,28 @@ def validate(raw) -> Tuple[Optional[AgentOutput], Optional[str]]:
     reason = raw["reason_for_action"]
     if not isinstance(reason, str) or not reason.strip():
         return None, "empty reason_for_action"
-    need = raw["needed_information"]
-    if need is not None and not isinstance(need, str):
-        return None, "needed_information not str/null"
-    return AgentOutput(action, ans, conf, reason.strip(), need), None
+
+    if stage == 1:
+        if action not in STAGE1_ALLOWED:
+            return None, f"stage 1 requires action in {sorted(STAGE1_ALLOWED)}"
+        if ans not in {"yes", "no", "maybe"}:
+            return None, "stage 1 answer must be yes/no/maybe"
+    elif stage == 2:
+        if action not in STAGE2_ALLOWED:
+            return None, f"stage 2 requires action in {sorted(STAGE2_ALLOWED)}"
+        if prior_answer not in {"yes", "no", "maybe"}:
+            return None, "stage 2 requires a valid stage 1 answer"
+        if action == "ABSTAIN":
+            if ans is not None:
+                return None, "ABSTAIN requires answer=null"
+        else:
+            if ans not in {"yes", "no", "maybe"}:
+                return None, "non-abstain stage 2 answer must be yes/no/maybe"
+            if action == "KEEP_ANSWER" and ans != prior_answer:
+                return None, "KEEP_ANSWER must repeat the stage 1 answer"
+            if action == "REVISE_ANSWER" and ans == prior_answer:
+                return None, "REVISE_ANSWER must differ from the stage 1 answer"
+    else:
+        return None, f"unsupported stage '{stage}'"
+
+    return AgentOutput(action, ans, conf, reason.strip()), None

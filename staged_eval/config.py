@@ -7,7 +7,11 @@ package works regardless of the caller's cwd.
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - exercised only in minimal envs
+    def load_dotenv(*_args, **_kwargs):
+        return False
 
 # ── directory anchors ────────────────────────────────────────────────────────
 PACKAGE_DIR = Path(__file__).resolve().parent   # .../MedRouteBench/staged_eval/

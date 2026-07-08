@@ -1,66 +1,67 @@
 """
-System prompt, per-stage user prompt builder, and repair template.
+System prompts and user prompt builders for the fixed two-stage revision setup.
 """
 import json
-from typing import Optional
+STAGE1_SYSTEM_PROMPT = """You are a careful biomedical reasoning agent in a fixed two-stage PubMedQA experiment.
 
-from .data import revealed_pairs
+Use only the QUESTION and the evidence shown to you. Do not invent hidden labels,
+gold answers, or any unavailable metadata.
 
-
-SYSTEM_PROMPT = """You are a careful biomedical reasoning agent answering a PubMedQA question in stages. New CONTEXTS are revealed one LABEL at a time.
-
-At every stage you MUST respond with a SINGLE JSON object and NOTHING else — no
-prose, no markdown, no code fences.
+Return exactly one JSON object and nothing else.
 
 Required keys:
-  "action": one of ["FOLLOW_UP","REVISE_ANSWER","ANSWER","ABSTAIN"]
+  "action": must be "ANSWER"
+  "answer": "yes" | "no" | "maybe"
+  "confidence": float in [0.0, 1.0]
+  "reason_for_action": short string (<= 240 chars)
+"""
+
+
+STAGE2_SYSTEM_PROMPT = """You are a careful biomedical reasoning agent in the revision stage of a fixed two-stage PubMedQA experiment.
+
+Use only the QUESTION, the shown Stage 1 output, and the full context shown to you.
+Do not use any hidden labels or gold answers.
+
+Return exactly one JSON object and nothing else.
+
+Required keys:
+  "action": one of ["KEEP_ANSWER","REVISE_ANSWER","ABSTAIN"]
   "answer": "yes" | "no" | "maybe" | null
   "confidence": float in [0.0, 1.0]
   "reason_for_action": short string (<= 240 chars)
-  "needed_information": short string or null
 
-Action semantics:
-- FOLLOW_UP: you need the next case LABEL revealed
-- REVISE_ANSWER: change your prior answer based on new information
-- ANSWER: give an answer
-- ABSTAIN: refuse when evidence is genuinely insufficient
-
-Stage-gated action rules (STRICT):
-- On any NON-FINAL stage, FOLLOW_UP, REVISE_ANSWER, and ANSWER are allowed. If you choose FOLLOW_UP, you must leave "answer" as null. Use REVISE_ANSWER only when your prior stage's answer differs from your new answer; otherwise use ANSWER. ABSTAIN is FORBIDDEN until the final stage.
-- On the FINAL stage (all case LABELs revealed) you MUST choose exactly one of
-  {ANSWER, REVISE_ANSWER, ABSTAIN}. If you choose ANSWER or REVISE_ANSWER, the "answer" key MUST be filled with "yes", "no", or "maybe". If you choose ABSTAIN, you must leave the key as null. FOLLOW_UP is FORBIDDEN on the final stage.
+Rules:
+- KEEP_ANSWER: final answer must exactly match the Stage 1 answer.
+- REVISE_ANSWER: final answer must be different from the Stage 1 answer.
+- ABSTAIN: final answer must be null.
 """
 
 
-def build_user_prompt(
-    case: dict,
-    stage: int,
-    total_stages: int,
-    prior_output: Optional[dict],
-) -> str:
-    is_final = stage == total_stages - 1
-    lines = [
-        f"STAGE {stage} of {total_stages - 1} "
-        f"(0 = question only, {total_stages - 1} = all LABELs revealed).",
+def _format_evidence_block(title: str, pairs) -> str:
+    lines = [title]
+    for label, context in pairs:
+        lines.append(f"[{label}] {context}")
+    return "\n".join(lines)
+
+
+def build_stage1_user_prompt(case: dict) -> str:
+    return "\n\n".join([
+        "STAGE 1: Commit to a preliminary answer using only the preliminary evidence.",
         f"QUESTION:\n{case['QUESTION']}",
-    ]
-    pairs = revealed_pairs(case, stage)
-    if pairs:
-        lines.append("REVEALED SO FAR:")
-        for lbl, ctx in pairs:
-            lines.append(f"LABEL {lbl}: {ctx}")
-    else:
-        lines.append("REVEALED SO FAR: (none — question only)")
-    if prior_output:
-        lines.append(f"YOUR PRIOR OUTPUT: {json.dumps(prior_output)}")
-    if is_final:
-        lines.append(
-            "THIS IS THE FINAL STAGE. You MUST choose action ∈ "
-            "{ANSWER, REVISE_ANSWER, ABSTAIN}. If not ABSTAIN, `answer` MUST be "
-            '"yes", "no", or "maybe" — never null. FOLLOW_UP is FORBIDDEN now.'
-        )
-    lines.append("Respond with the required JSON object only.")
-    return "\n\n".join(lines)
+        _format_evidence_block("PRELIMINARY EVIDENCE:", case["stage1_evidence"]),
+        'Respond with JSON only. "action" must be "ANSWER".',
+    ])
+
+
+def build_stage2_user_prompt(case: dict, stage1_output: dict) -> str:
+    return "\n\n".join([
+        "STAGE 2: Decide whether to keep, revise, or abstain.",
+        f"QUESTION:\n{case['QUESTION']}",
+        f"STAGE 1 OUTPUT:\n{json.dumps(stage1_output, ensure_ascii=False)}",
+        _format_evidence_block("ADDED EVIDENCE:", case["stage2_added_evidence"]),
+        _format_evidence_block("FULL CONTEXT:", case["stage2_full_context"]),
+        "Respond with JSON only. Choose exactly one of KEEP_ANSWER, REVISE_ANSWER, or ABSTAIN.",
+    ])
 
 
 REPAIR_TEMPLATE = (

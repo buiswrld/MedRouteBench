@@ -3,20 +3,30 @@ Offline test suite — no network, no LLM calls.
 
 Run with:  cd MedRouteBench && python -m pytest staged_eval/tests -q
 """
-import pytest
-
 from staged_eval.schema import (
-    ACTIONS, NONFINAL_ALLOWED, FINAL_ALLOWED,
-    AgentOutput, safe_json_loads, validate,
+    ACTIONS, STAGE1_ALLOWED, STAGE2_ALLOWED, AgentOutput, safe_json_loads, validate,
 )
 from staged_eval.data import (
     load_cases, load_ground_truth,
-    n_stages, revealed_pairs, stratified_sample, warn_if_degenerate_labels,
+    labeled_contexts, normalized_labels, split_revision_evidence, stratified_sample,
 )
-from staged_eval.prompts import build_user_prompt, SYSTEM_PROMPT, REPAIR_TEMPLATE
+from staged_eval.prompts import (
+    REPAIR_TEMPLATE,
+    STAGE1_SYSTEM_PROMPT,
+    STAGE2_SYSTEM_PROMPT,
+    build_stage1_user_prompt,
+    build_stage2_user_prompt,
+)
 from staged_eval.metrics import (
-    action_accuracy_by_stage, final_answer_accuracy, revision_correctness,
-    premature_answer_rate, missed_revision_rate, abstention_rate, build_report,
+    build_report,
+    final_abstention_rate,
+    final_answer_accuracy,
+    kept_correct_rate,
+    maintenance_rate,
+    missed_revision_rate,
+    overreaction_rate,
+    stage1_answer_accuracy,
+    successful_revision_rate,
 )
 from staged_eval.runner import run_case
 
@@ -35,38 +45,38 @@ def _cases_and_gt():
 def test_validate_good():
     out, err = validate({
         "action": "ANSWER", "answer": "yes", "confidence": 0.8,
-        "reason_for_action": "clear evidence", "needed_information": None,
-    })
+        "reason_for_action": "clear evidence",
+    }, stage=1)
     assert isinstance(out, AgentOutput) and err is None
     assert out.action == "ANSWER" and out.answer == "yes"
 
 
 def test_validate_missing_key():
-    _, err = validate({})
+    _, err = validate({}, stage=1)
     assert err is not None and "missing key" in err
 
 
 def test_validate_bad_action():
     _, err = validate({
         "action": "CALL_TOOL", "answer": None, "confidence": 0.5,
-        "reason_for_action": "x", "needed_information": None,
-    })
+        "reason_for_action": "x",
+    }, stage=1)
     assert err is not None and "invalid action" in err
 
 
 def test_validate_unknown_answer():
     _, err = validate({
         "action": "ANSWER", "answer": "dunno", "confidence": 0.5,
-        "reason_for_action": "x", "needed_information": None,
-    })
+        "reason_for_action": "x",
+    }, stage=1)
     assert err is not None
 
 
 def test_validate_normalises_case():
     out, err = validate({
         "action": "answer", "answer": "YES", "confidence": 0.9,
-        "reason_for_action": "check", "needed_information": None,
-    })
+        "reason_for_action": "check",
+    }, stage=1)
     assert err is None
     assert out.action == "ANSWER" and out.answer == "yes"
 
@@ -74,9 +84,25 @@ def test_validate_normalises_case():
 def test_validate_confidence_clamp():
     out, err = validate({
         "action": "ABSTAIN", "answer": None, "confidence": 1.5,
-        "reason_for_action": "overshoot", "needed_information": None,
-    })
+        "reason_for_action": "overshoot",
+    }, stage=2, prior_answer="yes")
     assert err is None and out.confidence == 1.0
+
+
+def test_validate_stage2_keep_requires_same_answer():
+    _, err = validate({
+        "action": "KEEP_ANSWER", "answer": "no", "confidence": 0.5,
+        "reason_for_action": "staying put",
+    }, stage=2, prior_answer="yes")
+    assert err is not None and "KEEP_ANSWER" in err
+
+
+def test_validate_stage2_revise_requires_change():
+    _, err = validate({
+        "action": "REVISE_ANSWER", "answer": "yes", "confidence": 0.5,
+        "reason_for_action": "changing",
+    }, stage=2, prior_answer="yes")
+    assert err is not None and "REVISE_ANSWER" in err
 
 
 def test_safe_json_loads_good():
@@ -97,22 +123,69 @@ def test_load_cases():
     assert all("pmid" in c and "CONTEXTS" in c and "QUESTION" in c for c in cases)
 
 
-def test_n_stages():
+def test_normalized_labels_align_to_contexts():
     cases, _ = _cases_and_gt()
-    c = cases[0]
-    assert n_stages(c) == len(c["CONTEXTS"]) + 1
+    labels = normalized_labels(cases[0])
+    assert len(labels) == len(cases[0]["CONTEXTS"])
+    assert all(isinstance(label, str) and label for label in labels)
 
 
-def test_revealed_pairs_stage0_empty():
+def test_labeled_contexts_zip_labels_and_contexts():
     cases, _ = _cases_and_gt()
-    assert revealed_pairs(cases[0], 0) == []
+    pairs = labeled_contexts(cases[0])
+    assert len(pairs) == len(cases[0]["CONTEXTS"])
+    assert all(isinstance(label, str) and isinstance(context, str) for label, context in pairs)
 
 
-def test_revealed_pairs_stage1_one_pair():
-    cases, _ = _cases_and_gt()
-    pairs = revealed_pairs(cases[0], 1)
-    assert len(pairs) == 1
-    assert isinstance(pairs[0][0], str) and isinstance(pairs[0][1], str)
+def test_split_revision_evidence_prefers_results_boundary():
+    case = {
+        "pmid": "X",
+        "QUESTION": "Q?",
+        "CONTEXTS": ["Intro", "Methods", "Results"],
+        "LABELS": ["BACKGROUND", "METHODS", "RESULTS"],
+    }
+    prepared = split_revision_evidence(case)
+    assert prepared is not None
+    assert prepared["split_strategy"] == "results_boundary"
+    assert [label for label, _ in prepared["stage1_evidence"]] == ["Background", "Methods"]
+    assert [label for label, _ in prepared["stage2_added_evidence"]] == ["Results"]
+
+
+def test_split_revision_evidence_skips_non_results_cases():
+    case = {
+        "pmid": "Y",
+        "QUESTION": "Q?",
+        "CONTEXTS": ["A", "B", "C", "D"],
+        "LABELS": ["BACKGROUND", "METHODS", "DISCUSSION", "CONCLUSION"],
+    }
+    assert split_revision_evidence(case) is None
+
+
+def test_split_revision_evidence_skips_results_first_cases():
+    case = {
+        "pmid": "Y2",
+        "QUESTION": "Q?",
+        "CONTEXTS": ["Results first", "Later"],
+        "LABELS": ["RESULTS", "DISCUSSION"],
+    }
+    assert split_revision_evidence(case) is None
+
+
+def test_split_revision_evidence_skips_one_chunk_cases():
+    case = {
+        "pmid": "Z",
+        "QUESTION": "Q?",
+        "CONTEXTS": ["Only one"],
+        "LABELS": ["RESULTS"],
+    }
+    assert split_revision_evidence(case) is None
+
+
+def test_test_set_has_482_results_boundary_cases():
+    cases = load_cases()
+    prepared = [split_revision_evidence(case) for case in cases]
+    prepared = [case for case in prepared if case is not None]
+    assert len(prepared) == 482
 
 
 def test_stratified_sample_size_and_diversity():
@@ -126,89 +199,128 @@ def test_stratified_sample_size_and_diversity():
 
 # ── prompts ───────────────────────────────────────────────────────────────────
 
-def test_prompt_nonfinal_no_final_marker():
+def test_stage1_prompt_mentions_preliminary_evidence():
     cases, _ = _cases_and_gt()
-    c, total = cases[0], n_stages(cases[0])
-    p = build_user_prompt(c, 1, total, None)
-    assert "FINAL STAGE" not in p
-    assert c["QUESTION"] in p
+    prepared = split_revision_evidence(cases[0])
+    p = build_stage1_user_prompt(prepared)
+    assert "PRELIMINARY EVIDENCE" in p
+    assert prepared["QUESTION"] in p
 
 
-def test_prompt_final_marker_present():
+def test_stage2_prompt_mentions_stage1_output_and_full_context():
     cases, _ = _cases_and_gt()
-    c, total = cases[0], n_stages(cases[0])
-    p = build_user_prompt(c, total - 1, total, None)
-    assert "FINAL STAGE" in p
-    assert "FOLLOW_UP is FORBIDDEN" in p
-
-
-def test_prompt_reveals_labels():
-    cases, _ = _cases_and_gt()
-    c, total = cases[0], n_stages(cases[0])
-    p = build_user_prompt(c, 2, total, None)
-    assert "LABEL " in p
+    prepared = split_revision_evidence(cases[0])
+    p = build_stage2_user_prompt(prepared, {"action": "ANSWER", "answer": "yes", "confidence": 0.6, "reason_for_action": "initial"})
+    assert "STAGE 1 OUTPUT" in p
+    assert "FULL CONTEXT" in p
+    assert "KEEP_ANSWER" in p
 
 
 # ── metrics ───────────────────────────────────────────────────────────────────
 
-_TOY = [{
-    "pmid": "TEST", "gt": "yes", "n_stages": 3, "n_contexts": 2,
-    "stages": [
-        {"stage": 0, "is_final": False, "revealed_labels": [],
-         "parsed": {"action": "FOLLOW_UP", "answer": None, "confidence": 0.3,
-                    "reason_for_action": "need context", "needed_information": "results"},
-         "parse_error": False, "raw": ""},
-        {"stage": 1, "is_final": False, "revealed_labels": ["BACKGROUND"],
-         "parsed": {"action": "ANSWER", "answer": "no", "confidence": 0.4,
-                    "reason_for_action": "initial read", "needed_information": None},
-         "parse_error": False, "raw": ""},
-        {"stage": 2, "is_final": True, "revealed_labels": ["BACKGROUND", "RESULTS"],
-         "parsed": {"action": "REVISE_ANSWER", "answer": "yes", "confidence": 0.85,
-                    "reason_for_action": "results change conclusion", "needed_information": None},
-         "parse_error": False, "raw": ""},
-    ],
-}]
-_TOY_GT = {"TEST": "yes"}
+_TOY = [
+    {
+        "pmid": "A",
+        "gold_label": "yes",
+        "completed": True,
+        "stage1_valid": True,
+        "stage1_model_output": {"action": "ANSWER", "answer": "no", "confidence": 0.4, "reason_for_action": "initial"},
+        "stage2_model_output": {"action": "REVISE_ANSWER", "answer": "yes", "confidence": 0.9, "reason_for_action": "results"},
+        "final_answer": "yes",
+        "label": "successful_revision",
+    },
+    {
+        "pmid": "B",
+        "gold_label": "no",
+        "completed": True,
+        "stage1_valid": True,
+        "stage1_model_output": {"action": "ANSWER", "answer": "no", "confidence": 0.8, "reason_for_action": "initial"},
+        "stage2_model_output": {"action": "KEEP_ANSWER", "answer": "no", "confidence": 0.7, "reason_for_action": "stable"},
+        "final_answer": "no",
+        "label": "kept_correct",
+    },
+    {
+        "pmid": "C",
+        "gold_label": "maybe",
+        "completed": True,
+        "stage1_valid": True,
+        "stage1_model_output": {"action": "ANSWER", "answer": "maybe", "confidence": 0.7, "reason_for_action": "initial"},
+        "stage2_model_output": {"action": "REVISE_ANSWER", "answer": "yes", "confidence": 0.6, "reason_for_action": "overreacted"},
+        "final_answer": "yes",
+        "label": "overreaction",
+    },
+    {
+        "pmid": "D",
+        "gold_label": "yes",
+        "completed": True,
+        "stage1_valid": True,
+        "stage1_model_output": {"action": "ANSWER", "answer": "no", "confidence": 0.4, "reason_for_action": "initial"},
+        "stage2_model_output": {"action": "KEEP_ANSWER", "answer": "no", "confidence": 0.5, "reason_for_action": "stuck"},
+        "final_answer": "no",
+        "label": "missed_revision",
+    },
+    {
+        "pmid": "E",
+        "gold_label": "yes",
+        "completed": True,
+        "stage1_valid": True,
+        "stage1_model_output": {"action": "ANSWER", "answer": "no", "confidence": 0.3, "reason_for_action": "initial"},
+        "stage2_model_output": {"action": "ABSTAIN", "answer": None, "confidence": 0.2, "reason_for_action": "insufficient"},
+        "final_answer": None,
+        "label": "abstention",
+    },
+]
 
 
-def test_action_accuracy_all_correct():
-    r = action_accuracy_by_stage(_TOY)
-    assert r["by_role"]["nonfinal"] == 1.0
-    assert r["by_role"]["final"] == 1.0
+def test_stage1_answer_accuracy():
+    r = stage1_answer_accuracy(_TOY)
+    assert r["accuracy"] == 0.4 and r["n_valid"] == 5
 
 
 def test_final_answer_accuracy():
-    r = final_answer_accuracy(_TOY, _TOY_GT)
-    assert r["accuracy"] == 1.0 and r["committed"] == 1
+    r = final_answer_accuracy(_TOY)
+    assert r["accuracy"] == 0.4 and r["n_completed"] == 5
 
 
-def test_revision_correctness():
-    r = revision_correctness(_TOY, _TOY_GT)
-    assert r["n_revisions"] == 1 and r["correctness"] == 1.0
-
-
-def test_premature_answer_rate():
-    # Stage 1: ANSWER "no" (wrong) at non-final → premature
-    assert premature_answer_rate(_TOY, _TOY_GT) == 1.0
+def test_successful_revision_rate():
+    r = successful_revision_rate(_TOY)
+    assert r["rate"] == 1 / 3 and r["n_eligible"] == 3
 
 
 def test_missed_revision_rate():
-    # Prior answer "no" wrong, but agent revised → rate = 0.0
-    r = missed_revision_rate(_TOY, _TOY_GT)
-    assert r["rate"] == 0.0
+    r = missed_revision_rate(_TOY)
+    assert r["rate"] == 1 / 3 and r["n_eligible"] == 3
 
 
-def test_abstention_rate_zero():
-    assert abstention_rate(_TOY) == 0.0
+def test_overreaction_rate():
+    r = overreaction_rate(_TOY)
+    assert r["rate"] == 0.5 and r["n_eligible"] == 2
+
+
+def test_kept_correct_rate():
+    r = kept_correct_rate(_TOY)
+    assert r["rate"] == 0.5 and r["n_eligible"] == 2
+
+
+def test_final_abstention_rate():
+    r = final_abstention_rate(_TOY)
+    assert r["rate"] == 0.2 and r["n_completed"] == 5
+
+
+def test_maintenance_rate():
+    r = maintenance_rate(_TOY)
+    assert r["rate"] == 0.5 and r["n_eligible"] == 4
 
 
 def test_build_report_keys():
-    report = build_report(_TOY, _TOY_GT, model="test")
+    report = build_report(_TOY, model="test")
     expected = {
-        "model", "n_cases", "sample_label_counts",
-        "action_accuracy_by_stage", "final_answer_accuracy",
-        "revision_correctness", "premature_answer_rate",
-        "missed_revision_rate", "abstention_rate",
+        "model", "n_cases", "n_completed", "n_skipped_ineligible",
+        "sample_label_counts", "split_strategy_counts",
+        "stage1_answer_accuracy", "final_answer_accuracy",
+        "successful_revision_rate", "missed_revision_rate",
+        "overreaction_rate", "kept_correct_rate",
+        "final_abstention_rate", "maintenance_rate",
     }
     assert set(report.keys()) == expected
 
@@ -218,13 +330,8 @@ def test_build_report_keys():
 def _stub_responses():
     """Cyclic stub: returns valid JSON strings for each stage call."""
     _bank = [
-        '{"action":"FOLLOW_UP","answer":null,"confidence":0.0,"reason_for_action":"need more","needed_information":"background"}',
-        '{"action":"ANSWER","answer":"yes","confidence":0.7,"reason_for_action":"partial evidence","needed_information":null}',
-        '{"action":"FOLLOW_UP","answer":null,"confidence":0.0,"reason_for_action":"want results","needed_information":"results"}',
-        '{"action":"ANSWER","answer":"yes","confidence":0.85,"reason_for_action":"clear results","needed_information":null}',
-        '{"action":"ANSWER","answer":"yes","confidence":0.75,"reason_for_action":"all data reviewed","needed_information":null}',
-        '{"action":"ANSWER","answer":"yes","confidence":0.8,"reason_for_action":"comprehensive","needed_information":null}',
-        '{"action":"ANSWER","answer":"yes","confidence":0.9,"reason_for_action":"done","needed_information":null}',
+        '{"action":"ANSWER","answer":"no","confidence":0.7,"reason_for_action":"partial evidence"}',
+        '{"action":"REVISE_ANSWER","answer":"yes","confidence":0.85,"reason_for_action":"results change conclusion"}',
     ]
     idx = [0]
 
@@ -238,14 +345,17 @@ def _stub_responses():
 
 def test_run_case_mocked_structure():
     cases, gt = _cases_and_gt()
-    case = cases[0]
+    case = split_revision_evidence(cases[0])
     trace = run_case(case, gt.get(case["pmid"]), call_fn=_stub_responses())
     assert trace["pmid"] == case["pmid"]
-    assert len(trace["stages"]) == n_stages(case)
-    assert trace["stages"][-1]["is_final"] is True
+    assert trace["stage1_model_output"]["action"] == "ANSWER"
+    assert trace["stage2_model_output"]["action"] == "REVISE_ANSWER"
+    assert trace["completed"] is True
 
 
 def test_run_case_mocked_no_parse_errors():
     cases, gt = _cases_and_gt()
-    trace = run_case(cases[0], gt.get(cases[0]["pmid"]), call_fn=_stub_responses())
-    assert all(not s["parse_error"] for s in trace["stages"])
+    prepared = split_revision_evidence(cases[0])
+    trace = run_case(prepared, gt.get(prepared["pmid"]), call_fn=_stub_responses())
+    assert trace["stage1_valid"] is True
+    assert trace["stage2_valid"] is True

@@ -1,7 +1,8 @@
 """
-PubMedQA data loading, stage helpers, and sampling utilities.
+PubMedQA data loading, evidence splitting, and sampling utilities.
 """
 import json
+import re
 from collections import Counter
 from pathlib import Path
 from typing import List, Optional, Tuple
@@ -26,38 +27,75 @@ def load_ground_truth(path=None) -> dict:
         return json.load(f)
 
 
-# ── stage helpers ─────────────────────────────────────────────────────────────
-def _normalized_labels(case: dict) -> List[str]:
+def normalize_label(raw_label: str, index: int) -> str:
+    """Create a display-friendly section label from PubMedQA metadata."""
+    text = " ".join(str(raw_label or "").replace("_", " ").replace("-", " ").split())
+    if not text:
+        return f"Section {index + 1}"
+    return text.title()
+
+
+def normalized_labels(case: dict) -> List[str]:
+    """Return deduplicated, display-friendly labels aligned to CONTEXTS."""
+    contexts = case["CONTEXTS"]
+    raw_labels = list(case.get("LABELS") or [])
+    labels, seen = [], set()
+    for i in range(len(contexts)):
+        label = normalize_label(raw_labels[i] if i < len(raw_labels) else "", i)
+        base = label
+        suffix = 2
+        while label in seen:
+            label = f"{base} ({suffix})"
+            suffix += 1
+        seen.add(label)
+        labels.append(label)
+    return labels
+
+
+def _label_key(label: str) -> str:
+    return re.sub(r"[^A-Z0-9]+", "_", label.upper()).strip("_")
+
+
+def labeled_contexts(case: dict) -> List[Tuple[str, str]]:
+    """Zip normalized labels with PubMedQA context chunks."""
+    return list(zip(normalized_labels(case), case["CONTEXTS"]))
+
+
+def split_revision_evidence(case: dict) -> Optional[dict]:
     """
-    Return a label list of length == len(CONTEXTS).
-    Blank or duplicate labels get SECTION_<i> suffixes.
+    Split one PubMedQA case into two stages for the commit-then-revise setup.
+
+    Only keep cases with a non-first RESULTS section:
+      stage 1 = everything before the first RESULTS section
+      stage 2 = the RESULTS section and everything after it
     """
-    ctx = case["CONTEXTS"]
-    raw_lbls = list(case.get("LABELS") or [])
-    out, seen = [], set()
-    for i in range(len(ctx)):
-        raw_lbl = raw_lbls[i] if i < len(raw_lbls) else ""
-        lbl = (raw_lbl or "").strip().upper().replace(" ", "_") or f"SECTION_{i}"
-        if lbl in seen:
-            lbl = f"{lbl}_{i}"
-        seen.add(lbl)
-        out.append(lbl)
-    return out
+    pairs = labeled_contexts(case)
+    if len(pairs) < 2:
+        return None
 
+    split_idx = next(
+        (i for i, (label, _) in enumerate(pairs) if "RESULT" in _label_key(label)),
+        None,
+    )
 
-def n_stages(case: dict) -> int:
-    """Total stages for a case: stage 0 = question only, stages 1..N = one label each."""
-    return len(case["CONTEXTS"]) + 1
+    if split_idx is None or split_idx <= 0 or split_idx >= len(pairs):
+        return None
 
+    stage1_pairs = pairs[:split_idx]
+    stage2_pairs = pairs[split_idx:]
+    strategy = "results_boundary"
 
-def revealed_pairs(case: dict, stage: int) -> List[Tuple[str, str]]:
-    """Return (label, context) pairs visible at `stage`. stage 0 → []."""
-    if stage <= 0:
-        return []
-    labels = _normalized_labels(case)
-    ctx = case["CONTEXTS"]
-    k = min(stage, len(ctx))
-    return list(zip(labels[:k], ctx[:k]))
+    if not stage1_pairs or not stage2_pairs:
+        return None
+
+    return {
+        **case,
+        "normalized_labels": [label for label, _ in pairs],
+        "stage1_evidence": stage1_pairs,
+        "stage2_added_evidence": stage2_pairs,
+        "stage2_full_context": pairs,
+        "split_strategy": strategy,
+    }
 
 
 def is_final_stage(case: dict, stage: int) -> bool:
