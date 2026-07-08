@@ -12,14 +12,13 @@ from dotenv import load_dotenv
 # ── directory anchors ────────────────────────────────────────────────────────
 PACKAGE_DIR = Path(__file__).resolve().parent   # .../MedRouteBench/staged_eval/
 PROJECT_DIR = PACKAGE_DIR.parent                 # .../MedRouteBench/
-REPO_ROOT   = PROJECT_DIR.parent                 # .../Algoverse/
 
 # Load .env from the project root (MedRouteBench/.env) before reading env vars.
 load_dotenv(PROJECT_DIR / ".env", override=True)
 
 # ── data paths ───────────────────────────────────────────────────────────────
 _data_env = os.environ.get("PUBMEDQA_DATA_DIR")
-DATA_DIR = Path(_data_env) if _data_env else REPO_ROOT / "pubmedqa" / "data"
+DATA_DIR = Path(_data_env) if _data_env else PROJECT_DIR / "data" / "pubmedqa"
 
 TEST_SET_PATH     = DATA_DIR / "test_set.json"
 ORI_PQAL_PATH     = DATA_DIR / "ori_pqal.json"
