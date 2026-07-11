@@ -1,24 +1,19 @@
-"""
-Main pipeline: load → sample → run → report → write artifacts.
+"""Load, split, sample, run, and report the two-stage PubMedQA experiment."""
 
-Usage
------
-python -m staged_eval.pipeline [--n 50] [--no-stratify] [--model ...] \
-                                [--out ...] [--limit ...] [--inspect I]
-"""
 import argparse
 import datetime
 import json
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
-from .config import GROQ_MODEL, RUNS_DIR, TEST_SET_PATH, GROUND_TRUTH_PATH
+from .config import GROQ_MODEL, RUNS_DIR
 from .data import (
+    FINAL_ANSWERS,
+    eligible_cases,
     load_cases,
     load_ground_truth,
-    n_stages,
     stratified_sample,
     warn_if_degenerate_labels,
 )
@@ -34,93 +29,145 @@ def run_pipeline(
     out_dir=None,
     limit: Optional[int] = None,
     verbose: bool = True,
+    call_fn: Optional[Callable] = None,
+    resume_dir=None,
 ) -> Tuple[dict, List[dict]]:
-    """
-    Load cases, sample, run staged evaluation, write artifacts, return
-    (report_dict, traces_list).
+    """Run the experiment and write one JSON trace per selected eligible case."""
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    if out_dir is not None and resume_dir is not None:
+        raise ValueError("out_dir and resume_dir are mutually exclusive")
 
-    Parameters
-    ----------
-    n         : Target sample size.
-    stratify  : Proportional yes/no/maybe stratification (default True).
-    model     : Override GROQ_MODEL for the report header.
-    out_dir   : Override RUNS_DIR for artifact output.
-    limit     : Cap the dataset size before sampling (useful for testing).
-    verbose   : Print progress to stdout.
-    """
-    _model    = model or GROQ_MODEL
-    runs_dir  = Path(out_dir) if out_dir else RUNS_DIR
-
+    selected_model = model or GROQ_MODEL
+    runs_dir = Path(out_dir) if out_dir else RUNS_DIR
     all_cases = load_cases(limit=limit)
-    gt        = load_ground_truth()
+    ground_truth = load_ground_truth()
 
-    if stratify and n < len(all_cases):
-        cases = stratified_sample(all_cases, gt, n)
+    gold_cases = [
+        case
+        for case in all_cases
+        if ground_truth.get(case["pmid"]) in FINAL_ANSWERS
+    ]
+    eligible = eligible_cases(gold_cases, ground_truth)
+    if stratify and n < len(eligible):
+        cases = stratified_sample(eligible, ground_truth, n)
     else:
-        cases = all_cases[:n]
+        cases = eligible[:n]
 
-    warn_if_degenerate_labels(cases, gt)
-    sample_counts = dict(Counter(gt.get(c["pmid"]) for c in cases))
+    warn_if_degenerate_labels(cases, ground_truth)
+    sample_counts = dict(Counter(ground_truth[case["pmid"]] for case in cases))
+    dataset_counts = {
+        "loaded": len(all_cases),
+        "with_official_gold": len(gold_cases),
+        "eligible_two_stage": len(eligible),
+        "skipped_unsplittable": len(gold_cases) - len(eligible),
+    }
 
-    ts      = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    run_dir = runs_dir / ts
-    run_dir.mkdir(parents=True, exist_ok=True)
+    if resume_dir is not None:
+        run_dir = Path(resume_dir)
+        if not run_dir.is_dir():
+            raise FileNotFoundError(f"resume directory does not exist: {run_dir}")
+    else:
+        timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        run_dir = runs_dir / timestamp
+        run_dir.mkdir(parents=True, exist_ok=True)
+
+    selected_pmids = {case["pmid"] for case in cases}
+    existing_by_pmid = {}
+    if resume_dir is not None:
+        for trace_path in run_dir.glob("trace_*.json"):
+            with open(trace_path, encoding="utf-8") as handle:
+                trace = json.load(handle)
+            pmid = str(trace.get("pmid"))
+            if pmid in selected_pmids:
+                existing_by_pmid[pmid] = trace
 
     if verbose:
-        print(f"run_dir: {run_dir}  |  n_cases: {len(cases)}")
-        if stratify:
-            print(f"stratified sample: {sample_counts}")
+        print(f"run_dir: {run_dir} | selected: {len(cases)} | eligible: {len(eligible)}")
+        print(f"sample labels: {sample_counts}")
+        if resume_dir is not None:
+            print(
+                f"resume: {len(existing_by_pmid)} complete traces found | "
+                f"remaining: {len(cases) - len(existing_by_pmid)}"
+            )
 
     traces: List[dict] = []
-    for i, case in enumerate(cases, 1):
+    for index, case in enumerate(cases, 1):
+        existing = existing_by_pmid.get(case["pmid"])
+        if existing is not None:
+            traces.append(existing)
+            continue
         if verbose:
-            print(
-                f"[{i}/{len(cases)}] pmid={case['pmid']}  "
-                f"gt={gt.get(case['pmid'])}  n_stages={n_stages(case)}"
-            )
-        trace = run_case(case, gt.get(case["pmid"]))
+            print(f"[{index}/{len(cases)}] pmid={case['pmid']} | fixed stages=2")
+        kwargs = {"call_fn": call_fn} if call_fn is not None else {}
+        trace = run_case(case, ground_truth[case["pmid"]], **kwargs)
         traces.append(trace)
-        with open(run_dir / f"trace_{case['pmid']}.json", "w") as f:
-            json.dump(trace, f, indent=2, ensure_ascii=False)
+        with open(
+            run_dir / f"trace_{case['pmid']}.json",
+            "w",
+            encoding="utf-8",
+        ) as handle:
+            json.dump(trace, handle, indent=2, ensure_ascii=False)
 
-    report = build_report(traces, gt, model=_model, sample_counts=sample_counts)
-    with open(run_dir / "report.json", "w") as f:
-        json.dump(report, f, indent=2)
+    report = build_report(
+        traces,
+        model=selected_model,
+        sample_counts=sample_counts,
+        dataset_counts=dataset_counts,
+    )
+    with open(run_dir / "report.json", "w", encoding="utf-8") as handle:
+        json.dump(report, handle, indent=2, ensure_ascii=False)
     if verbose:
         print(json.dumps(report, indent=2))
-
     return report, traces
 
 
 def inspect_trace(trace: dict) -> None:
-    """Print a compact per-stage summary of a trace."""
-    print(f"pmid={trace['pmid']}  gt={trace['gt']}  n_stages={trace['n_stages']}")
-    for s in trace["stages"]:
-        p = s["parsed"]
-        flag = "FINAL" if s["is_final"] else "     "
+    """Print a compact two-stage summary."""
+    print(
+        f"pmid={trace['pmid']} | gold={trace['pubmedqa_gold_label']} | "
+        f"status={trace['status']} | label={trace['label']}"
+    )
+    for stage in (1, 2):
+        output = trace.get(f"stage{stage}_model_output")
+        if output is None:
+            print(f"  stage={stage} not run")
+            continue
+        parsed = output.get("parsed")
+        if parsed is None:
+            print(f"  stage={stage} INVALID: {output.get('validation_error')}")
+            continue
         print(
-            f"  stage={s['stage']:>1} {flag} "
-            f"action={p['action']:<18} "
-            f"answer={str(p['answer']):<6} "
-            f"conf={round(p['confidence'] or 0.0, 2):<4}"
+            f"  stage={stage} action={parsed['action']:<14} "
+            f"answer={str(parsed['answer']):<5} repaired={output['repaired']}"
         )
 
-
-# ── CLI ───────────────────────────────────────────────────────────────────────
 
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="python -m staged_eval.pipeline",
-        description="MedRouteBench staged evaluation runner",
+        description="Fixed two-stage PubMedQA commit-then-revise experiment",
     )
-    parser.add_argument("--n",          type=int,   default=50,   help="target sample size")
-    parser.add_argument("--no-stratify",action="store_true",      help="disable stratified sampling")
-    parser.add_argument("--model",      default=None,             help="override GROQ_MODEL")
-    parser.add_argument("--out",        default=None,             help="output directory for run")
-    parser.add_argument("--limit",      type=int,   default=None, help="cap dataset before sampling")
+    parser.add_argument("--n", type=int, default=50, help="target eligible sample size")
     parser.add_argument(
-        "--inspect", type=int, default=None, metavar="I",
-        help="after the run, print the trace for the I-th case (0-indexed)",
+        "--no-stratify",
+        action="store_true",
+        help="disable proportional yes/no/maybe sampling",
+    )
+    parser.add_argument("--model", default=None, help="model name stored in the report")
+    parser.add_argument("--out", default=None, help="artifact output directory")
+    parser.add_argument(
+        "--resume",
+        default=None,
+        help="resume an interrupted run directory without repeating saved PMIDs",
+    )
+    parser.add_argument("--limit", type=int, default=None, help="cap cases before filtering")
+    parser.add_argument(
+        "--inspect",
+        type=int,
+        default=None,
+        metavar="I",
+        help="print the I-th trace after the run (0-indexed)",
     )
     return parser.parse_args()
 
@@ -133,9 +180,13 @@ if __name__ == "__main__":
         model=args.model,
         out_dir=args.out,
         limit=args.limit,
+        resume_dir=args.resume,
     )
     if args.inspect is not None:
-        if args.inspect < len(traces):
+        if 0 <= args.inspect < len(traces):
             inspect_trace(traces[args.inspect])
         else:
-            print(f"[WARN] --inspect {args.inspect} out of range (n={len(traces)})", file=sys.stderr)
+            print(
+                f"[WARN] --inspect {args.inspect} out of range (n={len(traces)})",
+                file=sys.stderr,
+            )

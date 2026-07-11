@@ -1,70 +1,82 @@
-"""
-System prompt, per-stage user prompt builder, and repair template.
-"""
+"""Prompts for the fixed PubMedQA commit-then-revise experiment."""
+
 import json
 from typing import Optional
 
-from .data import revealed_pairs
 
+SYSTEM_PROMPT = """You are a careful biomedical reasoning agent in a fixed two-stage PubMedQA experiment.
 
-SYSTEM_PROMPT = """You are a careful biomedical reasoning agent answering a PubMedQA question in stages. New CONTEXTS are revealed one LABEL at a time.
+Use only the question and labelled evidence supplied in the user message. Never
+claim access to a gold answer, long answer, hidden decision, or external source.
 
-At every stage you MUST respond with a SINGLE JSON object and NOTHING else — no
-prose, no markdown, no code fences.
+Return one JSON object and nothing else. The object must contain exactly:
+  "action": a stage-allowed action
+  "answer": "yes", "no", "maybe", or null
 
-Required keys:
-  "action": one of ["RETRIEVE_EVIDENCE","REVISE_ANSWER","ANSWER","ABSTAIN"]
-  "answer": "yes" | "no" | "maybe" | null
-  "confidence": float in [0.0, 1.0]
-  "reason_for_action": short string (<= 240 chars)
-  "needed_information": short string or null
+Stage 1 rules:
+- action MUST be "ANSWER"
+- answer MUST be "yes", "no", or "maybe"
 
-Action semantics:
-- RETRIEVE_EVIDENCE: you need the next case LABEL revealed
-- REVISE_ANSWER: change your prior answer based on new information
-- ANSWER: give an answer
-- ABSTAIN: refuse when evidence is genuinely insufficient
-
-Stage-gated action rules (STRICT):
-- On any NON-FINAL stage, RETRIEVE_EVIDENCE, REVISE_ANSWER, and ANSWER are allowed. If you choose RETRIEVE_EVIDENCE, you must leave "answer" as null and fill "needed_information". Use REVISE_ANSWER only when your prior stage's answer differs from your new answer; otherwise use ANSWER. ABSTAIN is FORBIDDEN until the final stage.
-- On the FINAL stage (all case LABELs revealed) you MUST choose exactly one of
-  {ANSWER, REVISE_ANSWER, ABSTAIN}. If you choose ANSWER or REVISE_ANSWER, the "answer" key MUST be filled with "yes", "no", or "maybe". If you choose ABSTAIN, you must leave the key as null. RETRIEVE_EVIDENCE is FORBIDDEN on the final stage.
+Stage 2 rules:
+- "KEEP_ANSWER": answer MUST exactly match the Stage 1 answer
+- "REVISE_ANSWER": answer MUST be yes/no/maybe and differ from Stage 1
+- "ABSTAIN": answer MUST be null
 """
+
+
+def _format_evidence(items: list) -> str:
+    return "\n\n".join(
+        f"LABEL: {item['label']}\nCONTEXT: {item['context']}" for item in items
+    )
 
 
 def build_user_prompt(
     case: dict,
     stage: int,
-    total_stages: int,
-    prior_output: Optional[dict],
+    evidence_split: dict,
+    prior_output: Optional[dict] = None,
 ) -> str:
-    is_final = stage == total_stages - 1
-    lines = [
-        f"STAGE {stage} of {total_stages - 1} "
-        f"(0 = question only, {total_stages - 1} = all LABELs revealed).",
-        f"QUESTION:\n{case['QUESTION']}",
-    ]
-    pairs = revealed_pairs(case, stage)
-    if pairs:
-        lines.append("REVEALED SO FAR:")
-        for lbl, ctx in pairs:
-            lines.append(f"LABEL {lbl}: {ctx}")
-    else:
-        lines.append("REVEALED SO FAR: (none — question only)")
-    if prior_output:
-        lines.append(f"YOUR PRIOR OUTPUT: {json.dumps(prior_output)}")
-    if is_final:
-        lines.append(
-            "THIS IS THE FINAL STAGE. You MUST choose action ∈ "
-            "{ANSWER, REVISE_ANSWER, ABSTAIN}. If not ABSTAIN, `answer` MUST be "
-            '"yes", "no", or "maybe" — never null. RETRIEVE_EVIDENCE is FORBIDDEN now.'
+    """Build a prompt from QUESTION, CONTEXTS/LABELS, and (at Stage 2) prior output."""
+    question = str(case["QUESTION"]).strip()
+    if stage == 1:
+        return "\n\n".join(
+            [
+                "STAGE 1 - PRELIMINARY COMMITMENT",
+                f"QUESTION:\n{question}",
+                "PRELIMINARY EVIDENCE:\n"
+                + _format_evidence(evidence_split["stage1_evidence"]),
+                'Return exactly {"action":"ANSWER","answer":"yes|no|maybe"} '
+                "with one concrete answer value.",
+            ]
         )
-    lines.append("Respond with the required JSON object only.")
-    return "\n\n".join(lines)
+
+    if stage == 2:
+        if prior_output is None:
+            raise ValueError("Stage 2 prompt requires the valid Stage 1 output")
+        return "\n\n".join(
+            [
+                "STAGE 2 - FINAL REVISION DECISION",
+                f"QUESTION:\n{question}",
+                "YOUR STAGE 1 OUTPUT:\n" + json.dumps(prior_output, ensure_ascii=False),
+                "FULL PUBMEDQA CONTEXT:\n"
+                + _format_evidence(evidence_split["full_context"]),
+                "Choose exactly one action: KEEP_ANSWER with the same answer; "
+                "REVISE_ANSWER with a different yes/no/maybe answer; or ABSTAIN "
+                "with answer null.",
+            ]
+        )
+
+    raise ValueError(f"Unsupported stage: {stage}")
 
 
-REPAIR_TEMPLATE = (
-    "Your previous response failed schema validation with error: {ERROR}. "
-    "Return a corrected JSON object with the required keys. No prose.\n\n"
-    "Original prompt:\n{ORIGINAL}"
-)
+REPAIR_TEMPLATE = """Your previous response was invalid: {ERROR}
+
+INVALID RESPONSE:
+{RESPONSE}
+
+Return a corrected JSON object that obeys the stage rules in the original prompt.
+Return JSON only.
+
+ORIGINAL PROMPT:
+{ORIGINAL}
+"""
