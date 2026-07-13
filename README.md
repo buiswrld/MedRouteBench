@@ -21,14 +21,42 @@ the prompts. `LONG_ANSWER`, `final_decision`, `test_ground_truth`, and gold
 labels are never included. Official labels from
 `data/pubmedqa/test_ground_truth.json` are used only for scoring and traces.
 
-Run an evaluation:
+Run an evaluation with the built-in Groq adapter:
 
 ```powershell
-python -m staged_eval.pipeline --n 50 --inspect 0
+python -m staged_eval.pipeline --n 50 --model llama-3.1-8b-instant --inspect 0
 ```
 
-Artifacts are written to `staged_eval/runs/<UTC timestamp>/`, with one trace per
-selected PMID and a `report.json` containing the eight revision metrics.
+The selected model is passed to the backend that performs the request and is
+recorded with the backend identity in both `manifest.json` and `report.json`.
+Shell, scheduler, and CI environment variables take precedence over local
+`.env` defaults.
+
+The benchmark pipeline is backend-neutral in Python. Supply any callable with
+the signature `(system: str, user: str) -> str` and identify the actual model:
+
+```python
+report, traces = run_pipeline(
+    n=50,
+    model="provider/model-name",
+    call_fn=my_json_backend,
+)
+```
+
+Production data must exist; the runner no longer silently substitutes the
+bundled fixtures. Use `--use-fixtures` only for an explicit offline fixture
+run, or pass `--cases` and `--ground-truth` paths.
+
+Artifacts are written atomically to a unique
+`staged_eval/runs/<UTC timestamp>_<id>/` directory. Each run contains a
+provenance manifest, one trace per selected PMID, and a report. `--resume`
+rejects changes to the model, backend, data hashes, evaluation code, or
+generation settings. Legacy run directories without a manifest remain readable,
+but cannot be resumed safely.
+
+Stage 1 and final answer accuracy use the same selected-case denominator.
+Invalid outputs and final abstentions count as incorrect instead of disappearing
+from the final-accuracy cohort.
 
 Run offline verification:
 

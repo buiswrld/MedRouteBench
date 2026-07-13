@@ -4,13 +4,19 @@ from dataclasses import asdict
 from typing import Callable, Optional
 
 from .data import FINAL_ANSWERS, split_evidence
-from .llm import call_json as _default_call_json
 from .prompts import (
     REPAIR_TEMPLATE as _DEFAULT_REPAIR_TEMPLATE,
     SYSTEM_PROMPT as _DEFAULT_SYSTEM_PROMPT,
     build_user_prompt,
 )
 from .schema import safe_json_loads, validate
+
+
+def _default_call_json(system: str, user: str) -> str:
+    """Load the built-in provider only for direct run_case calls without a backend."""
+    from .llm import call_json
+
+    return call_json(system, user)
 
 
 def _call_stage(

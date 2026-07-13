@@ -78,13 +78,13 @@ def _retry_wait(retry_state) -> float:
     retry=retry_if_exception_type(_retryable_errors),
     reraise=True,
 )
-def call_json(system: str, user: str) -> str:
+def call_json(system: str, user: str, *, model: str | None = None) -> str:
     """
     Call the Groq chat completion API with JSON mode enabled.
     Returns the raw content string (a JSON object).
     """
     resp = get_client().chat.completions.create(
-        model=GROQ_MODEL,
+        model=model or GROQ_MODEL,
         messages=[
             {"role": "system", "content": system},
             {"role": "user",   "content": user},

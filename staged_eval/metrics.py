@@ -4,6 +4,9 @@ from collections import Counter
 from typing import List, Optional
 
 
+FINAL_ANSWERS = {"yes", "no", "maybe"}
+
+
 def _ratio(numerator: int, denominator: int) -> dict:
     return {
         "rate": numerator / denominator if denominator else None,
@@ -12,12 +15,13 @@ def _ratio(numerator: int, denominator: int) -> dict:
     }
 
 
-def _valid_stage1(traces: List[dict]) -> List[dict]:
+def _scorable(traces: List[dict]) -> List[dict]:
+    """Return selected traces with a valid official gold label."""
     return [
         trace
         for trace in traces
-        if trace.get("stage1_model_output")
-        and trace["stage1_model_output"].get("valid")
+        if trace.get("pubmedqa_gold_label") in FINAL_ANSWERS
+        and not str(trace.get("status", "")).startswith("skipped_")
     ]
 
 
@@ -25,44 +29,61 @@ def _completed(traces: List[dict]) -> List[dict]:
     return [trace for trace in traces if trace.get("status") == "completed"]
 
 
-def _answers(trace: dict):
-    stage1 = trace["stage1_model_output"]["parsed"]
-    stage2 = trace["stage2_model_output"]["parsed"]
-    return stage1["answer"], stage2["answer"], stage2["action"]
+def _stage1_answer(trace: dict):
+    output = trace.get("stage1_model_output") or {}
+    parsed = output.get("parsed") or {}
+    if not output.get("valid"):
+        return None
+    return parsed.get("answer")
+
+
+def _stage2_answer_action(trace: dict):
+    if trace.get("status") != "completed":
+        return None, None
+    output = trace.get("stage2_model_output") or {}
+    parsed = output.get("parsed") or {}
+    if not output.get("valid"):
+        return None, None
+    return parsed.get("answer"), parsed.get("action")
+
+
+def _valid_stage1(traces: List[dict]) -> List[dict]:
+    return [
+        trace
+        for trace in _scorable(traces)
+        if _stage1_answer(trace) in FINAL_ANSWERS
+    ]
 
 
 def stage1_answer_accuracy(traces: List[dict]) -> dict:
-    """Accuracy among traces with a valid Stage 1 answer."""
-    eligible = _valid_stage1(traces)
+    """Accuracy across all selected scorable cases; invalid output is incorrect."""
+    eligible = _scorable(traces)
     correct = sum(
-        trace["stage1_model_output"]["parsed"]["answer"]
-        == trace["pubmedqa_gold_label"]
-        for trace in eligible
+        _stage1_answer(trace) == trace["pubmedqa_gold_label"] for trace in eligible
     )
     return _ratio(correct, len(eligible))
 
 
 def final_answer_accuracy(traces: List[dict]) -> dict:
-    """Accuracy among completed cases; a final abstention is incorrect."""
-    completed = _completed(traces)
+    """Final accuracy on the same cohort as Stage 1; invalid/abstain is incorrect."""
+    eligible = _scorable(traces)
     correct = sum(
-        trace["stage2_model_output"]["parsed"]["answer"]
-        == trace["pubmedqa_gold_label"]
-        for trace in completed
+        _stage2_answer_action(trace)[0] == trace["pubmedqa_gold_label"]
+        for trace in eligible
     )
-    return _ratio(correct, len(completed))
+    return _ratio(correct, len(eligible))
 
 
 def successful_revision_rate(traces: List[dict]) -> dict:
-    """Rate of correction among completed cases whose Stage 1 answer was wrong."""
+    """Correction rate among cases with a valid but wrong Stage 1 answer."""
     eligible = [
         trace
-        for trace in _completed(traces)
-        if _answers(trace)[0] != trace["pubmedqa_gold_label"]
+        for trace in _valid_stage1(traces)
+        if _stage1_answer(trace) != trace["pubmedqa_gold_label"]
     ]
     successful = sum(
-        _answers(trace)[2] == "REVISE_ANSWER"
-        and _answers(trace)[1] == trace["pubmedqa_gold_label"]
+        _stage2_answer_action(trace)[1] == "REVISE_ANSWER"
+        and _stage2_answer_action(trace)[0] == trace["pubmedqa_gold_label"]
         for trace in eligible
     )
     return _ratio(successful, len(eligible))
@@ -72,12 +93,13 @@ def missed_revision_rate(traces: List[dict]) -> dict:
     """Failure-to-correct rate among wrong Stage 1 cases, excluding abstentions."""
     eligible = [
         trace
-        for trace in _completed(traces)
-        if _answers(trace)[0] != trace["pubmedqa_gold_label"]
-        and _answers(trace)[2] != "ABSTAIN"
+        for trace in _valid_stage1(traces)
+        if _stage1_answer(trace) != trace["pubmedqa_gold_label"]
+        and _stage2_answer_action(trace)[1] != "ABSTAIN"
     ]
     missed = sum(
-        _answers(trace)[1] != trace["pubmedqa_gold_label"] for trace in eligible
+        _stage2_answer_action(trace)[0] != trace["pubmedqa_gold_label"]
+        for trace in eligible
     )
     return _ratio(missed, len(eligible))
 
@@ -86,12 +108,12 @@ def overreaction_rate(traces: List[dict]) -> dict:
     """Rate of changing a correct Stage 1 answer to an incorrect final answer."""
     eligible = [
         trace
-        for trace in _completed(traces)
-        if _answers(trace)[0] == trace["pubmedqa_gold_label"]
+        for trace in _valid_stage1(traces)
+        if _stage1_answer(trace) == trace["pubmedqa_gold_label"]
     ]
     overreactions = sum(
-        _answers(trace)[2] == "REVISE_ANSWER"
-        and _answers(trace)[1] != trace["pubmedqa_gold_label"]
+        _stage2_answer_action(trace)[1] == "REVISE_ANSWER"
+        and _stage2_answer_action(trace)[0] != trace["pubmedqa_gold_label"]
         for trace in eligible
     )
     return _ratio(overreactions, len(eligible))
@@ -101,30 +123,37 @@ def kept_correct_rate(traces: List[dict]) -> dict:
     """Rate of explicitly keeping a correct Stage 1 answer."""
     eligible = [
         trace
-        for trace in _completed(traces)
-        if _answers(trace)[0] == trace["pubmedqa_gold_label"]
+        for trace in _valid_stage1(traces)
+        if _stage1_answer(trace) == trace["pubmedqa_gold_label"]
     ]
     kept = sum(
-        _answers(trace)[2] == "KEEP_ANSWER"
-        and _answers(trace)[1] == trace["pubmedqa_gold_label"]
+        _stage2_answer_action(trace)[1] == "KEEP_ANSWER"
+        and _stage2_answer_action(trace)[0] == trace["pubmedqa_gold_label"]
         for trace in eligible
     )
     return _ratio(kept, len(eligible))
 
 
 def final_abstention_rate(traces: List[dict]) -> dict:
-    """Final ABSTAIN rate among completed cases."""
-    completed = _completed(traces)
-    abstentions = sum(_answers(trace)[2] == "ABSTAIN" for trace in completed)
-    return _ratio(abstentions, len(completed))
+    """Final ABSTAIN rate across all selected scorable cases."""
+    eligible = _scorable(traces)
+    abstentions = sum(
+        _stage2_answer_action(trace)[1] == "ABSTAIN" for trace in eligible
+    )
+    return _ratio(abstentions, len(eligible))
 
 
 def maintenance_rate(traces: List[dict]) -> dict:
-    """Stage 1/final answer agreement among completed non-abstention cases."""
+    """Answer agreement after Stage 1, with invalid Stage 2 counted as failure."""
     eligible = [
-        trace for trace in _completed(traces) if _answers(trace)[2] != "ABSTAIN"
+        trace
+        for trace in _valid_stage1(traces)
+        if _stage2_answer_action(trace)[1] != "ABSTAIN"
     ]
-    maintained = sum(_answers(trace)[0] == _answers(trace)[1] for trace in eligible)
+    maintained = sum(
+        _stage2_answer_action(trace)[0] == _stage1_answer(trace)
+        for trace in eligible
+    )
     return _ratio(maintained, len(eligible))
 
 
@@ -133,11 +162,18 @@ def build_report(
     model: str,
     sample_counts: Optional[dict] = None,
     dataset_counts: Optional[dict] = None,
+    *,
+    backend: Optional[str] = None,
+    run_id: Optional[str] = None,
+    provenance: Optional[dict] = None,
 ) -> dict:
-    """Assemble metrics plus enough denominators to audit every reported rate."""
+    """Assemble metrics plus denominators and run provenance."""
     completed = _completed(traces)
     return {
+        "run_id": run_id,
         "model": model,
+        "backend": backend,
+        "provenance": provenance,
         "n_selected_cases": len(traces),
         "n_completed_cases": len(completed),
         "n_invalid_cases": sum(trace.get("label") == "invalid" for trace in traces),

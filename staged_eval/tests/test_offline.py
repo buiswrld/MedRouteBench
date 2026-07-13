@@ -248,6 +248,31 @@ def test_real_loader_and_stratified_sample_are_gold_labelled():
     assert all(gold[case["pmid"]] in {"yes", "no", "maybe"} for case in sample)
 
 
+def test_fixture_fallback_must_be_explicit(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "staged_eval.data.TEST_SET_PATH",
+        tmp_path / "missing-test.json",
+    )
+    monkeypatch.setattr(
+        "staged_eval.data.ORI_PQAL_PATH",
+        tmp_path / "missing-cases.json",
+    )
+    monkeypatch.setattr(
+        "staged_eval.data.GROUND_TRUTH_PATH",
+        tmp_path / "missing-ground-truth.json",
+    )
+
+    with pytest.raises(FileNotFoundError, match="--use-fixtures"):
+        load_cases()
+    with pytest.raises(FileNotFoundError, match="--use-fixtures"):
+        load_ground_truth()
+
+    fixture_cases = load_cases(use_fixtures=True)
+    fixture_gold = load_ground_truth(use_fixtures=True)
+    assert fixture_cases
+    assert all(case["pmid"] in fixture_gold for case in fixture_cases)
+
+
 # Prompt privacy and fixed stages
 
 
@@ -411,6 +436,36 @@ def test_empty_metric_denominators_are_explicitly_null():
     }
 
 
+def test_invalid_stage2_cannot_inflate_final_accuracy():
+    invalid = _trace("2", "yes", "no", "KEEP_ANSWER", "no", "invalid")
+    invalid["stage2_model_output"] = {
+        "raw": "invalid",
+        "parsed": None,
+        "valid": False,
+        "repaired": True,
+        "validation_error": "invalid",
+    }
+    invalid["status"] = "invalid_stage2"
+
+    report = build_report([TRACES[4], invalid], model="test")
+    assert report["stage1_answer_accuracy"] == {
+        "rate": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+    }
+    assert report["final_answer_accuracy"] == {
+        "rate": 0.5,
+        "numerator": 1,
+        "denominator": 2,
+    }
+    assert report["successful_revision_rate"]["denominator"] == 1
+    assert report["missed_revision_rate"] == {
+        "rate": 1.0,
+        "numerator": 1,
+        "denominator": 1,
+    }
+
+
 def test_build_report_contains_exact_requested_metrics_and_counts():
     report = build_report(TRACES, model="test", sample_counts={"yes": 6})
     expected_metrics = {
@@ -430,10 +485,13 @@ def test_build_report_contains_exact_requested_metrics_and_counts():
 
 def test_pipeline_writes_report_and_one_trace_per_case(monkeypatch, tmp_path):
     cases = [_case("A"), _case("B")]
-    monkeypatch.setattr("staged_eval.pipeline.load_cases", lambda limit=None: cases)
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
     monkeypatch.setattr(
         "staged_eval.pipeline.load_ground_truth",
-        lambda: {"A": "yes", "B": "no"},
+        lambda path=None: {"A": "yes", "B": "no"},
     )
 
     def stub(_system, user):
@@ -450,17 +508,24 @@ def test_pipeline_writes_report_and_one_trace_per_case(monkeypatch, tmp_path):
     )
     run_dirs = list(tmp_path.iterdir())
     assert len(run_dirs) == 1
+    assert (run_dirs[0] / "manifest.json").exists()
     assert (run_dirs[0] / "report.json").exists()
     assert len(list(run_dirs[0].glob("trace_*.json"))) == 2
+    assert not list(run_dirs[0].glob(".*.tmp"))
+    assert report["run_id"] == run_dirs[0].name
+    assert report["provenance"]["model"] == report["model"]
     assert len(traces) == 2 and report["n_completed_cases"] == 2
 
 
 def test_pipeline_resume_skips_existing_traces(monkeypatch, tmp_path):
     cases = [_case("A"), _case("B")]
-    monkeypatch.setattr("staged_eval.pipeline.load_cases", lambda limit=None: cases)
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
     monkeypatch.setattr(
         "staged_eval.pipeline.load_ground_truth",
-        lambda: {"A": "yes", "B": "no"},
+        lambda path=None: {"A": "yes", "B": "no"},
     )
     calls = []
 
@@ -490,3 +555,155 @@ def test_pipeline_resume_skips_existing_traces(monkeypatch, tmp_path):
     assert len(calls) == 4
     assert [trace["pmid"] for trace in resumed_traces] == ["A", "B"]
     assert report["n_completed_cases"] == 2
+
+
+def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
+    cases = [_case("A")]
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+    seen_models = []
+
+    def fake_call(_system, user, *, model):
+        seen_models.append(model)
+        if user.startswith("STAGE 1"):
+            return _output("ANSWER", "yes")
+        return _output("KEEP_ANSWER", "yes")
+
+    monkeypatch.setattr("staged_eval.pipeline._call_groq_json", fake_call)
+    report, _ = run_pipeline(
+        n=1,
+        stratify=False,
+        model="chosen-model",
+        out_dir=tmp_path,
+        verbose=False,
+    )
+
+    assert seen_models == ["chosen-model", "chosen-model"]
+    assert report["model"] == "chosen-model"
+    assert report["backend"] == "groq"
+
+
+def test_run_directories_are_unique(monkeypatch, tmp_path):
+    cases = [_case("A")]
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+
+    def stub(_system, user):
+        if user.startswith("STAGE 1"):
+            return _output("ANSWER", "yes")
+        return _output("KEEP_ANSWER", "yes")
+
+    run_pipeline(
+        n=1,
+        stratify=False,
+        model="stub-model",
+        out_dir=tmp_path,
+        verbose=False,
+        call_fn=stub,
+    )
+    run_pipeline(
+        n=1,
+        stratify=False,
+        model="stub-model",
+        out_dir=tmp_path,
+        verbose=False,
+        call_fn=stub,
+    )
+
+    run_dirs = list(tmp_path.iterdir())
+    assert len(run_dirs) == 2
+    assert run_dirs[0].name != run_dirs[1].name
+
+
+def test_resume_rejects_model_provenance_mismatch(monkeypatch, tmp_path):
+    cases = [_case("A")]
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+
+    def stub(_system, user):
+        if user.startswith("STAGE 1"):
+            return _output("ANSWER", "yes")
+        return _output("KEEP_ANSWER", "yes")
+
+    run_pipeline(
+        n=1,
+        stratify=False,
+        model="model-a",
+        out_dir=tmp_path,
+        verbose=False,
+        call_fn=stub,
+    )
+    run_dir = next(tmp_path.iterdir())
+
+    with pytest.raises(ValueError, match="provenance does not match"):
+        run_pipeline(
+            n=1,
+            stratify=False,
+            model="model-b",
+            resume_dir=run_dir,
+            verbose=False,
+            call_fn=stub,
+        )
+
+
+def test_resume_recomputes_an_unreadable_trace(monkeypatch, tmp_path):
+    cases = [_case("A")]
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+
+    calls = []
+
+    def stub(_system, user):
+        calls.append((_system, user))
+        if user.startswith("STAGE 1"):
+            return _output("ANSWER", "yes")
+        return _output("KEEP_ANSWER", "yes")
+
+    run_pipeline(
+        n=1,
+        stratify=False,
+        model="stub-model",
+        out_dir=tmp_path,
+        verbose=False,
+        call_fn=stub,
+    )
+    run_dir = next(tmp_path.iterdir())
+    (run_dir / "trace_A.json").write_text("{", encoding="utf-8")
+    calls.clear()
+
+    report, traces = run_pipeline(
+        n=1,
+        stratify=False,
+        model="stub-model",
+        resume_dir=run_dir,
+        verbose=False,
+        call_fn=stub,
+    )
+
+    assert len(calls) == 2
+    assert traces[0]["status"] == "completed"
+    assert report["n_completed_cases"] == 1

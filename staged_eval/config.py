@@ -13,8 +13,9 @@ from dotenv import load_dotenv
 PACKAGE_DIR = Path(__file__).resolve().parent   # .../MedRouteBench/staged_eval/
 PROJECT_DIR = PACKAGE_DIR.parent                 # .../MedRouteBench/
 
-# Load .env from the project root (MedRouteBench/.env) before reading env vars.
-load_dotenv(PROJECT_DIR / ".env", override=True)
+# Load local defaults without replacing values supplied by the calling process.
+# This keeps shell, scheduler, and CI configuration authoritative.
+load_dotenv(PROJECT_DIR / ".env", override=False)
 
 # ── data paths ───────────────────────────────────────────────────────────────
 _data_env = os.environ.get("PUBMEDQA_DATA_DIR")
