@@ -1,6 +1,7 @@
 
 # secrets
 .env
-staged_eval/runs
-staged_eval/__pycache__
-
+idea1_two_stage_eval/runs
+idea1_two_stage_eval/__pycache__
+idea1_two_stage_eval/tests/__pycache__
+pubmedqa/

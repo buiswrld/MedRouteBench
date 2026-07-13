@@ -3,21 +3,21 @@ Offline test suite — no network, no LLM calls.
 
 Run with:  cd MedRouteBench && python -m pytest staged_eval/tests -q
 """
-from staged_eval.schema import (
+from idea1_two_stage_eval.schema import (
     ACTIONS, STAGE1_ALLOWED, STAGE2_ALLOWED, AgentOutput, safe_json_loads, validate,
 )
-from staged_eval.data import (
+from idea1_two_stage_eval.data import (
     load_cases, load_ground_truth,
     labeled_contexts, normalized_labels, split_revision_evidence, stratified_sample,
 )
-from staged_eval.prompts import (
+from idea1_two_stage_eval.prompts import (
     REPAIR_TEMPLATE,
     STAGE1_SYSTEM_PROMPT,
     STAGE2_SYSTEM_PROMPT,
     build_stage1_user_prompt,
     build_stage2_user_prompt,
 )
-from staged_eval.metrics import (
+from idea1_two_stage_eval.metrics import (
     build_report,
     final_abstention_rate,
     final_answer_accuracy,
@@ -28,7 +28,7 @@ from staged_eval.metrics import (
     stage1_answer_accuracy,
     successful_revision_rate,
 )
-from staged_eval.runner import run_case
+from idea1_two_stage_eval.runner import run_case
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -288,8 +288,10 @@ def test_successful_revision_rate():
 
 
 def test_missed_revision_rate():
+    # Abstentions excluded from denominator per spec ("excluding final abstentions").
+    # stage1-wrong non-abstention cases: A (successful_revision), D (missed_revision) → n=2
     r = missed_revision_rate(_TOY)
-    assert r["rate"] == 1 / 3 and r["n_eligible"] == 3
+    assert r["rate"] == 1 / 2 and r["n_eligible"] == 2
 
 
 def test_overreaction_rate():

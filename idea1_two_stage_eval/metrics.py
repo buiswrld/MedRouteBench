@@ -49,12 +49,13 @@ def successful_revision_rate(traces: List[dict]) -> dict:
 
 
 def missed_revision_rate(traces: List[dict]) -> dict:
-    completed = [
+    eligible = [
         trace for trace in _completed_cases(traces)
         if trace["stage1_model_output"]["answer"] != trace["gold_label"]
+        and trace["label"] != "abstention"
     ]
-    count = sum(1 for trace in completed if trace["label"] == "missed_revision")
-    return {"rate": _rate(count, len(completed)), "n_eligible": len(completed)}
+    count = sum(1 for trace in eligible if trace["label"] == "missed_revision")
+    return {"rate": _rate(count, len(eligible)), "n_eligible": len(eligible)}
 
 
 def overreaction_rate(traces: List[dict]) -> dict:
