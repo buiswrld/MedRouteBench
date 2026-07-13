@@ -1,0 +1,57 @@
+{
+  "pmid": "18222909",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND AND AIMS",
+      "context": "The hypothesis was tested that pectin content and methylation degree participate in regulation of cell wall mechanical properties and in this way may affect tissue growth and freezing resistance over the course of plant cold acclimation and de-acclimation."
+    },
+    {
+      "label": "METHODS",
+      "context": "Experiments were carried on the leaves of two double-haploid lines of winter oil-seed rape (Brassica napus subsp. oleifera), differing in winter survival and resistance to blackleg fungus (Leptosphaeria maculans)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "KEY RESULTS",
+      "context": "Plant acclimation in the cold (2 degrees C) brought about retardation of leaf expansion, concomitant with development of freezing resistance. These effects were associated with the increases in leaf tensile stiffness, cell wall and pectin contents, pectin methylesterase (EC 3.1.1.11) activity and the low-methylated pectin content, independently of the genotype studied. However, the cold-induced modifications in the cell wall properties were more pronounced in the leaves of the more pathogen-resistant genotype. De-acclimation promoted leaf expansion and reversed most of the cold-induced effects, with the exception of pectin methylesterase activity."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND AND AIMS",
+      "context": "The hypothesis was tested that pectin content and methylation degree participate in regulation of cell wall mechanical properties and in this way may affect tissue growth and freezing resistance over the course of plant cold acclimation and de-acclimation."
+    },
+    {
+      "label": "METHODS",
+      "context": "Experiments were carried on the leaves of two double-haploid lines of winter oil-seed rape (Brassica napus subsp. oleifera), differing in winter survival and resistance to blackleg fungus (Leptosphaeria maculans)."
+    },
+    {
+      "label": "KEY RESULTS",
+      "context": "Plant acclimation in the cold (2 degrees C) brought about retardation of leaf expansion, concomitant with development of freezing resistance. These effects were associated with the increases in leaf tensile stiffness, cell wall and pectin contents, pectin methylesterase (EC 3.1.1.11) activity and the low-methylated pectin content, independently of the genotype studied. However, the cold-induced modifications in the cell wall properties were more pronounced in the leaves of the more pathogen-resistant genotype. De-acclimation promoted leaf expansion and reversed most of the cold-induced effects, with the exception of pectin methylesterase activity."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

@@ -1,0 +1,57 @@
+{
+  "pmid": "21394762",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To investigate the significance of pelvic pain and its association with defecatory symptoms in women with pelvic organ prolapse (POP)."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "This is a cross sectional study of 248 women with stage II POP or greater. Women were stratified into \"pain\" and \"no-pain\" groups based on their response to a question on the Pelvic Floor Distress Inventory short form. Associations between patient demographics, exam findings and responses to validated questionnaires were evaluated."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In women with POP, defecatory symptoms are significantly more common in women with pelvic pain including straining with bowel movement (OR 2.4, 95% CI 1.3, 4.6), sense of incomplete emptying (OR 4.4, 95% CI 2.3, 8.2), pain with bowel movement (OR 5.3, 95% CI 1.2, 23.0) and splinting with bowel movement (OR 3.8, 95% CI 2.0, 7.5)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To investigate the significance of pelvic pain and its association with defecatory symptoms in women with pelvic organ prolapse (POP)."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "This is a cross sectional study of 248 women with stage II POP or greater. Women were stratified into \"pain\" and \"no-pain\" groups based on their response to a question on the Pelvic Floor Distress Inventory short form. Associations between patient demographics, exam findings and responses to validated questionnaires were evaluated."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In women with POP, defecatory symptoms are significantly more common in women with pelvic pain including straining with bowel movement (OR 2.4, 95% CI 1.3, 4.6), sense of incomplete emptying (OR 4.4, 95% CI 2.3, 8.2), pain with bowel movement (OR 5.3, 95% CI 1.2, 23.0) and splinting with bowel movement (OR 3.8, 95% CI 2.0, 7.5)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

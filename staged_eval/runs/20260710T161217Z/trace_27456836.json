@@ -1,0 +1,57 @@
+{
+  "pmid": "27456836",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To explore whether electrochemiluminescence (ECL) assays can help improve prediction of time to type 1 diabetes in the TrialNet autoantibody-positive population."
+    },
+    {
+      "label": "RESEARCH DESIGN AND METHODS",
+      "context": "TrialNet subjects who were positive for one or more autoantibodies (microinsulin autoantibody, GAD65 autoantibody [GADA], IA-2A, and ZnT8A) with available ECL-insulin autoantibody (IAA) and ECL-GADA data at their initial visit were analyzed; after a median follow-up of 24 months, 177 of these 1,287 subjects developed diabetes."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Univariate analyses showed that autoantibodies by radioimmunoassays (RIAs), ECL-IAA, ECL-GADA, age, sex, number of positive autoantibodies, presence of HLA DR3/4-DQ8 genotype, HbA1c, and oral glucose tolerance test (OGTT) measurements were all significantly associated with progression to diabetes. Subjects who were ECL positive had a risk of progression to diabetes within 6 years of 58% compared with 5% for the ECL-negative subjects (P<0.0001). Multivariate Cox proportional hazards models were compared, with the base model including age, sex, OGTT measurements, and number of positive autoantibodies by RIAs. The model with positivity for ECL-GADA and/or ECL-IAA was the best, and factors that remained significantly associated with time to diabetes were area under the curve (AUC) C-peptide, fasting C-peptide, AUC glucose, number of positive autoantibodies by RIAs, and ECL positivity. Adding ECL to the Diabetes Prevention Trial risk score (DPTRS) improved the receiver operating characteristic curves with AUC of 0.83 (P<0.0001)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To explore whether electrochemiluminescence (ECL) assays can help improve prediction of time to type 1 diabetes in the TrialNet autoantibody-positive population."
+    },
+    {
+      "label": "RESEARCH DESIGN AND METHODS",
+      "context": "TrialNet subjects who were positive for one or more autoantibodies (microinsulin autoantibody, GAD65 autoantibody [GADA], IA-2A, and ZnT8A) with available ECL-insulin autoantibody (IAA) and ECL-GADA data at their initial visit were analyzed; after a median follow-up of 24 months, 177 of these 1,287 subjects developed diabetes."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Univariate analyses showed that autoantibodies by radioimmunoassays (RIAs), ECL-IAA, ECL-GADA, age, sex, number of positive autoantibodies, presence of HLA DR3/4-DQ8 genotype, HbA1c, and oral glucose tolerance test (OGTT) measurements were all significantly associated with progression to diabetes. Subjects who were ECL positive had a risk of progression to diabetes within 6 years of 58% compared with 5% for the ECL-negative subjects (P<0.0001). Multivariate Cox proportional hazards models were compared, with the base model including age, sex, OGTT measurements, and number of positive autoantibodies by RIAs. The model with positivity for ECL-GADA and/or ECL-IAA was the best, and factors that remained significantly associated with time to diabetes were area under the curve (AUC) C-peptide, fasting C-peptide, AUC glucose, number of positive autoantibodies by RIAs, and ECL positivity. Adding ECL to the Diabetes Prevention Trial risk score (DPTRS) improved the receiver operating characteristic curves with AUC of 0.83 (P<0.0001)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

@@ -1,0 +1,57 @@
+{
+  "pmid": "14599616",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Lymphedema may be identified by simpler circumference changes as compared with changes in limb volume."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ninety breast cancer patients were prospectively enrolled in an academic trial, and seven upper extremity circumferences were measured quarterly for 3 years. A 10% volume increase or greater than 1 cm increase in arm circumference identified lymphedema with verification by a lymphedema specialist. Sensitivity and specificity of several different criteria for detecting lymphedema were compared using the academic trial as the standard."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Thirty-nine cases of lymphedema were identified by the academic trial. Using a 10% increase in circumference at two sites as the criterion, half the lymphedema cases were detected (sensitivity 37%). When using a 10% increase in circumference at any site, 74.4% of cases were detected (sensitivity 49%). Detection by a 5% increase in circumference at any site was 91% sensitive."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Lymphedema may be identified by simpler circumference changes as compared with changes in limb volume."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ninety breast cancer patients were prospectively enrolled in an academic trial, and seven upper extremity circumferences were measured quarterly for 3 years. A 10% volume increase or greater than 1 cm increase in arm circumference identified lymphedema with verification by a lymphedema specialist. Sensitivity and specificity of several different criteria for detecting lymphedema were compared using the academic trial as the standard."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Thirty-nine cases of lymphedema were identified by the academic trial. Using a 10% increase in circumference at two sites as the criterion, half the lymphedema cases were detected (sensitivity 37%). When using a 10% increase in circumference at any site, 74.4% of cases were detected (sensitivity 49%). Detection by a 5% increase in circumference at any site was 91% sensitive."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

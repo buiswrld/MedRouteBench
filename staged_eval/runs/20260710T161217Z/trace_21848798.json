@@ -1,0 +1,65 @@
+{
+  "pmid": "21848798",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "In recent clinical trials (RCT) of bowel preparation, Golytely was more efficacious than MiraLAX. We hypothesised that there is a difference in adenoma detection between Golytely and MiraLAX."
+    },
+    {
+      "label": "AIMS",
+      "context": "To compare the adenoma detection rate (ADR) between these bowel preparations, and to identify independent predictors of bowel preparation quality and adenoma detection."
+    },
+    {
+      "label": "METHODS",
+      "context": "This was a post hoc analysis of an RCT that assessed efficacy and patient tolerability of Golytely vs. MiraLAX/Gatorade in average risk screening colonoscopy patients. Bowel preparation quality was measured with the Boston Bowel Preparation Scale (BBPS). An excellent/good equivalent BBPS score was defined as ≥ 7. Polyp pathology review was performed. ADR was defined as the proportion of colonoscopies with an adenoma. Univariate and multivariate analyses were conducted."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "One hundred and ninety patients were prospectively enrolled (87 MiraLAX, 103 Golytely). Golytely had a higher rate of a BBPS score ≥ 7 (82.5% vs. MiraLAX 67.8%, P=0.02). The ADR in the Golytely cohort was 26.2% (27/103), and was 16.1% (14/87) for MiraLAX (P = 0.091). On multivariate analyses, Golytely was 2.13 × more likely to be associated with a BBPS ≥ 7 (95% CI 1.05-4.32, P = 0.04) and 2.28 × more likely to be associated with adenoma detection (95% CI 1.05-4.98, P = 0.04) than MiraLAX."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "In recent clinical trials (RCT) of bowel preparation, Golytely was more efficacious than MiraLAX. We hypothesised that there is a difference in adenoma detection between Golytely and MiraLAX."
+    },
+    {
+      "label": "AIMS",
+      "context": "To compare the adenoma detection rate (ADR) between these bowel preparations, and to identify independent predictors of bowel preparation quality and adenoma detection."
+    },
+    {
+      "label": "METHODS",
+      "context": "This was a post hoc analysis of an RCT that assessed efficacy and patient tolerability of Golytely vs. MiraLAX/Gatorade in average risk screening colonoscopy patients. Bowel preparation quality was measured with the Boston Bowel Preparation Scale (BBPS). An excellent/good equivalent BBPS score was defined as ≥ 7. Polyp pathology review was performed. ADR was defined as the proportion of colonoscopies with an adenoma. Univariate and multivariate analyses were conducted."
+    },
+    {
+      "label": "RESULTS",
+      "context": "One hundred and ninety patients were prospectively enrolled (87 MiraLAX, 103 Golytely). Golytely had a higher rate of a BBPS score ≥ 7 (82.5% vs. MiraLAX 67.8%, P=0.02). The ADR in the Golytely cohort was 26.2% (27/103), and was 16.1% (14/87) for MiraLAX (P = 0.091). On multivariate analyses, Golytely was 2.13 × more likely to be associated with a BBPS ≥ 7 (95% CI 1.05-4.32, P = 0.04) and 2.28 × more likely to be associated with adenoma detection (95% CI 1.05-4.98, P = 0.04) than MiraLAX."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

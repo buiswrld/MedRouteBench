@@ -1,0 +1,57 @@
+{
+  "pmid": "18507507",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "half_split",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Specialty pharmaceuticals have evolved beyond their status as niche drugs designed to treat rare conditions and are now poised to become the standard of care in a wide variety of common chronic illnesses. Due in part to the cost of these therapies, payers are increasingly demanding evidence of their value. Determining the value of these medications is hampered by a lack of robust pharmacoeconomic data."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To outline emerging strategies and case study examples for the medical and pharmacy benefits management of specialty pharmaceuticals."
+    },
+    {
+      "label": "SUMMARY",
+      "context": "The promise of specialty pharmaceuticals: increased life expectancy, improved quality of life, enhanced workplace productivity, decreased burden of disease, and reduced health care spending comes at a significant cost. These agents require special handling, administration, patient education, clinical support, and risk mitigation. Additionally, specialty drugs require distribution systems that ensure appropriate patient selection and data collection. With the specialty pharmaceutical pipeline overflowing with new medicines and an aging population increasingly relying on these novel treatments to treat common diseases, the challenge of managing the costs associated with these agents can be daunting. Aided by sophisticated pharmacoeconomic models to assess value, the cost impacts of these specialty drugs can be appropriately controlled."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Specialty pharmaceuticals have evolved beyond their status as niche drugs designed to treat rare conditions and are now poised to become the standard of care in a wide variety of common chronic illnesses. Due in part to the cost of these therapies, payers are increasingly demanding evidence of their value. Determining the value of these medications is hampered by a lack of robust pharmacoeconomic data."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "To outline emerging strategies and case study examples for the medical and pharmacy benefits management of specialty pharmaceuticals."
+    },
+    {
+      "label": "SUMMARY",
+      "context": "The promise of specialty pharmaceuticals: increased life expectancy, improved quality of life, enhanced workplace productivity, decreased burden of disease, and reduced health care spending comes at a significant cost. These agents require special handling, administration, patient education, clinical support, and risk mitigation. Additionally, specialty drugs require distribution systems that ensure appropriate patient selection and data collection. With the specialty pharmaceutical pipeline overflowing with new medicines and an aging population increasingly relying on these novel treatments to treat common diseases, the challenge of managing the costs associated with these agents can be daunting. Aided by sophisticated pharmacoeconomic models to assess value, the cost impacts of these specialty drugs can be appropriately controlled."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

@@ -1,0 +1,57 @@
+{
+  "pmid": "18928979",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The objective of the study was to determine whether myometrial electrical activity can differentiate false from true preterm labor."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "Electrical uterine myography (EUM) was measured prospectively on 87 women, gestational age less than 35 weeks. The period between contractions, power of contraction peaks and movement of center of electrical activity (RMS), was used to develop an index score (1-5) for prediction of preterm delivery (PTD) within 14 days of the test. The score was compared with fetal fibronectin (fFN) and cervical length (CL)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Patients delivering within 14 days from testing showed a higher index and mean RMS (P = .000). No patients with EUM index scores of 1-2 delivered in this time frame. Combining EUM with CL or fFN increased predictability. Logistic regression revealed that history of PTD and EUM index had 4- to 5-fold increased risk for PTD. Gestational age at testing, body mass index, fFN, and CL were nonsignificant contributors to PTD risk."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The objective of the study was to determine whether myometrial electrical activity can differentiate false from true preterm labor."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "Electrical uterine myography (EUM) was measured prospectively on 87 women, gestational age less than 35 weeks. The period between contractions, power of contraction peaks and movement of center of electrical activity (RMS), was used to develop an index score (1-5) for prediction of preterm delivery (PTD) within 14 days of the test. The score was compared with fetal fibronectin (fFN) and cervical length (CL)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Patients delivering within 14 days from testing showed a higher index and mean RMS (P = .000). No patients with EUM index scores of 1-2 delivered in this time frame. Combining EUM with CL or fFN increased predictability. Logistic regression revealed that history of PTD and EUM index had 4- to 5-fold increased risk for PTD. Gestational age at testing, body mass index, fFN, and CL were nonsignificant contributors to PTD risk."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

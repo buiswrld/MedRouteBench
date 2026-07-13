@@ -1,0 +1,57 @@
+{
+  "pmid": "25007420",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Francophones may experience poorer health due to social status, cultural differences in lifestyle and attitudes, and language barriers to health care. Our study sought to compare mental health indicators between Francophones and non-Francophones living in the province of Manitoba."
+    },
+    {
+      "label": "METHODS",
+      "context": "Two populations were used: one from administrative datasets housed at the Manitoba Centre for Health Policy and the other from representative survey samples. The administrative datasets contained data from physician billings, hospitalizations, prescription drug use, education, and social services use, and surveys included indicators on language variables and on self-rated health."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Outside urban areas, Francophones had lower rates of diagnosed substance use disorder (rate ratio [RR] = 0.80; 95% CI 0.68 to 0.95) and of suicide and suicide attempts (RR = 0.59; 95% CI 0.43 to 0.79), compared with non-Francophones, but no differences were found between the groups across the province in rates of diagnosed mood disorders, anxiety disorders, dementia, or any mental disorders after adjusting for age, sex, and geographic area. When surveyed, Francophones were less likely than non-Francophones to report that their mental health was excellent, very good, or good (66.9%, compared with 74.2%)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Francophones may experience poorer health due to social status, cultural differences in lifestyle and attitudes, and language barriers to health care. Our study sought to compare mental health indicators between Francophones and non-Francophones living in the province of Manitoba."
+    },
+    {
+      "label": "METHODS",
+      "context": "Two populations were used: one from administrative datasets housed at the Manitoba Centre for Health Policy and the other from representative survey samples. The administrative datasets contained data from physician billings, hospitalizations, prescription drug use, education, and social services use, and surveys included indicators on language variables and on self-rated health."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Outside urban areas, Francophones had lower rates of diagnosed substance use disorder (rate ratio [RR] = 0.80; 95% CI 0.68 to 0.95) and of suicide and suicide attempts (RR = 0.59; 95% CI 0.43 to 0.79), compared with non-Francophones, but no differences were found between the groups across the province in rates of diagnosed mood disorders, anxiety disorders, dementia, or any mental disorders after adjusting for age, sex, and geographic area. When surveyed, Francophones were less likely than non-Francophones to report that their mental health was excellent, very good, or good (66.9%, compared with 74.2%)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

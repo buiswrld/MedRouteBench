@@ -1,0 +1,57 @@
+{
+  "pmid": "18274917",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "To investigate whether low-tone SD was a precursor of Meniere's disease and whether patients with low-tone SD suffered from endolymphatic hydrops."
+    },
+    {
+      "label": "PATIENTS AND METHODS",
+      "context": "This was a retrospective case review in the university hospital. A total of 184 patients with low-tone SD were divided into two groups with single and recurrent episodes. The progress, follow-up audiograms, and ECochG results of the patients were reviewed and compared with those of patients with high-tone SD and Meniere's disease."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In all, 83 of 177 patients with low-tone SD unaccompanied by vertigo had recurrent hearing loss; 15 of the 83 developed vertiginous attacks. The remaining 94 patients had a single episode. Three of the seven patients with low-tone SD accompanied by vertigo had recurrent hearing loss; two of the three were subsequently confirmed to have Meniere's disease. The other four had a single episode. No difference in rate of progress from SD to Meniere's disease was observed among the low-tone and the high-tone SD groups. The average -SP/AP of each group with a single episode is smaller than that of other groups with recurrent episodes and Meniere's disease."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "To investigate whether low-tone SD was a precursor of Meniere's disease and whether patients with low-tone SD suffered from endolymphatic hydrops."
+    },
+    {
+      "label": "PATIENTS AND METHODS",
+      "context": "This was a retrospective case review in the university hospital. A total of 184 patients with low-tone SD were divided into two groups with single and recurrent episodes. The progress, follow-up audiograms, and ECochG results of the patients were reviewed and compared with those of patients with high-tone SD and Meniere's disease."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In all, 83 of 177 patients with low-tone SD unaccompanied by vertigo had recurrent hearing loss; 15 of the 83 developed vertiginous attacks. The remaining 94 patients had a single episode. Three of the seven patients with low-tone SD accompanied by vertigo had recurrent hearing loss; two of the three were subsequently confirmed to have Meniere's disease. The other four had a single episode. No difference in rate of progress from SD to Meniere's disease was observed among the low-tone and the high-tone SD groups. The average -SP/AP of each group with a single episode is smaller than that of other groups with recurrent episodes and Meniere's disease."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

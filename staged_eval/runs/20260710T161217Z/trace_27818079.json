@@ -1,0 +1,57 @@
+{
+  "pmid": "27818079",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study evaluated the outcomes and complications of the surgical treatment of condylar fractures by the retromandibular transparotid approach. The authors hypothesized that such an approach would be safe and reliable for the treatment of most condylar fractures."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "A retrospective evaluation of patients who underwent surgical reduction of a condylar fracture from January 2012 to December 2014 at the Clinic of Dentistry and Maxillofacial Surgery of the University Hospital of Verona (Verona, Italy) was performed. Inclusion criteria were having undergone surgical treatment of condylar fractures with a retromandibular transparotid approach and the availability of computed tomograms of the preoperative and postoperative facial skeleton with a minimum follow-up of 1 year. Static and dynamic occlusal function, temporomandibular joint health status, presence of neurologic impairments, and esthetic outcomes were evaluated in all patients."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The sample was composed of 25 patients. Preinjury occlusion and temporomandibular joint health were restored in most patients. Esthetic outcomes were deemed satisfactory by clinicians and patients. Neither permanent neurologic impairments nor major postoperative complications were observed."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study evaluated the outcomes and complications of the surgical treatment of condylar fractures by the retromandibular transparotid approach. The authors hypothesized that such an approach would be safe and reliable for the treatment of most condylar fractures."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "A retrospective evaluation of patients who underwent surgical reduction of a condylar fracture from January 2012 to December 2014 at the Clinic of Dentistry and Maxillofacial Surgery of the University Hospital of Verona (Verona, Italy) was performed. Inclusion criteria were having undergone surgical treatment of condylar fractures with a retromandibular transparotid approach and the availability of computed tomograms of the preoperative and postoperative facial skeleton with a minimum follow-up of 1 year. Static and dynamic occlusal function, temporomandibular joint health status, presence of neurologic impairments, and esthetic outcomes were evaluated in all patients."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The sample was composed of 25 patients. Preinjury occlusion and temporomandibular joint health were restored in most patients. Esthetic outcomes were deemed satisfactory by clinicians and patients. Neither permanent neurologic impairments nor major postoperative complications were observed."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

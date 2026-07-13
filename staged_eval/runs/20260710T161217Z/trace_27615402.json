@@ -1,0 +1,65 @@
+{
+  "pmid": "27615402",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Parental drinking has been shown to be associated with offspring drinking. However, the relationship appears to be more complex than often assumed and few studies have tracked it over longer time periods."
+    },
+    {
+      "label": "AIMS",
+      "context": "To explore the long-term (10-year) transmission of familial drinking during adolescence to offspring drinking patterns in young adulthood."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Swedish longitudinal study, assessing the relationship between familial drinking in 2000 and offspring drinking in 2010 using simultaneous quantile regression analysis (n=744).DATA: Data on familial drinking was gathered from the Swedish level-of-living surveys (LNU) and from partner LNU in 2000 while data on offspring drinking in young adulthood was gathered from LNU 2010. Drinking among offspring, parents and potential stepparents was measured through identical quantity-frequency indices referring to the past 12 months in 2010 and 2000 respectively."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Young adults whose families were abstainers in 2000 drank substantially less across quintiles in 2010 than offspring of non-abstaining families. The difference, however, was not statistically significant between quintiles of the conditional distribution. Actual drinking levels in drinking families were not at all or weakly associated with drinking in offspring. Supplementary analyses confirmed these patterns."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Parental drinking has been shown to be associated with offspring drinking. However, the relationship appears to be more complex than often assumed and few studies have tracked it over longer time periods."
+    },
+    {
+      "label": "AIMS",
+      "context": "To explore the long-term (10-year) transmission of familial drinking during adolescence to offspring drinking patterns in young adulthood."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Swedish longitudinal study, assessing the relationship between familial drinking in 2000 and offspring drinking in 2010 using simultaneous quantile regression analysis (n=744).DATA: Data on familial drinking was gathered from the Swedish level-of-living surveys (LNU) and from partner LNU in 2000 while data on offspring drinking in young adulthood was gathered from LNU 2010. Drinking among offspring, parents and potential stepparents was measured through identical quantity-frequency indices referring to the past 12 months in 2010 and 2000 respectively."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Young adults whose families were abstainers in 2000 drank substantially less across quintiles in 2010 than offspring of non-abstaining families. The difference, however, was not statistically significant between quintiles of the conditional distribution. Actual drinking levels in drinking families were not at all or weakly associated with drinking in offspring. Supplementary analyses confirmed these patterns."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"REVISE_ANSWER\",\n   \"answer\": \"no\"\n}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

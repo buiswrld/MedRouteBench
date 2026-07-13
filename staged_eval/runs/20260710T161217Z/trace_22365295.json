@@ -1,0 +1,57 @@
+{
+  "pmid": "22365295",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "To determine the rate of early infection for totally implantable venous access devices (TIVADs) placed without antibiotic prophylaxis."
+    },
+    {
+      "label": "MATERIAL AND METHODS",
+      "context": "A list of patients who underwent TIVAD placement in 2009 was obtained from the patient archiving and communication system (PACS). This list was cross-referenced to all patients who underwent TIVAD removal from January 1, 2009, through January 30, 2010, to identify TIVADs that were removed within 30 days of placement. Retrospective chart review was performed to record patient demographics, including age, sex, cancer diagnosis, and indication for removal. Concurrent antibiotic therapy, chemotherapy, and laboratory data before and within 30 days of placement were recorded. Central line-associated bloodstream infections (CLABSIs) were identified using U.S. Centers for Disease Control and Prevention (CDC) criteria."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "There were 1,183 ports placed and 13 removed. CLABSIs occurred in seven (0.6%) patients within 30 days of placement. At the time of TIVAD placement, 81 (7%) patients were receiving antibiotics incidental to the procedure. One patient who received an antibiotic the day of implantation developed a CLABSI. Chemotherapy was administered to 148 (13%) patients on the day of placement."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "To determine the rate of early infection for totally implantable venous access devices (TIVADs) placed without antibiotic prophylaxis."
+    },
+    {
+      "label": "MATERIAL AND METHODS",
+      "context": "A list of patients who underwent TIVAD placement in 2009 was obtained from the patient archiving and communication system (PACS). This list was cross-referenced to all patients who underwent TIVAD removal from January 1, 2009, through January 30, 2010, to identify TIVADs that were removed within 30 days of placement. Retrospective chart review was performed to record patient demographics, including age, sex, cancer diagnosis, and indication for removal. Concurrent antibiotic therapy, chemotherapy, and laboratory data before and within 30 days of placement were recorded. Central line-associated bloodstream infections (CLABSIs) were identified using U.S. Centers for Disease Control and Prevention (CDC) criteria."
+    },
+    {
+      "label": "RESULTS",
+      "context": "There were 1,183 ports placed and 13 removed. CLABSIs occurred in seven (0.6%) patients within 30 days of placement. At the time of TIVAD placement, 81 (7%) patients were receiving antibiotics incidental to the procedure. One patient who received an antibiotic the day of implantation developed a CLABSI. Chemotherapy was administered to 148 (13%) patients on the day of placement."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

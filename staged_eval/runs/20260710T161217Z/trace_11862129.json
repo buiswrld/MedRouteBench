@@ -1,0 +1,57 @@
+{
+  "pmid": "11862129",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine if clinical variables assessed in relation to Albuterol aerosol treatments accurately identify children with pathologic radiographs during their initial episode of bronchospasm."
+    },
+    {
+      "label": "METHODS",
+      "context": "A prospective convenience sample of children with a first episode of wheezing. Data collected included demographics, baseline and post-treatment clinical score and physical examination, number of aerosols, requirement for supplemental oxygen, and disposition. Chest radiographs were obtained and interpreted, and patients were divided into 2 groups based on a pathologic versus nonpathologic radiograph interpretation. Chi2 testing was performed for categoric variables, and the student t test was performed for continuous variables. A discriminant analysis was used to develop a model."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Pathologic radiographs were identified in 61 patients (9%). Between groups, a significant difference was noted for pretreatment oxygen saturation only. Clinical score, respiratory rate, and presence of rales both pretreatment and posttreatment were not significantly different between groups. The discriminant analysis correctly predicted 90% of nonpathologic radiographs but only 15% of pathologic radiographs."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine if clinical variables assessed in relation to Albuterol aerosol treatments accurately identify children with pathologic radiographs during their initial episode of bronchospasm."
+    },
+    {
+      "label": "METHODS",
+      "context": "A prospective convenience sample of children with a first episode of wheezing. Data collected included demographics, baseline and post-treatment clinical score and physical examination, number of aerosols, requirement for supplemental oxygen, and disposition. Chest radiographs were obtained and interpreted, and patients were divided into 2 groups based on a pathologic versus nonpathologic radiograph interpretation. Chi2 testing was performed for categoric variables, and the student t test was performed for continuous variables. A discriminant analysis was used to develop a model."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Pathologic radiographs were identified in 61 patients (9%). Between groups, a significant difference was noted for pretreatment oxygen saturation only. Clinical score, respiratory rate, and presence of rales both pretreatment and posttreatment were not significantly different between groups. The discriminant analysis correctly predicted 90% of nonpathologic radiographs but only 15% of pathologic radiographs."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"REVISE_ANSWER\",\n   \"answer\": \"no\"\n}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision"
+}

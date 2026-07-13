@@ -1,0 +1,57 @@
+{
+  "pmid": "24476003",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Although its excellent results, laparoscopic sleeve gastrectomy (LSG) presents major complications ranging from 0% to 29%. Among them, the staple line leak presents an incidence varying from 0% to 7%. Many trials debated about different solutions in order to reduce leaks' incidence. No author has investigated the role of gastric decompression in the prevention of this complication. Aim of our work is to evaluate if this procedure can play a role in avoiding the occurrence of staple line leaks after LSG."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "Between January 2008 and November 2012, 145 patients were prospectively and randomly included in the study. Seventy patients composed the group A, whose operations were completed with placement of nasogastric tube; the other 75 patients were included in the group B, in which no nasogastric tube was placed."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "No statistical differences were observed between group A and group B regarding gender distribution, age, weight, and BMI. No intraoperative complications and no conversion occurred in both groups. Intraoperative blood loss (50.1 ± 42.3 vs. 52.5 ± 37.6 ml, respectively) and operative time (65.4 ± 25.5 vs. 62.6 ± 27.8 min, respectively) were comparable between the two groups (p: NS). One staple line leak (1.4%) occurred on 6th postoperative day in group A patients. No leak was observed in group B patients. Postoperative hospital stay was significantly longer in group A vs. group B patients (7.6 ± 3.4 vs. 6.2 ± 3.1 days, respectively, p: 0.04)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Although its excellent results, laparoscopic sleeve gastrectomy (LSG) presents major complications ranging from 0% to 29%. Among them, the staple line leak presents an incidence varying from 0% to 7%. Many trials debated about different solutions in order to reduce leaks' incidence. No author has investigated the role of gastric decompression in the prevention of this complication. Aim of our work is to evaluate if this procedure can play a role in avoiding the occurrence of staple line leaks after LSG."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "Between January 2008 and November 2012, 145 patients were prospectively and randomly included in the study. Seventy patients composed the group A, whose operations were completed with placement of nasogastric tube; the other 75 patients were included in the group B, in which no nasogastric tube was placed."
+    },
+    {
+      "label": "RESULTS",
+      "context": "No statistical differences were observed between group A and group B regarding gender distribution, age, weight, and BMI. No intraoperative complications and no conversion occurred in both groups. Intraoperative blood loss (50.1 ± 42.3 vs. 52.5 ± 37.6 ml, respectively) and operative time (65.4 ± 25.5 vs. 62.6 ± 27.8 min, respectively) were comparable between the two groups (p: NS). One staple line leak (1.4%) occurred on 6th postoperative day in group A patients. No leak was observed in group B patients. Postoperative hospital stay was significantly longer in group A vs. group B patients (7.6 ± 3.4 vs. 6.2 ± 3.1 days, respectively, p: 0.04)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"REVISE_ANSWER\",\n   \"answer\": \"no\"\n}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision"
+}

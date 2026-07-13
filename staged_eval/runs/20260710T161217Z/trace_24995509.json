@@ -1,0 +1,81 @@
+{
+  "pmid": "24995509",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "To investigate the association between age-related macular degeneration (AMD) and the polymorphisms of HIF1A, a major vascular epithelial growth factor regulator under hypoxic conditions. The associations of AMD and polymorphisms of genes CFH, SKIV2L and MYRIP were also studied."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Prospective study."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Eighty-seven AMD patients and 80 healthy subjects admitted to the Department of Ophthalmology at Pamukkale University Hospital, Denizli, Turkey, were included: 45 (52%) had wet type AMD, and 42 (48%) had dry type AMD."
+    },
+    {
+      "label": "METHODS",
+      "context": "Polymorphisms rs1061170 (CFH), rs429608 (SKIV2L), rs2679798 (MYRIP) and both rs11549465 and rs11549467 (HIF1A) were investigated in DNA isolated from peripheral blood samples of the cases and controls by dye-termination DNA sequencing."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Genotype distribution of rs1061170 (CFH), rs429608 (SKIV2L), rs2679798 (MYRIP) and both rs11549465 and rs11549467 (HIF1A) in AMD cases and healthy controls; association between genotypes and AMD subtypes."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Given the significant difference between the mean age of case and control groups (72.13 ± 5.77 vs. 62.80 ± 5.22, respectively) (P = .000), subsequent analyses were adjusted for age. We found that having at least one C allele for polymorphism rs1061170 increases AMD risk independent of age (OR = 2.42, 95% confidence interval [CI], 1.22-4.81). The ancestral T allele for polymorphism rs1061170 has a protective effect for AMD (OR = 0.53, 95% CI, 0.34-0.83). No statistically significant difference for distributions of other single nucleotide polymorphisms (SNPs) emerged between patients and healthy subjects."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "To investigate the association between age-related macular degeneration (AMD) and the polymorphisms of HIF1A, a major vascular epithelial growth factor regulator under hypoxic conditions. The associations of AMD and polymorphisms of genes CFH, SKIV2L and MYRIP were also studied."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Prospective study."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Eighty-seven AMD patients and 80 healthy subjects admitted to the Department of Ophthalmology at Pamukkale University Hospital, Denizli, Turkey, were included: 45 (52%) had wet type AMD, and 42 (48%) had dry type AMD."
+    },
+    {
+      "label": "METHODS",
+      "context": "Polymorphisms rs1061170 (CFH), rs429608 (SKIV2L), rs2679798 (MYRIP) and both rs11549465 and rs11549467 (HIF1A) were investigated in DNA isolated from peripheral blood samples of the cases and controls by dye-termination DNA sequencing."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Genotype distribution of rs1061170 (CFH), rs429608 (SKIV2L), rs2679798 (MYRIP) and both rs11549465 and rs11549467 (HIF1A) in AMD cases and healthy controls; association between genotypes and AMD subtypes."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Given the significant difference between the mean age of case and control groups (72.13 ± 5.77 vs. 62.80 ± 5.22, respectively) (P = .000), subsequent analyses were adjusted for age. We found that having at least one C allele for polymorphism rs1061170 increases AMD risk independent of age (OR = 2.42, 95% confidence interval [CI], 1.22-4.81). The ancestral T allele for polymorphism rs1061170 has a protective effect for AMD (OR = 0.53, 95% CI, 0.34-0.83). No statistically significant difference for distributions of other single nucleotide polymorphisms (SNPs) emerged between patients and healthy subjects."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

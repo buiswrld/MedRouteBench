@@ -1,0 +1,57 @@
+{
+  "pmid": "28359277",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Governments are urged to determine methods to control the use of medical resources and curb the rise of healthcare costs. The question is, do health behaviors have an impact on the use of medical resources? This study aims to identify and understand the difference in the number of outpatient visits and health examinations based on various health behaviors and to determine whether patients seek medical care for illness from the same physicians."
+    },
+    {
+      "label": "METHODS",
+      "context": "This study used the dataset derived from the Department of Budget, Accounting and Statistics of Kaohsiung, Taiwan in 2005. Persons older than 15 years were surveyed using an on-site questionnaire. A total of 2911 persons were enrolled in this study. Independent t-tests, chi-square tests, one-way ANOVA, multiple linear regression and binominal logistic regression were used in the data analysis."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The regression model for the frequency of doctor visits, health examinations, and whether the same physician is sought for medical care has demonstrated significant correlations with gender, age and education-level variables. Four health behaviors (i.e., exercise habits, dietary habits, regular blood pressure measurement, drinking habits) exhibited a significant correlation with healthcare utilization (P<0.05)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Governments are urged to determine methods to control the use of medical resources and curb the rise of healthcare costs. The question is, do health behaviors have an impact on the use of medical resources? This study aims to identify and understand the difference in the number of outpatient visits and health examinations based on various health behaviors and to determine whether patients seek medical care for illness from the same physicians."
+    },
+    {
+      "label": "METHODS",
+      "context": "This study used the dataset derived from the Department of Budget, Accounting and Statistics of Kaohsiung, Taiwan in 2005. Persons older than 15 years were surveyed using an on-site questionnaire. A total of 2911 persons were enrolled in this study. Independent t-tests, chi-square tests, one-way ANOVA, multiple linear regression and binominal logistic regression were used in the data analysis."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The regression model for the frequency of doctor visits, health examinations, and whether the same physician is sought for medical care has demonstrated significant correlations with gender, age and education-level variables. Four health behaviors (i.e., exercise habits, dietary habits, regular blood pressure measurement, drinking habits) exhibited a significant correlation with healthcare utilization (P<0.05)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

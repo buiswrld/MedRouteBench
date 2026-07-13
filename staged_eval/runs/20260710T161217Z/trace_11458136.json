@@ -1,0 +1,81 @@
+{
+  "pmid": "11458136",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "By requiring or encouraging enrollees to obtain a usual source of care, managed care programs hope to improve access to care without incurring higher costs."
+    },
+    {
+      "label": "OBJECTIVES",
+      "context": "(1) To examine the effects of managed care on the likelihood of low-income persons having a usual source of care and a usual physician, and; (2) To examine the association between usual source of care and access."
+    },
+    {
+      "label": "RESEARCH DESIGN",
+      "context": "Cross-sectional survey of households conducted during 1996 and 1997."
+    },
+    {
+      "label": "SUBJECTS",
+      "context": "A nationally representative sample of 14,271 low-income persons."
+    },
+    {
+      "label": "MEASURES",
+      "context": "Usual source of care, usual physician, managed care enrollment, managed care penetration."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "High managed care penetration in the community is associated with a lower likelihood of having a usual source of care for uninsured persons (54.8% vs. 62.2% in low penetration areas) as well as a lower likelihood of having a usual physician (60% vs. 72.8%). Managed care has only marginal effects on the likelihood of having a usual source of care for privately insured and Medicaid beneficiaries. Having a usual physician substantially reduces unmet medical needs for the insured but less so for the uninsured."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "By requiring or encouraging enrollees to obtain a usual source of care, managed care programs hope to improve access to care without incurring higher costs."
+    },
+    {
+      "label": "OBJECTIVES",
+      "context": "(1) To examine the effects of managed care on the likelihood of low-income persons having a usual source of care and a usual physician, and; (2) To examine the association between usual source of care and access."
+    },
+    {
+      "label": "RESEARCH DESIGN",
+      "context": "Cross-sectional survey of households conducted during 1996 and 1997."
+    },
+    {
+      "label": "SUBJECTS",
+      "context": "A nationally representative sample of 14,271 low-income persons."
+    },
+    {
+      "label": "MEASURES",
+      "context": "Usual source of care, usual physician, managed care enrollment, managed care penetration."
+    },
+    {
+      "label": "RESULTS",
+      "context": "High managed care penetration in the community is associated with a lower likelihood of having a usual source of care for uninsured persons (54.8% vs. 62.2% in low penetration areas) as well as a lower likelihood of having a usual physician (60% vs. 72.8%). Managed care has only marginal effects on the likelihood of having a usual source of care for privately insured and Medicaid beneficiaries. Having a usual physician substantially reduces unmet medical needs for the insured but less so for the uninsured."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"REVISE_ANSWER\",\n   \"answer\": \"no\"\n}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

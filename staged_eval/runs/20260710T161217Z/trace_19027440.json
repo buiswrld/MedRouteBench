@@ -1,0 +1,57 @@
+{
+  "pmid": "19027440",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "The objectives of this study were to investigate longitudinal predictors of fear of recurrence in survivors of head and neck cancer (HNC) using Leventhal's Common Sense Model (CSM) as a framework. The research questions were as follows: (a) to what extent do HNC patients report fear of cancer recurrence? (b) To what extent are fears of recurrence manifestations of illness-related anxiety? (c) Are fears of recurrence closely related to current symptoms, disease, and treatment-related factors, or psychological/socio-demographic factors? (d) What factors are predictive of long-term fears of recurrence?"
+    },
+    {
+      "label": "METHODS",
+      "context": "A prospective repeat measures design was employed whereby a sample of 82 newly diagnosed HNC patients (54 males, 28 females, mean age 60 years) completed measures of fears of recurrence, illness perceptions, coping, and anxiety and depression, prior to treatment and 6-8 months after treatment (fears of recurrence only)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A third of HNC patients at diagnosis reported relatively high levels of fears of recurrence, with 12% still reporting similar levels of fear 6-8 months after treatment. Fears of recurrence were not related to any socio-demographic factor (age, gender, ethnicity, marital status, and educational attainment) or disease, treatment, or symptom-related factors. Path analyses demonstrated that fears of cancer recurrence after treatment were directly predicted by pre-treatment fears and optimism."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "The objectives of this study were to investigate longitudinal predictors of fear of recurrence in survivors of head and neck cancer (HNC) using Leventhal's Common Sense Model (CSM) as a framework. The research questions were as follows: (a) to what extent do HNC patients report fear of cancer recurrence? (b) To what extent are fears of recurrence manifestations of illness-related anxiety? (c) Are fears of recurrence closely related to current symptoms, disease, and treatment-related factors, or psychological/socio-demographic factors? (d) What factors are predictive of long-term fears of recurrence?"
+    },
+    {
+      "label": "METHODS",
+      "context": "A prospective repeat measures design was employed whereby a sample of 82 newly diagnosed HNC patients (54 males, 28 females, mean age 60 years) completed measures of fears of recurrence, illness perceptions, coping, and anxiety and depression, prior to treatment and 6-8 months after treatment (fears of recurrence only)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A third of HNC patients at diagnosis reported relatively high levels of fears of recurrence, with 12% still reporting similar levels of fear 6-8 months after treatment. Fears of recurrence were not related to any socio-demographic factor (age, gender, ethnicity, marital status, and educational attainment) or disease, treatment, or symptom-related factors. Path analyses demonstrated that fears of cancer recurrence after treatment were directly predicted by pre-treatment fears and optimism."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

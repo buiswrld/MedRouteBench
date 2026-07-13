@@ -1,0 +1,57 @@
+{
+  "pmid": "24922528",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "To explore the extent to which parent-adolescent emotional closeness, family conflict, and parental permissiveness moderate the association of puberty and alcohol use in adolescents (aged 10-14)."
+    },
+    {
+      "label": "METHODS",
+      "context": "Cross-sectional survey of 7631 adolescents from 231 Australian schools. Measures included pubertal status, recent (30day) alcohol use, parent-adolescent emotional closeness, family conflict, parental permissiveness of alcohol use and peer alcohol use. The analysis was based on a two-level (individuals nested within schools) logistic regression model, with main effects entered first, and interaction terms added second."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The interaction of family factors and pubertal stage did not improve the fit of the model, so a main effect model of family factors and pubertal stage was adopted. There were significant main effects for pubertal stage with boys in middle puberty at increased odds of alcohol use, and girls in advanced puberty at increased odds of alcohol use."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "To explore the extent to which parent-adolescent emotional closeness, family conflict, and parental permissiveness moderate the association of puberty and alcohol use in adolescents (aged 10-14)."
+    },
+    {
+      "label": "METHODS",
+      "context": "Cross-sectional survey of 7631 adolescents from 231 Australian schools. Measures included pubertal status, recent (30day) alcohol use, parent-adolescent emotional closeness, family conflict, parental permissiveness of alcohol use and peer alcohol use. The analysis was based on a two-level (individuals nested within schools) logistic regression model, with main effects entered first, and interaction terms added second."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The interaction of family factors and pubertal stage did not improve the fit of the model, so a main effect model of family factors and pubertal stage was adopted. There were significant main effects for pubertal stage with boys in middle puberty at increased odds of alcohol use, and girls in advanced puberty at increased odds of alcohol use."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

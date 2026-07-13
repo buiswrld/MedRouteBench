@@ -1,0 +1,57 @@
+{
+  "pmid": "11438275",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "It is generally believed that positioning of the patient in a head-down tilt (Trendelenberg position) decreases the likelihood of a venous air embolism during liver resection."
+    },
+    {
+      "label": "METHODS",
+      "context": "The physiological effect of variation in horizontal attitude on central and hepatic venous pressure was measured in 10 patients during liver surgery. Hemodynamic indices were recorded with the operating table in the horizontal, 20 degrees head-up and 20 degrees head-down positions."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "There was no demonstrable pressure gradient between the hepatic and central venous levels in any of the positions. The absolute pressures did, however, vary in a predictable way, being highest in the head-down and lowest during head-up tilt. However, on no occasion was a negative intraluminal pressure recorded."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "It is generally believed that positioning of the patient in a head-down tilt (Trendelenberg position) decreases the likelihood of a venous air embolism during liver resection."
+    },
+    {
+      "label": "METHODS",
+      "context": "The physiological effect of variation in horizontal attitude on central and hepatic venous pressure was measured in 10 patients during liver surgery. Hemodynamic indices were recorded with the operating table in the horizontal, 20 degrees head-up and 20 degrees head-down positions."
+    },
+    {
+      "label": "RESULTS",
+      "context": "There was no demonstrable pressure gradient between the hepatic and central venous levels in any of the positions. The absolute pressures did, however, vary in a predictable way, being highest in the head-down and lowest during head-up tilt. However, on no occasion was a negative intraluminal pressure recorded."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

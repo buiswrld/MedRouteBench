@@ -1,0 +1,57 @@
+{
+  "pmid": "17306983",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Enlargement of the ascending aorta is often combined with valvular, coronary, or other cardiac diseases. Reduction aortoplasty can be an optional therapy; however, indications regarding the diameter of aorta, the history of dilatation (poststenosis, bicuspid aortic valve), or the intraoperative management (wall excision, reduction suture, external reinforcement) are not established."
+    },
+    {
+      "label": "METHODS",
+      "context": "In a retrospective study between 1997 and 2005, we investigated 531 patients operated for aneurysm or ectasia of the ascending aorta (diameter: 45-76mm). Of these, in 50 patients, size-reducing ascending aortoplasty was performed. External reinforcement with a non-coated dacron prosthesis was added in order to stabilize the aortic wall."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Aortoplasty was associated with aortic valve replacement in 47 cases (35 mechanical vs 12 biological), subvalvular myectomy in 29 cases, and CABG in 13 cases. The procedure was performed with low hospital mortality (2%) and a low postoperative morbidity. Computertomographic and echocardiographic diameters were significantly smaller after reduction (55.8+/-9mm down to 40.51+/-6.2mm (CT), p<0.002; 54.1+/-6.7mm preoperatively down to 38.7+/-7.1mm (echocardiography), p<0.002), with stable performance in long-term follow-up (mean follow-up time: 70 months)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Enlargement of the ascending aorta is often combined with valvular, coronary, or other cardiac diseases. Reduction aortoplasty can be an optional therapy; however, indications regarding the diameter of aorta, the history of dilatation (poststenosis, bicuspid aortic valve), or the intraoperative management (wall excision, reduction suture, external reinforcement) are not established."
+    },
+    {
+      "label": "METHODS",
+      "context": "In a retrospective study between 1997 and 2005, we investigated 531 patients operated for aneurysm or ectasia of the ascending aorta (diameter: 45-76mm). Of these, in 50 patients, size-reducing ascending aortoplasty was performed. External reinforcement with a non-coated dacron prosthesis was added in order to stabilize the aortic wall."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Aortoplasty was associated with aortic valve replacement in 47 cases (35 mechanical vs 12 biological), subvalvular myectomy in 29 cases, and CABG in 13 cases. The procedure was performed with low hospital mortality (2%) and a low postoperative morbidity. Computertomographic and echocardiographic diameters were significantly smaller after reduction (55.8+/-9mm down to 40.51+/-6.2mm (CT), p<0.002; 54.1+/-6.7mm preoperatively down to 38.7+/-7.1mm (echocardiography), p<0.002), with stable performance in long-term follow-up (mean follow-up time: 70 months)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

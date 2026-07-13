@@ -1,0 +1,57 @@
+{
+  "pmid": "25779009",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "There is no standard protocol for the evaluation of antiseptics used for skin and mucous membranes in the presence of interfering substances. Our objective was to suggest trial conditions adapted from the NF EN 13727 standard, for the evaluation of antiseptics used in gynecology and dermatology."
+    },
+    {
+      "label": "METHODS",
+      "context": "Three antiseptic solutions were tested in vitro: a chlorhexidine-benzalkonium (CB) combination, a hexamidine-chlorhexidine-chlorocresol (HCC) combination, and povidone iodine (P). The adaptation of trial conditions to the standard involved choosing dilutions, solvent, and interfering substances. The activity of solutions was assessed on the recommended strains at concentrations of 97% (pure solution), 50%, and 10% (diluted solution), and 1%. A logarithmic reduction ≥ 5 was expected after 60seconds of contact, to meet requirements of bactericidal activity."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "HCC did not present any bactericidal activity except on P. aeruginosa at a concentration of 97%. P was not bactericidal on E. hirae at any concentration and on S. aureus at 97%. CB had the most homogeneous bactericidal activity with a reduction>5 log on the 4 bacterial strains at concentrations of 97%, 50% and 10%."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "There is no standard protocol for the evaluation of antiseptics used for skin and mucous membranes in the presence of interfering substances. Our objective was to suggest trial conditions adapted from the NF EN 13727 standard, for the evaluation of antiseptics used in gynecology and dermatology."
+    },
+    {
+      "label": "METHODS",
+      "context": "Three antiseptic solutions were tested in vitro: a chlorhexidine-benzalkonium (CB) combination, a hexamidine-chlorhexidine-chlorocresol (HCC) combination, and povidone iodine (P). The adaptation of trial conditions to the standard involved choosing dilutions, solvent, and interfering substances. The activity of solutions was assessed on the recommended strains at concentrations of 97% (pure solution), 50%, and 10% (diluted solution), and 1%. A logarithmic reduction ≥ 5 was expected after 60seconds of contact, to meet requirements of bactericidal activity."
+    },
+    {
+      "label": "RESULTS",
+      "context": "HCC did not present any bactericidal activity except on P. aeruginosa at a concentration of 97%. P was not bactericidal on E. hirae at any concentration and on S. aureus at 97%. CB had the most homogeneous bactericidal activity with a reduction>5 log on the 4 bacterial strains at concentrations of 97%, 50% and 10%."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

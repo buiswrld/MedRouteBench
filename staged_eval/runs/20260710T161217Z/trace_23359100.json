@@ -1,0 +1,57 @@
+{
+  "pmid": "23359100",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "Heterotopic ossification is a common complication after total hip arthroplasty. Non-steroidal anti-inflammatory drugs (NSAIDs) are known to prevent heterotopic ossifications effectively, however gastrointestinal complaints are reported frequently. In this study, we investigated whether etoricoxib, a selective cyclo-oxygenase-2 (COX-2) inhibitor that produces fewer gastrointestinal side effects, is an effective alternative for the prevention of heterotopic ossification."
+    },
+    {
+      "label": "METHODS",
+      "context": "We investigated the effectiveness of oral etoricoxib 90 mg for seven days in a prospective two-stage study design for phase-2 clinical trials in a small sample of patients (n = 42). A cemented primary total hip arthroplasty was implanted for osteoarthritis. Six months after surgery, heterotopic ossification was determined on anteroposterior pelvic radiographs using the Brooker classification."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "No heterotopic ossification was found in 62 % of the patients that took etoricoxib; 31 % of the patients had Brooker grade 1 and 7 % Brooker grade 2 ossification."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "Heterotopic ossification is a common complication after total hip arthroplasty. Non-steroidal anti-inflammatory drugs (NSAIDs) are known to prevent heterotopic ossifications effectively, however gastrointestinal complaints are reported frequently. In this study, we investigated whether etoricoxib, a selective cyclo-oxygenase-2 (COX-2) inhibitor that produces fewer gastrointestinal side effects, is an effective alternative for the prevention of heterotopic ossification."
+    },
+    {
+      "label": "METHODS",
+      "context": "We investigated the effectiveness of oral etoricoxib 90 mg for seven days in a prospective two-stage study design for phase-2 clinical trials in a small sample of patients (n = 42). A cemented primary total hip arthroplasty was implanted for osteoarthritis. Six months after surgery, heterotopic ossification was determined on anteroposterior pelvic radiographs using the Brooker classification."
+    },
+    {
+      "label": "RESULTS",
+      "context": "No heterotopic ossification was found in 62 % of the patients that took etoricoxib; 31 % of the patients had Brooker grade 1 and 7 % Brooker grade 2 ossification."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

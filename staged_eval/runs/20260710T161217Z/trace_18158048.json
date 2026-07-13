@@ -1,0 +1,57 @@
+{
+  "pmid": "18158048",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "There is controversy surrounding the optimal management of the testicular remnant associated with the vanishing testes syndrome. Some urologists advocate the need for surgical exploration, whereas others believe this is unnecessary. These differing opinions are based on the variable reports of viable germ cell elements found within the testicular remnants. To better understand the pathology associated with this syndrome and the need for surgical management, we reviewed our experience regarding the incidence of viable germ cell elements within the testicular remnant."
+    },
+    {
+      "label": "METHODS",
+      "context": "An institutional review board-approved, retrospective review was performed of all consecutive patients undergoing exploration for a nonpalpable testis at Eastern Virginia Medical School and Geisinger Medical Center between 1994 and 2006. Patients who were found to have spermatic vessels and a vas deferens exiting a closed internal inguinal ring were included in this analysis."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Fifty-six patients underwent removal of the testicular remnant. Patient age ranged from 11 to 216 months. In 8 of the specimens (14%), we identified viable germ cell elements. In an additional 4 patients (7%), we identified seminiferous tubules without germ cell elements."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "There is controversy surrounding the optimal management of the testicular remnant associated with the vanishing testes syndrome. Some urologists advocate the need for surgical exploration, whereas others believe this is unnecessary. These differing opinions are based on the variable reports of viable germ cell elements found within the testicular remnants. To better understand the pathology associated with this syndrome and the need for surgical management, we reviewed our experience regarding the incidence of viable germ cell elements within the testicular remnant."
+    },
+    {
+      "label": "METHODS",
+      "context": "An institutional review board-approved, retrospective review was performed of all consecutive patients undergoing exploration for a nonpalpable testis at Eastern Virginia Medical School and Geisinger Medical Center between 1994 and 2006. Patients who were found to have spermatic vessels and a vas deferens exiting a closed internal inguinal ring were included in this analysis."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Fifty-six patients underwent removal of the testicular remnant. Patient age ranged from 11 to 216 months. In 8 of the specimens (14%), we identified viable germ cell elements. In an additional 4 patients (7%), we identified seminiferous tubules without germ cell elements."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

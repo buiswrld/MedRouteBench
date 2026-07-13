@@ -1,0 +1,65 @@
+{
+  "pmid": "19578820",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Opioid-dependent patients often have co-occurring chronic illnesses requiring medications that interact with methadone. Methadone maintenance treatment (MMT) is typically provided separately from medical care. Hence, coordination of medical care and substance use treatment is important to preserve patient safety."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "To identify potential safety risks among MMT patients engaged in medical care by evaluating the frequency that opioid dependence and MMT documentation are missing in medical records and characterizing potential medication-methadone interactions."
+    },
+    {
+      "label": "METHODS",
+      "context": "Among patients from a methadone clinic who received primary care from an affiliated, but separate, medical center, we reviewed electronic medical records for documentation of methadone, opioid dependence, and potential drug-methadone interactions. The proportions of medical records without opioid dependence and methadone documentation were estimated and potential medication-methadone interactions were identified."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Among the study subjects (n = 84), opioid dependence documentation was missing from the medical record in 30% (95% CI, 20%-41%) and MMT documentation was missing from either the last primary care note or the last hospital discharge summary in 11% (95% CI, 5%-19%). Sixty-nine percent of the study subjects had at least 1 medication that potentially interacted with methadone; 19% had 3 or more potentially interacting medications."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Opioid-dependent patients often have co-occurring chronic illnesses requiring medications that interact with methadone. Methadone maintenance treatment (MMT) is typically provided separately from medical care. Hence, coordination of medical care and substance use treatment is important to preserve patient safety."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "To identify potential safety risks among MMT patients engaged in medical care by evaluating the frequency that opioid dependence and MMT documentation are missing in medical records and characterizing potential medication-methadone interactions."
+    },
+    {
+      "label": "METHODS",
+      "context": "Among patients from a methadone clinic who received primary care from an affiliated, but separate, medical center, we reviewed electronic medical records for documentation of methadone, opioid dependence, and potential drug-methadone interactions. The proportions of medical records without opioid dependence and methadone documentation were estimated and potential medication-methadone interactions were identified."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Among the study subjects (n = 84), opioid dependence documentation was missing from the medical record in 30% (95% CI, 20%-41%) and MMT documentation was missing from either the last primary care note or the last hospital discharge summary in 11% (95% CI, 5%-19%). Sixty-nine percent of the study subjects had at least 1 medication that potentially interacted with methadone; 19% had 3 or more potentially interacting medications."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

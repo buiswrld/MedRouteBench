@@ -1,0 +1,57 @@
+{
+  "pmid": "21431987",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study was designed to determine prospectively whether the systematic use of PET/CT associated with conventional techniques could improve the accuracy of staging in patients with liver metastases of colorectal carcinoma. We also assessed the impact on the therapeutic strategy."
+    },
+    {
+      "label": "METHODS",
+      "context": "Between 2006 and 2008, 97 patients who were evaluated for resection of LMCRC were prospectively enrolled. Preoperative workup included multidetector-CT (MDCT) and PET/CT. In 11 patients with liver steatosis or iodinated contrast allergy, MR also was performed. Sixty-eight patients underwent laparotomy. Sensitivity, specificity, positive predictive value (PPV), and negative predictive values for hepatic and extrahepatic staging of MDCT and PET-CT were calculated."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In a lesion-by-lesion analysis of the hepatic staging, the sensitivity of MDCT/RM was superior to PET/CT (89.2 vs. 55%, p < 0.001). On the extrahepatic staging, PET/CT was superior to MDCT/MR only for the detection of locoregional recurrence (p = 0.03) and recurrence in uncommon sites (p = 0.016). New findings in PET/CT resulted in a change in therapeutic strategy in 17 patients. However, additional information was correct only in eight cases and wrong in nine patients."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study was designed to determine prospectively whether the systematic use of PET/CT associated with conventional techniques could improve the accuracy of staging in patients with liver metastases of colorectal carcinoma. We also assessed the impact on the therapeutic strategy."
+    },
+    {
+      "label": "METHODS",
+      "context": "Between 2006 and 2008, 97 patients who were evaluated for resection of LMCRC were prospectively enrolled. Preoperative workup included multidetector-CT (MDCT) and PET/CT. In 11 patients with liver steatosis or iodinated contrast allergy, MR also was performed. Sixty-eight patients underwent laparotomy. Sensitivity, specificity, positive predictive value (PPV), and negative predictive values for hepatic and extrahepatic staging of MDCT and PET-CT were calculated."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In a lesion-by-lesion analysis of the hepatic staging, the sensitivity of MDCT/RM was superior to PET/CT (89.2 vs. 55%, p < 0.001). On the extrahepatic staging, PET/CT was superior to MDCT/MR only for the detection of locoregional recurrence (p = 0.03) and recurrence in uncommon sites (p = 0.016). New findings in PET/CT resulted in a change in therapeutic strategy in 17 patients. However, additional information was correct only in eight cases and wrong in nine patients."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

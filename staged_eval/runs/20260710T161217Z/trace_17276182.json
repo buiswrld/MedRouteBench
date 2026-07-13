@@ -1,0 +1,65 @@
+{
+  "pmid": "17276182",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "This study sought to evaluate mutations in genes encoding the slow component of the cardiac delayed rectifier K+ current (I(Ks)) channel in familial atrial fibrillation (AF)."
+    },
+    {
+      "label": "BACKGROUND",
+      "context": "Although AF can have a genetic etiology, links between inherited gene defects and acquired factors such as atrial stretch have not been explored."
+    },
+    {
+      "label": "METHODS",
+      "context": "Mutation screening of the KCNQ1, KCNE1, KCNE2, and KCNE3 genes was performed in 50 families with AF. The effects of mutant protein on cardiac I(Ks) activation were evaluated using electrophysiological studies and human atrial action potential modeling."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "One missense KCNQ1 mutation, R14C, was identified in 1 family with a high prevalence of hypertension. Atrial fibrillation was present only in older individuals who had developed atrial dilation and who were genotype positive. Patch-clamp studies of wild-type or R14C KCNQ1 expressed with KCNE1 in CHO cells showed no statistically significant differences between wild-type and mutant channel kinetics at baseline, or after activation of adenylate cyclase with forskolin. After exposure to hypotonic solution to elicit cell swelling/stretch, mutant channels showed a marked increase in current, a leftward shift in the voltage dependence of activation, altered channel kinetics, and shortening of the modeled atrial action potential duration."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "This study sought to evaluate mutations in genes encoding the slow component of the cardiac delayed rectifier K+ current (I(Ks)) channel in familial atrial fibrillation (AF)."
+    },
+    {
+      "label": "BACKGROUND",
+      "context": "Although AF can have a genetic etiology, links between inherited gene defects and acquired factors such as atrial stretch have not been explored."
+    },
+    {
+      "label": "METHODS",
+      "context": "Mutation screening of the KCNQ1, KCNE1, KCNE2, and KCNE3 genes was performed in 50 families with AF. The effects of mutant protein on cardiac I(Ks) activation were evaluated using electrophysiological studies and human atrial action potential modeling."
+    },
+    {
+      "label": "RESULTS",
+      "context": "One missense KCNQ1 mutation, R14C, was identified in 1 family with a high prevalence of hypertension. Atrial fibrillation was present only in older individuals who had developed atrial dilation and who were genotype positive. Patch-clamp studies of wild-type or R14C KCNQ1 expressed with KCNE1 in CHO cells showed no statistically significant differences between wild-type and mutant channel kinetics at baseline, or after activation of adenylate cyclase with forskolin. After exposure to hypotonic solution to elicit cell swelling/stretch, mutant channels showed a marked increase in current, a leftward shift in the voltage dependence of activation, altered channel kinetics, and shortening of the modeled atrial action potential duration."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

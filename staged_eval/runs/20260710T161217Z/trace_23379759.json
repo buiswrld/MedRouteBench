@@ -1,0 +1,57 @@
+{
+  "pmid": "23379759",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "The aims of the study were to report the rates of recurrent and residual cholesteatoma following primary CAT surgery and to report the rate of conversion to a modified radical mastoidectomy."
+    },
+    {
+      "label": "METHODS",
+      "context": "This was a retrospective review of a single surgeon series between 2006 and 2012."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In total 132 second-look operations were undertaken, with a mean interval between primary surgery and second-look procedures of 6 months. The rate of cholesteatoma at second-look surgery was 19.7%, which was split into residual disease (10.6%) and recurrent disease (9.09%). New tympanic membrane defects with cholesteatoma were considered as recurrent disease. Residual disease was defined as cholesteatoma present behind an intact tympanic membrane. The majority of recurrent and residual disease was easily removed at second look (73.1%). Only four cases were converted to a modified radical mastoidectomy (3%) and three cases required a third-look procedure."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "The aims of the study were to report the rates of recurrent and residual cholesteatoma following primary CAT surgery and to report the rate of conversion to a modified radical mastoidectomy."
+    },
+    {
+      "label": "METHODS",
+      "context": "This was a retrospective review of a single surgeon series between 2006 and 2012."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In total 132 second-look operations were undertaken, with a mean interval between primary surgery and second-look procedures of 6 months. The rate of cholesteatoma at second-look surgery was 19.7%, which was split into residual disease (10.6%) and recurrent disease (9.09%). New tympanic membrane defects with cholesteatoma were considered as recurrent disease. Residual disease was defined as cholesteatoma present behind an intact tympanic membrane. The majority of recurrent and residual disease was easily removed at second look (73.1%). Only four cases were converted to a modified radical mastoidectomy (3%) and three cases required a third-look procedure."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

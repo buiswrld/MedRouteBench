@@ -1,0 +1,57 @@
+{
+  "pmid": "23870157",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "Precursor events are undesirable events that can lead to a subsequent adverse event and have been associated with postoperative mortality. The purpose of the present study was to determine whether precursor events are associated with a composite endpoint of major adverse cardiac events (MACE) (death, acute renal failure, stroke, infection) in a low- to medium-risk coronary artery bypass grafting, valve, and valve plus coronary artery bypass grafting population. These events might be targets for strategies aimed at quality improvement."
+    },
+    {
+      "label": "METHODS",
+      "context": "The present study was a retrospective cohort design performed at the Queen Elizabeth Health Science Centre. Low- to medium-risk patients who had experienced postoperative MACE were matched 1:1 with patients who had not experienced postoperative MACE. The operative notes, for both groups, were scored by 5 surgeons to determine the frequency of 4 precursor events: bleeding, difficulty weaning from cardiopulmonary bypass, repair or regrafting, and incomplete revascularization or repair. A univariate comparison of ≥1 precursor events in the matched groups was performed."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A total of 311 MACE patients (98.4%) were matched. The primary outcome occurred more frequently in the MACE group than in the non-MACE group (33% vs 24%; P = .015). The incidence of the individual events of bleeding and difficulty weaning from cardiopulmonary bypass was significantly higher in the MACE group. Those patients with a precursor event in the absence of MACE also appeared to have a greater prevalence of other important postoperative outcomes."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "Precursor events are undesirable events that can lead to a subsequent adverse event and have been associated with postoperative mortality. The purpose of the present study was to determine whether precursor events are associated with a composite endpoint of major adverse cardiac events (MACE) (death, acute renal failure, stroke, infection) in a low- to medium-risk coronary artery bypass grafting, valve, and valve plus coronary artery bypass grafting population. These events might be targets for strategies aimed at quality improvement."
+    },
+    {
+      "label": "METHODS",
+      "context": "The present study was a retrospective cohort design performed at the Queen Elizabeth Health Science Centre. Low- to medium-risk patients who had experienced postoperative MACE were matched 1:1 with patients who had not experienced postoperative MACE. The operative notes, for both groups, were scored by 5 surgeons to determine the frequency of 4 precursor events: bleeding, difficulty weaning from cardiopulmonary bypass, repair or regrafting, and incomplete revascularization or repair. A univariate comparison of ≥1 precursor events in the matched groups was performed."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A total of 311 MACE patients (98.4%) were matched. The primary outcome occurred more frequently in the MACE group than in the non-MACE group (33% vs 24%; P = .015). The incidence of the individual events of bleeding and difficulty weaning from cardiopulmonary bypass was significantly higher in the MACE group. Those patients with a precursor event in the absence of MACE also appeared to have a greater prevalence of other important postoperative outcomes."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}

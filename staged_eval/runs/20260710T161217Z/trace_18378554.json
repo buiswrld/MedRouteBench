@@ -1,0 +1,81 @@
+{
+  "pmid": "18378554",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The authors examined equivalence of wandering and physically nonaggressive agitation (PNA) as concepts."
+    },
+    {
+      "label": "DESIGN",
+      "context": "A cross-sectional correlational design was used."
+    },
+    {
+      "label": "SETTING",
+      "context": "Participants were recruited from 22 nursing homes and 6 assisted living facilities in two states."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Ambulatory residents meeting DSM-IV criteria for dementia (N = 181) were studied."
+    },
+    {
+      "label": "MEASUREMENTS",
+      "context": "Video-tapes for up to twelve 20-minute observations per participant were coded for wandering using an empirically derived taxonomy of ambulation patterns. Separate raters coded the same tapes for six PNA behaviors on the agitation behavior mapping instrument."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Most participants (73.5%) wandered; all showed PNA behaviors. Factor analyses yielded an one-factor solution for wandering (explained variance = 43.66%) and a two-factor solution for PNA (explained variance = 53.45%). Overall wandering correlated significantly with PNA Factor 1 (df =179, r = 0.68, p<0.001) and Factor 2, but at a lower value (df = 179, r = 0.26, p<0.01)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The authors examined equivalence of wandering and physically nonaggressive agitation (PNA) as concepts."
+    },
+    {
+      "label": "DESIGN",
+      "context": "A cross-sectional correlational design was used."
+    },
+    {
+      "label": "SETTING",
+      "context": "Participants were recruited from 22 nursing homes and 6 assisted living facilities in two states."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Ambulatory residents meeting DSM-IV criteria for dementia (N = 181) were studied."
+    },
+    {
+      "label": "MEASUREMENTS",
+      "context": "Video-tapes for up to twelve 20-minute observations per participant were coded for wandering using an empirically derived taxonomy of ambulation patterns. Separate raters coded the same tapes for six PNA behaviors on the agitation behavior mapping instrument."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Most participants (73.5%) wandered; all showed PNA behaviors. Factor analyses yielded an one-factor solution for wandering (explained variance = 43.66%) and a two-factor solution for PNA (explained variance = 53.45%). Overall wandering correlated significantly with PNA Factor 1 (df =179, r = 0.68, p<0.001) and Factor 2, but at a lower value (df = 179, r = 0.26, p<0.01)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"maybe\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

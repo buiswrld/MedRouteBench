@@ -1,0 +1,64 @@
+{
+  "model": "llama-3.1-8b-instant",
+  "n_selected_cases": 500,
+  "n_completed_cases": 500,
+  "n_invalid_cases": 0,
+  "dataset_counts": {
+    "loaded": 1000,
+    "with_official_gold": 500,
+    "eligible_two_stage": 500,
+    "skipped_unsplittable": 0
+  },
+  "sample_label_counts": {
+    "yes": 276,
+    "no": 169,
+    "maybe": 55
+  },
+  "trace_label_counts": {
+    "kept_correct": 164,
+    "missed_revision": 272,
+    "successful_revision": 44,
+    "overreaction": 17,
+    "abstention": 3
+  },
+  "stage1_answer_accuracy": {
+    "rate": 0.362,
+    "numerator": 181,
+    "denominator": 500
+  },
+  "final_answer_accuracy": {
+    "rate": 0.416,
+    "numerator": 208,
+    "denominator": 500
+  },
+  "successful_revision_rate": {
+    "rate": 0.13793103448275862,
+    "numerator": 44,
+    "denominator": 319
+  },
+  "missed_revision_rate": {
+    "rate": 0.8607594936708861,
+    "numerator": 272,
+    "denominator": 316
+  },
+  "overreaction_rate": {
+    "rate": 0.09392265193370165,
+    "numerator": 17,
+    "denominator": 181
+  },
+  "kept_correct_rate": {
+    "rate": 0.9060773480662984,
+    "numerator": 164,
+    "denominator": 181
+  },
+  "final_abstention_rate": {
+    "rate": 0.006,
+    "numerator": 3,
+    "denominator": 500
+  },
+  "maintenance_rate": {
+    "rate": 0.8511066398390342,
+    "numerator": 423,
+    "denominator": 497
+  }
+}

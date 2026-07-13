@@ -1,0 +1,57 @@
+{
+  "pmid": "19103915",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "There is an urgent need to increase opportunistic screening for sexually transmitted infections (STIs) in community settings, particularly for those who are at increased risk including men who have sex with men (MSM). The aim of this qualitative study was to explore whether home sampling kits (HSK) for multiple bacterial STIs are potentially acceptable among MSM and to identify any concerns regarding their use. This study was developed as part of a formative evaluation of HSKs."
+    },
+    {
+      "label": "METHODS",
+      "context": "Focus groups and one-to-one semi-structured interviews with MSM were conducted. Focus group participants (n = 20) were shown a variety of self-sampling materials and asked to discuss them. Individual interviewees (n = 24) had experience of the self-sampling techniques as part of a pilot clinical study. All data were digitally recorded and transcribed verbatim. Data were analysed using a framework analysis approach."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The concept of a HSK was generally viewed as positive, with many benefits identified relating to increased access to testing, enhanced personal comfort and empowerment. Concerns about the accuracy of the test, delays in receiving the results, the possible lack of support and potential negative impact on 'others' were raised."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "There is an urgent need to increase opportunistic screening for sexually transmitted infections (STIs) in community settings, particularly for those who are at increased risk including men who have sex with men (MSM). The aim of this qualitative study was to explore whether home sampling kits (HSK) for multiple bacterial STIs are potentially acceptable among MSM and to identify any concerns regarding their use. This study was developed as part of a formative evaluation of HSKs."
+    },
+    {
+      "label": "METHODS",
+      "context": "Focus groups and one-to-one semi-structured interviews with MSM were conducted. Focus group participants (n = 20) were shown a variety of self-sampling materials and asked to discuss them. Individual interviewees (n = 24) had experience of the self-sampling techniques as part of a pilot clinical study. All data were digitally recorded and transcribed verbatim. Data were analysed using a framework analysis approach."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The concept of a HSK was generally viewed as positive, with many benefits identified relating to increased access to testing, enhanced personal comfort and empowerment. Concerns about the accuracy of the test, delays in receiving the results, the possible lack of support and potential negative impact on 'others' were raised."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision"
+}

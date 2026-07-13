@@ -1,0 +1,57 @@
+{
+  "pmid": "19106867",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Recent suicide bombings pose the novel problem for Trauma Centers of the massive simultaneous arrival of many gravely wounded patients."
+    },
+    {
+      "label": "METHODS",
+      "context": "We report the experience of the French-German Military Trauma Group, a Level 2 Trauma Center, in Afghanistan during the wave of suicide bombings in February 2007."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\n  \"action\": \"ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Fourteen casualties were received. A first triage was carried out by the U S Army Level I group prior to evacuation. A second surgical triage was carried out with systematic ultrasound exam. Four cases (ISS>25) were re-categorized and underwent emergency surgical procedures."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Recent suicide bombings pose the novel problem for Trauma Centers of the massive simultaneous arrival of many gravely wounded patients."
+    },
+    {
+      "label": "METHODS",
+      "context": "We report the experience of the French-German Military Trauma Group, a Level 2 Trauma Center, in Afghanistan during the wave of suicide bombings in February 2007."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Fourteen casualties were received. A first triage was carried out by the U S Army Level I group prior to evacuation. A second surgical triage was carried out with systematic ultrasound exam. Four cases (ISS>25) were re-categorized and underwent emergency surgical procedures."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n   \"answer\": \"yes\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct"
+}
