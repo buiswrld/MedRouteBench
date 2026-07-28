@@ -12,6 +12,8 @@ from pathlib import Path
 from typing import Callable, Optional, Tuple
 
 from .config import (
+    AZURE_OPENAI_DEPLOYMENT,
+    BACKEND,
     GROQ_MODEL,
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
@@ -19,7 +21,6 @@ from .config import (
     PACKAGE_DIR,
     REASONING_EFFORT,
     RUNS_DIR,
-    TEMPERATURE,
 )
 from .data import load_dataset, resolve_data_path
 from .metrics import build_report
@@ -44,7 +45,7 @@ def _callable_id(call_fn: Callable) -> str:
     return f"{module}.{name}"
 
 
-def _call_groq_json(
+def _call_llm_json(
     system: str,
     user: str,
     image_url: str | None,
@@ -58,14 +59,30 @@ def _call_groq_json(
 
 def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
     if call_fn is None:
+        if BACKEND == "azure":
+            selected_model = model or AZURE_OPENAI_DEPLOYMENT
+            if not selected_model:
+                raise RuntimeError(
+                    "AZURE_OPENAI_DEPLOYMENT must be set when using the azure backend. "
+                    "Add it to MedRouteBench/.env or export in the calling environment."
+                )
+            return (
+                partial(_call_llm_json, model=selected_model),
+                selected_model,
+                "azure-vision",
+                {
+                    "max_completion_tokens": MAX_TOKENS,
+                    "max_retries": MAX_RETRIES,
+                    "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
+                },
+            )
         selected_model = model or GROQ_MODEL
         return (
-            partial(_call_groq_json, model=selected_model),
+            partial(_call_llm_json, model=selected_model),
             selected_model,
             "groq-vision",
             {
-                "temperature": TEMPERATURE,
-                "max_tokens": MAX_TOKENS,
+                "max_completion_tokens": MAX_TOKENS,
                 "max_retries": MAX_RETRIES,
                 "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
                 "reasoning_effort": REASONING_EFFORT,
@@ -108,7 +125,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "groq-vision":
+    if backend in ("groq-vision", "azure-vision"):
         code_names.append("llm.py")
     return {
         "schema_version": RUN_SCHEMA_VERSION,

@@ -1,4 +1,4 @@
-"""Groq vision adapter with bounded transient retries and JSON mode."""
+"""LLM vision client — routes to Azure OpenAI or Groq based on BACKEND configuration."""
 
 import re
 import time
@@ -6,16 +6,13 @@ import urllib.request
 from collections import OrderedDict
 from urllib.parse import urlparse
 
-from groq import (
-    APIConnectionError,
-    APITimeoutError,
-    Groq,
-    InternalServerError,
-    RateLimitError,
-)
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 from .config import (
+    AZURE_OPENAI_API_KEY,
+    AZURE_OPENAI_DEPLOYMENT,
+    AZURE_OPENAI_ENDPOINT,
+    BACKEND,
     GROQ_API_KEY,
     GROQ_MODEL,
     IMAGE_URL_CACHE_TTL_SECONDS,
@@ -23,32 +20,66 @@ from .config import (
     MAX_RETRY_WAIT_SECONDS,
     MAX_TOKENS,
     REASONING_EFFORT,
-    TEMPERATURE,
 )
 
+from openai import OpenAI
+from openai import (
+    APIConnectionError as _OAIConnectionError,
+    APITimeoutError as _OAITimeoutError,
+    InternalServerError as _OAIInternalServerError,
+    RateLimitError as _OAIRateLimitError,
+)
+from groq import Groq
+from groq import (
+    APIConnectionError as _GroqConnectionError,
+    APITimeoutError as _GroqTimeoutError,
+    InternalServerError as _GroqInternalServerError,
+    RateLimitError as _GroqRateLimitError,
+)
 
-_client: Groq | None = None
+_client = None
 _IMAGE_URL_CACHE_MAX_SIZE = 128
 _image_url_cache: OrderedDict[str, tuple[float, str]] = OrderedDict()
 _fallback_wait = wait_exponential(multiplier=1, min=1, max=60)
 _retryable_errors = (
-    RateLimitError,
-    APIConnectionError,
-    APITimeoutError,
-    InternalServerError,
+    _OAIRateLimitError,
+    _OAIConnectionError,
+    _OAITimeoutError,
+    _OAIInternalServerError,
+    _GroqRateLimitError,
+    _GroqConnectionError,
+    _GroqTimeoutError,
+    _GroqInternalServerError,
 )
 
 
-def get_client() -> Groq:
+def get_client():
     global _client
     if _client is None:
-        if not GROQ_API_KEY:
-            raise RuntimeError(
-                "GROQ_API_KEY is not set. Add it to MedRouteBench/.env or "
-                "export it in the calling environment."
+        if BACKEND == "azure":
+            if not AZURE_OPENAI_ENDPOINT or not AZURE_OPENAI_API_KEY:
+                raise RuntimeError(
+                    "AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY must be set. "
+                    "Add them to MedRouteBench/.env or export in the calling environment."
+                )
+            # Azure v1 API: append /openai/v1/ if not already present.
+            base = AZURE_OPENAI_ENDPOINT.rstrip("/")
+            if not base.endswith("/openai/v1"):
+                base = base + "/openai/v1"
+            base = base + "/"  # OpenAI client requires trailing slash
+            _client = OpenAI(
+                base_url=base,
+                api_key=AZURE_OPENAI_API_KEY,
             )
-        _client = Groq(api_key=GROQ_API_KEY)
+        else:
+            if not GROQ_API_KEY:
+                raise RuntimeError(
+                    "GROQ_API_KEY is not set. Add it to MedRouteBench/.env or "
+                    "export it in the calling environment."
+                )
+            _client = Groq(api_key=GROQ_API_KEY)
     return _client
+
 
 
 def _parse_retry_after_message(message: str) -> float | None:
@@ -77,7 +108,7 @@ def _reported_retry_delay(exception: Exception) -> float | None:
 def _should_retry(exception: Exception) -> bool:
     if not isinstance(exception, _retryable_errors):
         return False
-    if isinstance(exception, RateLimitError):
+    if isinstance(exception, (_OAIRateLimitError, _GroqRateLimitError)):
         reported = _reported_retry_delay(exception)
         if reported is not None and reported > MAX_RETRY_WAIT_SECONDS:
             print(
@@ -92,7 +123,7 @@ def _should_retry(exception: Exception) -> bool:
 def _retry_wait(retry_state) -> float:
     exception = retry_state.outcome.exception()
     seconds = None
-    if isinstance(exception, RateLimitError):
+    if isinstance(exception, (_OAIRateLimitError, _GroqRateLimitError)):
         seconds = _reported_retry_delay(exception)
     if seconds is None:
         seconds = float(_fallback_wait(retry_state))
@@ -175,32 +206,42 @@ def call_json(
         ]
     else:
         user_content = user
+    effective_model = model or (AZURE_OPENAI_DEPLOYMENT if BACKEND == "azure" else GROQ_MODEL)
     request_kwargs = dict(
-        model=model or GROQ_MODEL,
+        model=effective_model,
         messages=[
             {"role": "system", "content": system},
             {"role": "user", "content": user_content},
         ],
-        temperature=TEMPERATURE,
-        max_tokens=MAX_TOKENS,
-        reasoning_effort=REASONING_EFFORT,
+        max_completion_tokens=MAX_TOKENS,
         response_format={"type": "json_object"},
     )
+    # reasoning_effort is Groq-specific; omit it for Azure deployments
+    if BACKEND != "azure" and REASONING_EFFORT and REASONING_EFFORT != "none":
+        request_kwargs["reasoning_effort"] = REASONING_EFFORT
     try:
         response = get_client().chat.completions.create(**request_kwargs)
     except Exception as exc:
-        # Groq can reject an otherwise valid request when JSON-mode generation
-        # is empty. Retry only that provider-side condition without JSON mode;
-        # runner.py still validates and repairs the returned text contract.
-        if "json_validate_failed" not in str(exc):
+        if "json_validate_failed" in str(exc):
+            # Groq can reject an otherwise valid request when JSON-mode generation
+            # is empty. Retry without JSON mode.
+            request_kwargs.pop("response_format")
+            response = get_client().chat.completions.create(**request_kwargs)
+        else:
             raise
-        request_kwargs.pop("response_format")
-        response = get_client().chat.completions.create(**request_kwargs)
     return response.choices[0].message.content
 
 
 def preflight_model(model: str | None = None) -> dict:
-    """Confirm that the configured model is visible to the current Groq account."""
+    """Confirm the configured model is accessible.
+
+    For Azure, the deployment name is validated by a lightweight chat call
+    rather than a model-list endpoint (which Azure does not expose in the same
+    way). For Groq, the model-list endpoint is used as before.
+    """
+    if BACKEND == "azure":
+        # Azure deployments are account-scoped; skip the model-list check.
+        return {"model": model or AZURE_OPENAI_DEPLOYMENT, "available": True, "note": "preflight skipped for azure backend"}
     selected = model or GROQ_MODEL
     available = {entry.id for entry in get_client().models.list().data}
     return {"model": selected, "available": selected in available}

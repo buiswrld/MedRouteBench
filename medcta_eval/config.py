@@ -40,3 +40,9 @@ IMAGE_URL_CACHE_TTL_SECONDS = float(
     os.environ.get("MEDCTA_IMAGE_URL_CACHE_TTL_SECONDS", "2700")
 )
 REASONING_EFFORT = os.environ.get("MEDCTA_REASONING_EFFORT", "none")
+
+# ── Azure OpenAI backend (takes precedence over Groq when endpoint is set) ───
+AZURE_OPENAI_ENDPOINT   = os.environ.get("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_API_KEY    = os.environ.get("AZURE_OPENAI_API_KEY")
+AZURE_OPENAI_DEPLOYMENT = os.environ.get("AZURE_OPENAI_DEPLOYMENT")
+BACKEND = "azure" if AZURE_OPENAI_ENDPOINT else "groq"

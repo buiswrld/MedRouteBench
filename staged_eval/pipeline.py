@@ -12,7 +12,7 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import GROQ_MODEL, MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, TEMPERATURE
+from .config import GROQ_MODEL, MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_OPENAI_DEPLOYMENT, BACKEND
 from .data import (
     FINAL_ANSWERS,
     eligible_cases,
@@ -45,8 +45,8 @@ def _callable_id(call_fn: Callable) -> str:
     return f"{module}.{name}"
 
 
-def _call_groq_json(system: str, user: str, *, model: str) -> str:
-    """Load the optional built-in provider adapter only when it is selected."""
+def _call_llm_json(system: str, user: str, *, model: str) -> str:
+    """Load the built-in provider adapter (Groq or Azure) only when selected."""
     from .llm import call_json
 
     return call_json(system, user, model=model)
@@ -54,12 +54,25 @@ def _call_groq_json(system: str, user: str, *, model: str) -> str:
 
 def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
     if call_fn is None:
+        if BACKEND == "azure":
+            selected_model = model or AZURE_OPENAI_DEPLOYMENT
+            if not selected_model:
+                raise RuntimeError(
+                    "AZURE_OPENAI_DEPLOYMENT must be set when using the azure backend. "
+                    "Add it to MedRouteBench/.env or export in your shell."
+                )
+            return (
+                partial(_call_llm_json, model=selected_model),
+                selected_model,
+                "azure",
+                {"max_completion_tokens": MAX_TOKENS},
+            )
         selected_model = model or GROQ_MODEL
         return (
-            partial(_call_groq_json, model=selected_model),
+            partial(_call_llm_json, model=selected_model),
             selected_model,
             "groq",
-            {"temperature": TEMPERATURE, "max_tokens": MAX_TOKENS},
+            {"max_completion_tokens": MAX_TOKENS},
         )
 
     callable_id = _callable_id(call_fn)
@@ -83,7 +96,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "groq":
+    if backend in ("groq", "azure"):
         code_names.append("llm.py")
     code_files = {name: PACKAGE_DIR / name for name in code_names}
     return {

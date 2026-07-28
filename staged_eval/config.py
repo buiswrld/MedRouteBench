@@ -36,3 +36,12 @@ GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 GROQ_MODEL   = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
 TEMPERATURE  = float(os.environ.get("TEMPERATURE", "0.0"))
 MAX_TOKENS   = int(os.environ.get("MAX_TOKENS", "512"))
+
+# ── Azure OpenAI backend (takes precedence over Groq when endpoint is set) ───
+AZURE_OPENAI_ENDPOINT   = os.environ.get("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_API_KEY    = os.environ.get("AZURE_OPENAI_API_KEY")
+AZURE_OPENAI_DEPLOYMENT = os.environ.get("AZURE_OPENAI_DEPLOYMENT")
+# Azure v1 API (openai.azure.com/openai/v1/) does not require api_version.
+# Set AZURE_OPENAI_API_VERSION only if you need a legacy versioned endpoint.
+AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION")
+BACKEND = "azure" if AZURE_OPENAI_ENDPOINT else "groq"

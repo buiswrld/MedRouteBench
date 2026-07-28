@@ -575,7 +575,8 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
             return _output("ANSWER", "yes")
         return _output("KEEP_ANSWER", "yes")
 
-    monkeypatch.setattr("staged_eval.pipeline._call_groq_json", fake_call)
+    monkeypatch.setattr("staged_eval.pipeline._call_llm_json", fake_call)
+    monkeypatch.setattr("staged_eval.pipeline.BACKEND", "groq")
     report, _ = run_pipeline(
         n=1,
         stratify=False,
