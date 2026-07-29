@@ -3,8 +3,7 @@
 from collections import Counter
 from typing import List, Optional
 
-
-FINAL_ANSWERS = {"yes", "no", "maybe"}
+from staged_eval.data import FINAL_ANSWERS
 
 
 def _ratio(numerator: int, denominator: int) -> dict:
