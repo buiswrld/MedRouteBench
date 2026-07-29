@@ -1,6 +1,6 @@
 """MedCTA reference-trajectory evaluator for MedRouteBench Idea #3."""
 
-from .config import DATA_PATH, GROQ_MODEL
+from .config import AZURE_OPENAI_DEPLOYMENT, DATA_PATH
 from .schema import ACTIONS, AgentOutput
 
 
@@ -23,5 +23,5 @@ __all__ = [
     "ACTIONS",
     "AgentOutput",
     "DATA_PATH",
-    "GROQ_MODEL",
+    "AZURE_OPENAI_DEPLOYMENT",
 ]

@@ -112,31 +112,49 @@ def _adapt_case(case_id: str, raw_case: dict, revision: str) -> dict:
             cursor += 1
             break
 
-        if not isinstance(tool_calls, list) or len(tool_calls) != 1:
-            raise ValueError(f"case {case_id}: expected one tool call per step")
-        if cursor + 1 >= len(dialogs):
+        if not isinstance(tool_calls, list) or not tool_calls:
+            raise ValueError(f"case {case_id}: malformed tool calls")
+        if cursor + len(tool_calls) >= len(dialogs):
             raise ValueError(f"case {case_id}: tool call lacks an observation")
-        call = tool_calls[0].get("function") or {}
-        tool_name = call.get("name")
-        arguments = call.get("arguments")
-        observation = dialogs[cursor + 1]
-        if tool_name not in tool_names:
-            raise ValueError(f"case {case_id}: reference uses unavailable {tool_name}")
-        if not isinstance(arguments, dict):
-            raise ValueError(f"case {case_id}: tool arguments must be an object")
-        if observation.get("role") != "tool" or observation.get("name") != tool_name:
-            raise ValueError(f"case {case_id}: call/observation tool mismatch")
-        reference_steps.append(
-            {
+
+        # The evaluator requests one action per model turn. MedCTA case 19 has
+        # two calls in one assistant turn, so replay them deterministically in
+        # source order and reveal each matching saved observation in sequence.
+        for parallel_index, tool_call in enumerate(tool_calls):
+            call = tool_call.get("function") or {}
+            tool_name = call.get("name")
+            arguments = call.get("arguments")
+            observation = dialogs[cursor + 1 + parallel_index]
+            if tool_name not in tool_names:
+                raise ValueError(
+                    f"case {case_id}: reference uses unavailable {tool_name}"
+                )
+            if not isinstance(arguments, dict):
+                raise ValueError(f"case {case_id}: tool arguments must be an object")
+            if (
+                observation.get("role") != "tool"
+                or observation.get("name") != tool_name
+            ):
+                raise ValueError(f"case {case_id}: call/observation tool mismatch")
+            reference_step = {
                 "step_index": len(reference_steps),
                 "action": "CALL_TOOL",
                 "tool_name": tool_name,
                 "reference_arguments": arguments,
-                "reference_observation": _observation_text(observation.get("content")),
+                "reference_observation": _observation_text(
+                    observation.get("content")
+                ),
                 "reference_answer": None,
             }
-        )
-        cursor += 2
+            if len(tool_calls) > 1:
+                reference_step["source_parallel_call"] = {
+                    "assistant_dialog_index": cursor,
+                    "call_index": parallel_index,
+                    "call_count": len(tool_calls),
+                    "policy": "sequentialized_in_source_order",
+                }
+            reference_steps.append(reference_step)
+        cursor += 1 + len(tool_calls)
 
     if cursor != len(dialogs) or reference_steps[-1]["action"] != "FINAL_ANSWER":
         raise ValueError(f"case {case_id}: trajectory lacks one terminal answer")
@@ -193,6 +211,7 @@ def adapt_raw_dataset(
             "source_url": source_url,
             "source_revision": revision,
             "image_base_url": SOURCE_IMAGE_BASE_URL,
+            "parallel_call_policy": "sequentialized_in_source_order",
         },
         "selected_case_ids": normalized_ids,
         "cases": [_adapt_case(case_id, raw[case_id], revision) for case_id in normalized_ids],

@@ -6,7 +6,8 @@
     "source_page": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA",
     "source_url": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/raw/dataset.json",
     "source_revision": "0be777092121a18ba2a85a0c4145a9d4fe8ed7db",
-    "image_base_url": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db"
+    "image_base_url": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db",
+    "parallel_call_policy": "sequentialized_in_source_order"
   },
   "selected_case_ids": [
     "0",

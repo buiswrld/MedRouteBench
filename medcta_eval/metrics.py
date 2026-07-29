@@ -17,6 +17,53 @@ def _steps(traces: list[dict]):
         yield from trace.get("steps") or []
 
 
+def _response_metadata(traces: list[dict]):
+    for step in _steps(traces):
+        output = step.get("model_output") or {}
+        for key in ("initial_response_metadata", "repair_response_metadata"):
+            metadata = output.get(key)
+            if isinstance(metadata, dict):
+                yield metadata
+
+
+def usage_summary(traces: list[dict]) -> dict:
+    metadata = list(_response_metadata(traces))
+    usage = [
+        item["usage"]
+        for item in metadata
+        if isinstance(item.get("usage"), dict)
+    ]
+    return {
+        "responses_with_metadata": len(metadata),
+        "responses_with_usage": len(usage),
+        "prompt_tokens": sum(int(item.get("prompt_tokens") or 0) for item in usage),
+        "completion_tokens": sum(
+            int(item.get("completion_tokens") or 0) for item in usage
+        ),
+        "total_tokens": sum(int(item.get("total_tokens") or 0) for item in usage),
+        "cached_prompt_tokens": sum(
+            int((item.get("prompt_tokens_details") or {}).get("cached_tokens") or 0)
+            for item in usage
+        ),
+        "reasoning_tokens": sum(
+            int(
+                (item.get("completion_tokens_details") or {}).get(
+                    "reasoning_tokens"
+                )
+                or 0
+            )
+            for item in usage
+        ),
+        "system_fingerprint_counts": dict(
+            Counter(
+                item["system_fingerprint"]
+                for item in metadata
+                if item.get("system_fingerprint")
+            )
+        ),
+    }
+
+
 def _evaluable_traces(traces: list[dict]) -> list[dict]:
     """Exclude cases where no routing evaluation could be completed.
 
@@ -157,4 +204,5 @@ def build_report(
             bool((step.get("model_output") or {}).get("repaired"))
             for step in _steps(traces)
         ),
+        "usage": usage_summary(traces),
     }

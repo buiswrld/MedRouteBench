@@ -12,14 +12,14 @@ from pathlib import Path
 from typing import Callable, Optional, Tuple
 
 from .config import (
-    GROQ_MODEL,
+    AZURE_IMAGE_DETAIL,
+    AZURE_MAX_COMPLETION_TOKENS,
+    AZURE_OPENAI_DEPLOYMENT,
+    AZURE_REASONING_EFFORT,
+    AZURE_SEED,
     MAX_RETRIES,
-    MAX_RETRY_WAIT_SECONDS,
-    MAX_TOKENS,
     PACKAGE_DIR,
-    REASONING_EFFORT,
     RUNS_DIR,
-    TEMPERATURE,
 )
 from .data import load_dataset, resolve_data_path
 from .metrics import build_report
@@ -27,7 +27,7 @@ from .runner import run_case
 from .schema import ACTIONS
 
 
-RUN_SCHEMA_VERSION = 1
+RUN_SCHEMA_VERSION = 3
 
 
 def _sha256_file(path: Path) -> str:
@@ -44,7 +44,7 @@ def _callable_id(call_fn: Callable) -> str:
     return f"{module}.{name}"
 
 
-def _call_groq_json(
+def _call_azure_json(
     system: str,
     user: str,
     image_url: str | None,
@@ -56,39 +56,35 @@ def _call_groq_json(
     return call_json(system, user, image_url, model=model)
 
 
-def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
-    if call_fn is None:
-        selected_model = model or GROQ_MODEL
-        return (
-            partial(_call_groq_json, model=selected_model),
-            selected_model,
-            "groq-vision",
-            {
-                "temperature": TEMPERATURE,
-                "max_tokens": MAX_TOKENS,
-                "max_retries": MAX_RETRIES,
-                "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
-                "reasoning_effort": REASONING_EFFORT,
-            },
-        )
-    callable_id = _callable_id(call_fn)
-    return call_fn, model or f"custom:{callable_id}", f"callable:{callable_id}", None
+def _select_backend(
+    call_fn: Optional[Callable],
+    model: Optional[str],
+):
+    if call_fn is not None:
+        callable_id = _callable_id(call_fn)
+        return call_fn, model or f"custom:{callable_id}", f"callable:{callable_id}", None
+
+    selected_model = model or AZURE_OPENAI_DEPLOYMENT
+    return (
+        partial(_call_azure_json, model=selected_model),
+        selected_model,
+        "azure-openai",
+        {
+            "max_completion_tokens": AZURE_MAX_COMPLETION_TOKENS,
+            "max_retries": MAX_RETRIES,
+            "reasoning_effort": AZURE_REASONING_EFFORT,
+            "image_detail": AZURE_IMAGE_DETAIL,
+            "response_format": "json_object",
+            "seed": AZURE_SEED,
+        },
+    )
 
 
-def _preflight_groq_model(model: str) -> dict:
-    """Fail before inference when the selected model is not account-visible.
+def _preflight_azure_model(model: str) -> dict:
+    """Validate Azure endpoint, key, and deployment settings before artifacts."""
+    from .llm import preflight_config
 
-    This deliberately uses only Groq's model-list endpoint. It consumes no
-    generation tokens, though it cannot diagnose an exhausted token quota.
-    """
-    from .llm import preflight_model
-
-    result = preflight_model(model)
-    if not result.get("available"):
-        raise RuntimeError(
-            f"configured Groq model is not available to this account: {model}"
-        )
-    return {**result, "check": "model_list_only"}
+    return preflight_config(model)
 
 
 def _build_provenance(
@@ -108,14 +104,17 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "groq-vision":
+    if backend == "azure-openai":
         code_names.append("llm.py")
+    image_delivery = "pinned_huggingface_url_via_resolved_cdn"
+    if backend == "azure-openai":
+        image_delivery += "_with_unsupported_formats_transcoded_to_png_data_url"
     return {
         "schema_version": RUN_SCHEMA_VERSION,
         "backend": backend,
         "model": model,
         "generation": generation,
-        "image_delivery": "pinned_huggingface_url_via_resolved_cdn",
+        "image_delivery": image_delivery,
         "selected_case_ids": selected_case_ids,
         "dataset": dataset_metadata,
         "adapted_data": {"path": str(data_path), "sha256": _sha256_file(data_path)},
@@ -294,20 +293,22 @@ def run_pipeline(
     if out_dir is not None and resume_dir is not None:
         raise ValueError("out_dir and resume_dir are mutually exclusive")
 
-    effective_call, selected_model, backend, generation = _select_backend(call_fn, model)
+    effective_call, selected_model, selected_backend, generation = _select_backend(
+        call_fn, model
+    )
     resolved_data = resolve_data_path(cases_path)
     payload = load_dataset(resolved_data)
     cases = _select_cases(payload, n, case_ids)
     selected_case_ids = [case["case_id"] for case in cases]
     model_preflight = None
-    if backend == "groq-vision" and cases and resume_dir is None:
-        model_preflight = _preflight_groq_model(selected_model)
+    if selected_backend == "azure-openai" and cases and resume_dir is None:
+        model_preflight = _preflight_azure_model(selected_model)
     provenance = _build_provenance(
         resolved_data,
         payload["dataset"],
         selected_case_ids,
         model=selected_model,
-        backend=backend,
+        backend=selected_backend,
         generation=generation,
     )
 
@@ -340,12 +341,12 @@ def run_pipeline(
             selected_case_ids,
             verbose=verbose,
         )
-        if backend == "groq-vision" and len(existing_by_id) < len(cases):
-            model_preflight = _preflight_groq_model(selected_model)
+        if selected_backend == "azure-openai" and len(existing_by_id) < len(cases):
+            model_preflight = _preflight_azure_model(selected_model)
 
     if verbose:
         print(f"run_dir: {run_dir} | selected: {len(cases)}")
-        print(f"backend: {backend} | model: {selected_model}")
+        print(f"backend: {selected_backend} | model: {selected_model}")
         if resume_dir is not None:
             print(
                 f"resume: {len(existing_by_id)} saved traces | "
@@ -361,7 +362,7 @@ def run_pipeline(
         traces,
         selected_case_ids=selected_case_ids,
         model=selected_model,
-        backend=backend,
+        backend=selected_backend,
         run_id=run_id,
         provenance=provenance,
     )
@@ -385,7 +386,7 @@ def run_pipeline(
             traces,
             selected_case_ids=selected_case_ids,
             model=selected_model,
-            backend=backend,
+            backend=selected_backend,
             run_id=run_id,
             provenance=provenance,
         )
@@ -395,7 +396,7 @@ def run_pipeline(
         traces,
         selected_case_ids=selected_case_ids,
         model=selected_model,
-        backend=backend,
+        backend=selected_backend,
         run_id=run_id,
         provenance=provenance,
     )
@@ -444,7 +445,11 @@ def _parse_args() -> argparse.Namespace:
         description="MedCTA reference-trajectory routing evaluator",
     )
     parser.add_argument("--n", type=int, default=11, help="number of adapted cases")
-    parser.add_argument("--model", default=None, help="Groq vision model identifier")
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="provider model/deployment identifier",
+    )
     parser.add_argument("--out", default=None, help="artifact output directory")
     parser.add_argument("--cases", default=None, help="adapted MedCTA subset JSON")
     run_mode = parser.add_mutually_exclusive_group()

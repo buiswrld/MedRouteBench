@@ -32,7 +32,21 @@ FIXTURE_GROUND_TRUTH_PATH = FIXTURE_DATA_DIR / "test_ground_truth.json"
 RUNS_DIR = PACKAGE_DIR / "runs"
 
 # ── LLM settings ─────────────────────────────────────────────────────────────
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-GROQ_MODEL   = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
-TEMPERATURE  = float(os.environ.get("TEMPERATURE", "0.0"))
-MAX_TOKENS   = int(os.environ.get("MAX_TOKENS", "512"))
+AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY")
+AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_DEPLOYMENT = os.environ.get(
+    "AZURE_OPENAI_DEPLOYMENT", "gpt-5-mini"
+)
+AZURE_REASONING_EFFORT = (
+    os.environ.get("STAGED_AZURE_REASONING_EFFORT", "low").strip() or None
+)
+AZURE_MAX_COMPLETION_TOKENS = int(
+    os.environ.get("STAGED_AZURE_MAX_COMPLETION_TOKENS", "1024")
+)
+_azure_seed = os.environ.get("STAGED_AZURE_SEED")
+AZURE_SEED = (
+    int(_azure_seed)
+    if _azure_seed is not None and _azure_seed.strip()
+    else None
+)
+MAX_RETRIES = int(os.environ.get("STAGED_MAX_RETRIES", "5"))

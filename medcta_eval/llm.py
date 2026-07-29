@@ -1,108 +1,150 @@
-"""Groq vision adapter with bounded transient retries and JSON mode."""
+"""Azure OpenAI-compatible vision adapter for MedCTA evaluation."""
 
+import base64
+import io
 import re
 import time
 import urllib.request
 from collections import OrderedDict
-from urllib.parse import urlparse
+from pathlib import PurePosixPath
+from urllib.parse import urlparse, urlunparse
 
-from groq import (
-    APIConnectionError,
-    APITimeoutError,
-    Groq,
-    InternalServerError,
-    RateLimitError,
-)
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from .config import (
-    GROQ_API_KEY,
-    GROQ_MODEL,
+    AZURE_IMAGE_DETAIL,
+    AZURE_MAX_COMPLETION_TOKENS,
+    AZURE_OPENAI_API_KEY,
+    AZURE_OPENAI_DEPLOYMENT,
+    AZURE_OPENAI_ENDPOINT,
+    AZURE_REASONING_EFFORT,
+    AZURE_SEED,
     IMAGE_URL_CACHE_TTL_SECONDS,
     MAX_RETRIES,
-    MAX_RETRY_WAIT_SECONDS,
-    MAX_TOKENS,
-    REASONING_EFFORT,
-    TEMPERATURE,
 )
 
 
-_client: Groq | None = None
+_client = None
+_AZURE_SUPPORTED_IMAGE_SUFFIXES = {".gif", ".jpeg", ".jpg", ".png", ".webp"}
 _IMAGE_URL_CACHE_MAX_SIZE = 128
 _image_url_cache: OrderedDict[str, tuple[float, str]] = OrderedDict()
-_fallback_wait = wait_exponential(multiplier=1, min=1, max=60)
-_retryable_errors = (
-    RateLimitError,
-    APIConnectionError,
-    APITimeoutError,
-    InternalServerError,
-)
 
 
-def get_client() -> Groq:
+class AzureJSONResponse(str):
+    """JSON text with non-secret provider accounting metadata attached."""
+
+    def __new__(cls, value: str, *, metadata: dict):
+        instance = super().__new__(cls, value)
+        instance.metadata = metadata
+        return instance
+
+
+def _dump_provider_value(value):
+    if value is None:
+        return None
+    if hasattr(value, "model_dump"):
+        return value.model_dump(exclude_none=True)
+    if isinstance(value, dict):
+        return value
+    if hasattr(value, "__dict__"):
+        return {
+            key: _dump_provider_value(item)
+            for key, item in vars(value).items()
+            if item is not None
+        }
+    return value
+
+
+def normalize_base_url(endpoint: str | None) -> str:
+    """Normalize an Azure resource endpoint to its OpenAI-compatible v1 root."""
+    if not endpoint or not endpoint.strip():
+        raise RuntimeError(
+            "AZURE_OPENAI_ENDPOINT is not set. Add the Azure resource endpoint "
+            "to MedRouteBench/.env; it may be either the resource root or end "
+            "with /openai/v1/."
+        )
+    parsed = urlparse(endpoint.strip())
+    if parsed.scheme != "https" or not parsed.netloc:
+        raise RuntimeError("AZURE_OPENAI_ENDPOINT must be an https URL")
+
+    path = parsed.path.rstrip("/")
+    path = re.sub(r"/(?:chat/completions|responses)$", "", path)
+    if not path:
+        path = "/openai/v1"
+    elif not path.endswith("/openai/v1"):
+        raise RuntimeError(
+            "AZURE_OPENAI_ENDPOINT must be the Azure resource root or end with "
+            "/openai/v1/, /openai/v1/chat/completions, or /openai/v1/responses"
+        )
+    return urlunparse((parsed.scheme, parsed.netloc, f"{path}/", "", "", ""))
+
+
+def get_client():
+    """Create the OpenAI client lazily so offline tests need no Azure SDK."""
     global _client
     if _client is None:
-        if not GROQ_API_KEY:
+        if not AZURE_OPENAI_API_KEY:
             raise RuntimeError(
-                "GROQ_API_KEY is not set. Add it to MedRouteBench/.env or "
-                "export it in the calling environment."
+                "AZURE_OPENAI_API_KEY is not set. Add the Azure resource key to "
+                "MedRouteBench/.env; never commit or paste it into source files."
             )
-        _client = Groq(api_key=GROQ_API_KEY)
+        try:
+            from openai import OpenAI
+        except ImportError as exc:
+            raise RuntimeError(
+                "The openai package is required for Azure runs. Install project "
+                "requirements with: python -m pip install -r requirements.txt"
+            ) from exc
+        _client = OpenAI(
+            api_key=AZURE_OPENAI_API_KEY,
+            base_url=normalize_base_url(AZURE_OPENAI_ENDPOINT),
+            max_retries=0,
+        )
     return _client
 
 
-def _parse_retry_after_message(message: str) -> float | None:
-    match = re.search(
-        r"try again in\s+(?:(?P<minutes>\d+)m)?(?P<seconds>[\d.]+)s",
-        message,
-        flags=re.IGNORECASE,
-    )
-    if not match:
-        return None
-    return 60 * int(match.group("minutes") or 0) + float(match.group("seconds"))
+def preflight_config(model: str | None = None) -> dict:
+    """Validate required Azure settings without spending inference tokens."""
+    if not AZURE_OPENAI_API_KEY:
+        raise RuntimeError(
+            "AZURE_OPENAI_API_KEY is not set. Add it to MedRouteBench/.env."
+        )
+    selected = (model or AZURE_OPENAI_DEPLOYMENT).strip()
+    if not selected:
+        raise RuntimeError("AZURE_OPENAI_DEPLOYMENT is not set")
+    base_url = normalize_base_url(AZURE_OPENAI_ENDPOINT)
+    return {
+        "model": selected,
+        "endpoint_host": urlparse(base_url).hostname,
+        "check": "local_configuration_only",
+    }
 
 
-def _reported_retry_delay(exception: Exception) -> float | None:
-    response = getattr(exception, "response", None)
-    headers = getattr(response, "headers", {}) or {}
-    retry_after = headers.get("retry-after")
-    if retry_after is not None:
-        try:
-            return float(retry_after)
-        except (TypeError, ValueError):
-            pass
-    return _parse_retry_after_message(str(exception))
+def _retryable_openai_errors():
+    try:
+        from openai import (
+            APIConnectionError,
+            APITimeoutError,
+            InternalServerError,
+            RateLimitError,
+        )
+    except ImportError:
+        return (ConnectionError, TimeoutError)
+    return (RateLimitError, APIConnectionError, APITimeoutError, InternalServerError)
 
 
-def _should_retry(exception: Exception) -> bool:
-    if not isinstance(exception, _retryable_errors):
-        return False
-    if isinstance(exception, RateLimitError):
-        reported = _reported_retry_delay(exception)
-        if reported is not None and reported > MAX_RETRY_WAIT_SECONDS:
-            print(
-                f"[NO RETRY] RateLimitError requested {reported:.1f}s, above "
-                f"MEDCTA_MAX_RETRY_WAIT_SECONDS={MAX_RETRY_WAIT_SECONDS:.1f}s",
-                flush=True,
-            )
-            return False
-    return True
+def _call_once(request_kwargs: dict):
+    return get_client().chat.completions.create(**request_kwargs)
 
 
-def _retry_wait(retry_state) -> float:
-    exception = retry_state.outcome.exception()
-    seconds = None
-    if isinstance(exception, RateLimitError):
-        seconds = _reported_retry_delay(exception)
-    if seconds is None:
-        seconds = float(_fallback_wait(retry_state))
-    seconds = max(1.0, seconds) + 0.5
-    print(
-        f"[RETRY] {type(exception).__name__}; waiting {seconds:.1f}s "
-        f"(attempt {retry_state.attempt_number}/{MAX_RETRIES})",
-        flush=True,
-    )
-    return seconds
+@retry(
+    wait=wait_exponential(multiplier=1, min=1, max=30),
+    stop=stop_after_attempt(MAX_RETRIES),
+    retry=retry_if_exception_type(_retryable_openai_errors()),
+    reraise=True,
+)
+def _call_with_retries(request_kwargs: dict):
+    return _call_once(request_kwargs)
 
 
 def clear_image_url_cache() -> None:
@@ -111,13 +153,7 @@ def clear_image_url_cache() -> None:
 
 
 def resolve_image_url(image_url: str) -> str:
-    """Resolve Hugging Face's redirect before giving the URL to Groq.
-
-    Groq's media fetcher currently rejects the initial 302 returned by
-    ``huggingface.co/.../resolve/...``. The final CDN URL is resolved in memory
-    and cached for less than the signed URL lifetime; the pinned source URL
-    remains the auditable reference stored in prompts, traces, and manifests.
-    """
+    """Resolve pinned Hugging Face image URLs to their current CDN target."""
     if urlparse(image_url).hostname != "huggingface.co":
         return image_url
     now = time.monotonic()
@@ -152,12 +188,38 @@ def resolve_image_url(image_url: str) -> str:
     return resolved
 
 
-@retry(
-    wait=_retry_wait,
-    stop=stop_after_attempt(MAX_RETRIES),
-    retry=retry_if_exception(_should_retry),
-    reraise=True,
-)
+def prepare_image_url(image_url: str) -> str:
+    """Resolve supported URLs or transcode unsupported MedCTA formats to PNG."""
+    suffix = PurePosixPath(urlparse(image_url).path).suffix.casefold()
+    resolved = resolve_image_url(image_url)
+    if suffix in _AZURE_SUPPORTED_IMAGE_SUFFIXES:
+        return resolved
+
+    try:
+        from PIL import Image
+    except ImportError as exc:
+        raise RuntimeError(
+            "Pillow is required to transcode non-JPEG MedCTA images for Azure. "
+            "Install project requirements with: "
+            "python -m pip install -r requirements.txt"
+        ) from exc
+
+    request = urllib.request.Request(
+        resolved,
+        headers={"User-Agent": "MedRouteBench-MedCTA-evaluator/1.0"},
+    )
+    with urllib.request.urlopen(request, timeout=60) as response:
+        source = response.read()
+    with Image.open(io.BytesIO(source)) as image:
+        frame = image.copy()
+    if frame.mode not in {"RGB", "RGBA"}:
+        frame = frame.convert("RGB")
+    output = io.BytesIO()
+    frame.save(output, format="PNG")
+    encoded = base64.b64encode(output.getvalue()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
+
+
 def call_json(
     system: str,
     user: str,
@@ -165,42 +227,45 @@ def call_json(
     *,
     model: str | None = None,
 ) -> str:
-    """Call a Groq vision model and return its raw JSON response text."""
+    """Call an Azure-deployed multimodal model and return raw JSON text."""
     user_content: str | list[dict]
     if image_url:
-        resolved_image_url = resolve_image_url(image_url)
         user_content = [
             {"type": "text", "text": user},
-            {"type": "image_url", "image_url": {"url": resolved_image_url}},
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": prepare_image_url(image_url),
+                    "detail": AZURE_IMAGE_DETAIL,
+                },
+            },
         ]
     else:
         user_content = user
-    request_kwargs = dict(
-        model=model or GROQ_MODEL,
-        messages=[
+
+    request_kwargs = {
+        "model": model or AZURE_OPENAI_DEPLOYMENT,
+        "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": user_content},
         ],
-        temperature=TEMPERATURE,
-        max_tokens=MAX_TOKENS,
-        reasoning_effort=REASONING_EFFORT,
-        response_format={"type": "json_object"},
+        "max_completion_tokens": AZURE_MAX_COMPLETION_TOKENS,
+        "response_format": {"type": "json_object"},
+    }
+    if AZURE_REASONING_EFFORT is not None:
+        request_kwargs["reasoning_effort"] = AZURE_REASONING_EFFORT
+    if AZURE_SEED is not None:
+        request_kwargs["seed"] = AZURE_SEED
+
+    response = _call_with_retries(request_kwargs)
+    content = response.choices[0].message.content
+    if not isinstance(content, str) or not content.strip():
+        raise RuntimeError("Azure model returned an empty response")
+    return AzureJSONResponse(
+        content,
+        metadata={
+            "provider_model": getattr(response, "model", None),
+            "system_fingerprint": getattr(response, "system_fingerprint", None),
+            "usage": _dump_provider_value(getattr(response, "usage", None)),
+        },
     )
-    try:
-        response = get_client().chat.completions.create(**request_kwargs)
-    except Exception as exc:
-        # Groq can reject an otherwise valid request when JSON-mode generation
-        # is empty. Retry only that provider-side condition without JSON mode;
-        # runner.py still validates and repairs the returned text contract.
-        if "json_validate_failed" not in str(exc):
-            raise
-        request_kwargs.pop("response_format")
-        response = get_client().chat.completions.create(**request_kwargs)
-    return response.choices[0].message.content
-
-
-def preflight_model(model: str | None = None) -> dict:
-    """Confirm that the configured model is visible to the current Groq account."""
-    selected = model or GROQ_MODEL
-    available = {entry.id for entry in get_client().models.list().data}
-    return {"model": selected, "available": selected in available}

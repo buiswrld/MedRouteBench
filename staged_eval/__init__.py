@@ -1,6 +1,6 @@
 """MedRouteBench fixed two-stage PubMedQA revision experiment."""
 
-from .config import GROUND_TRUTH_PATH, GROQ_MODEL, TEST_SET_PATH
+from .config import AZURE_OPENAI_DEPLOYMENT, GROUND_TRUTH_PATH, TEST_SET_PATH
 from .schema import ACTIONS, STAGE1_ALLOWED, STAGE2_ALLOWED, AgentOutput
 
 
@@ -21,5 +21,5 @@ __all__ = [
     "AgentOutput",
     "TEST_SET_PATH",
     "GROUND_TRUTH_PATH",
-    "GROQ_MODEL",
+    "AZURE_OPENAI_DEPLOYMENT",
 ]

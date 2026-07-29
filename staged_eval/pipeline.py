@@ -12,7 +12,15 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import GROQ_MODEL, MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, TEMPERATURE
+from .config import (
+    AZURE_MAX_COMPLETION_TOKENS,
+    AZURE_OPENAI_DEPLOYMENT,
+    AZURE_REASONING_EFFORT,
+    AZURE_SEED,
+    MAX_RETRIES,
+    PACKAGE_DIR,
+    RUNS_DIR,
+)
 from .data import (
     FINAL_ANSWERS,
     eligible_cases,
@@ -28,7 +36,7 @@ from .runner import run_case
 from .schema import ACTIONS
 
 
-RUN_SCHEMA_VERSION = 1
+RUN_SCHEMA_VERSION = 2
 
 
 def _sha256_file(path: Path) -> str:
@@ -45,8 +53,8 @@ def _callable_id(call_fn: Callable) -> str:
     return f"{module}.{name}"
 
 
-def _call_groq_json(system: str, user: str, *, model: str) -> str:
-    """Load the optional built-in provider adapter only when it is selected."""
+def _call_azure_json(system: str, user: str, *, model: str) -> str:
+    """Load the built-in Azure adapter only when it is selected."""
     from .llm import call_json
 
     return call_json(system, user, model=model)
@@ -54,16 +62,29 @@ def _call_groq_json(system: str, user: str, *, model: str) -> str:
 
 def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
     if call_fn is None:
-        selected_model = model or GROQ_MODEL
+        selected_model = model or AZURE_OPENAI_DEPLOYMENT
         return (
-            partial(_call_groq_json, model=selected_model),
+            partial(_call_azure_json, model=selected_model),
             selected_model,
-            "groq",
-            {"temperature": TEMPERATURE, "max_tokens": MAX_TOKENS},
+            "azure-openai",
+            {
+                "max_completion_tokens": AZURE_MAX_COMPLETION_TOKENS,
+                "max_retries": MAX_RETRIES,
+                "reasoning_effort": AZURE_REASONING_EFFORT,
+                "response_format": "json_object",
+                "seed": AZURE_SEED,
+            },
         )
 
     callable_id = _callable_id(call_fn)
     return call_fn, model or f"custom:{callable_id}", f"callable:{callable_id}", None
+
+
+def _preflight_azure_model(model: str) -> dict:
+    """Validate Azure endpoint, key, and deployment settings without inference."""
+    from .llm import preflight_config
+
+    return preflight_config(model)
 
 
 def _build_provenance(
@@ -83,7 +104,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "groq":
+    if backend == "azure-openai":
         code_names.append("llm.py")
     code_files = {name: PACKAGE_DIR / name for name in code_names}
     return {
@@ -217,6 +238,9 @@ def run_pipeline(
         "eligible_two_stage": len(eligible),
         "skipped_unsplittable": len(gold_cases) - len(eligible),
     }
+    model_preflight = None
+    if backend == "azure-openai" and cases and resume_dir is None:
+        model_preflight = _preflight_azure_model(selected_model)
 
     if resume_dir is not None:
         run_dir = Path(resume_dir).resolve()
@@ -238,6 +262,7 @@ def run_pipeline(
         manifest = {
             "run_id": run_id,
             "created_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "model_preflight": model_preflight,
             "provenance": provenance,
         }
         _write_json_atomic(run_dir / "manifest.json", manifest)
@@ -259,6 +284,8 @@ def run_pipeline(
                 and trace.get("pubmedqa_gold_label") == ground_truth.get(pmid)
             ):
                 existing_by_pmid[pmid] = trace
+        if backend == "azure-openai" and len(existing_by_pmid) < len(cases):
+            model_preflight = _preflight_azure_model(selected_model)
 
     if verbose:
         print(
@@ -338,7 +365,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--model",
         default=None,
-        help="model identifier passed to the built-in backend and stored in provenance",
+        help="Azure deployment name passed to the built-in backend",
     )
     parser.add_argument("--out", default=None, help="artifact output directory")
     parser.add_argument(

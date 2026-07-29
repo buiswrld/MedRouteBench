@@ -19,6 +19,7 @@ SOURCE_RAW_URL = (
 )
 SOURCE_IMAGE_BASE_URL = f"{SOURCE_PAGE_URL}/resolve/{SOURCE_REVISION}"
 STARTER_CASE_IDS = tuple(str(index) for index in range(11))
+FULL_CASE_IDS = tuple(str(index) for index in range(107))
 
 _data_env = os.environ.get("MEDCTA_DATA_PATH")
 DATA_PATH = (
@@ -28,15 +29,26 @@ DATA_PATH = (
 )
 RUNS_DIR = PACKAGE_DIR / "runs"
 
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-GROQ_MODEL = os.environ.get("MEDCTA_MODEL", "qwen/qwen3.6-27b")
-TEMPERATURE = float(os.environ.get("MEDCTA_TEMPERATURE", "0.0"))
-MAX_TOKENS = int(os.environ.get("MEDCTA_MAX_TOKENS", "512"))
-MAX_RETRIES = int(os.environ.get("MEDCTA_MAX_RETRIES", "5"))
-MAX_RETRY_WAIT_SECONDS = float(
-    os.environ.get("MEDCTA_MAX_RETRY_WAIT_SECONDS", "60")
+AZURE_OPENAI_API_KEY = os.environ.get("AZURE_OPENAI_API_KEY")
+AZURE_OPENAI_ENDPOINT = os.environ.get("AZURE_OPENAI_ENDPOINT")
+AZURE_OPENAI_DEPLOYMENT = os.environ.get(
+    "AZURE_OPENAI_DEPLOYMENT", "gpt-5-mini"
 )
+AZURE_REASONING_EFFORT = (
+    os.environ.get("MEDCTA_AZURE_REASONING_EFFORT", "low").strip() or None
+)
+AZURE_MAX_COMPLETION_TOKENS = int(
+    os.environ.get("MEDCTA_AZURE_MAX_COMPLETION_TOKENS", "1024")
+)
+AZURE_IMAGE_DETAIL = os.environ.get("MEDCTA_AZURE_IMAGE_DETAIL", "auto").strip()
+_azure_seed = os.environ.get("MEDCTA_AZURE_SEED")
+AZURE_SEED = (
+    int(_azure_seed)
+    if _azure_seed is not None and _azure_seed.strip()
+    else None
+)
+
+MAX_RETRIES = int(os.environ.get("MEDCTA_MAX_RETRIES", "5"))
 IMAGE_URL_CACHE_TTL_SECONDS = float(
     os.environ.get("MEDCTA_IMAGE_URL_CACHE_TTL_SECONDS", "2700")
 )
-REASONING_EFFORT = os.environ.get("MEDCTA_REASONING_EFFORT", "none")

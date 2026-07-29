@@ -18,6 +18,11 @@ def _exception_summary(exc: Exception) -> dict:
     return {"type": type(exc).__name__, "message": str(exc)}
 
 
+def _response_metadata(response) -> Optional[dict]:
+    metadata = getattr(response, "metadata", None)
+    return metadata if isinstance(metadata, dict) else None
+
+
 def _call_stage(
     call_fn: Callable,
     system_prompt: str,
@@ -33,7 +38,9 @@ def _call_stage(
         return {
             "initial_response_received": False,
             "initial_raw": None,
+            "initial_response_metadata": None,
             "raw": None,
+            "repair_response_metadata": None,
             "parsed": None,
             "valid": False,
             "repaired": False,
@@ -45,6 +52,7 @@ def _call_stage(
         }
 
     parsed_raw, json_error = safe_json_loads(initial_raw)
+    initial_response_metadata = _response_metadata(initial_raw)
     parsed, validation_error = validate(
         parsed_raw,
         available_tools=available_tools,
@@ -54,7 +62,9 @@ def _call_stage(
         return {
             "initial_response_received": True,
             "initial_raw": initial_raw,
+            "initial_response_metadata": initial_response_metadata,
             "raw": initial_raw,
+            "repair_response_metadata": None,
             "parsed": asdict(parsed),
             "valid": True,
             "repaired": False,
@@ -76,7 +86,9 @@ def _call_stage(
         return {
             "initial_response_received": True,
             "initial_raw": initial_raw,
+            "initial_response_metadata": initial_response_metadata,
             "raw": None,
+            "repair_response_metadata": None,
             "parsed": None,
             "valid": False,
             "repaired": True,
@@ -88,6 +100,7 @@ def _call_stage(
         }
 
     repaired_raw, repaired_json_error = safe_json_loads(repair_raw)
+    repair_response_metadata = _response_metadata(repair_raw)
     repaired, repaired_validation_error = validate(
         repaired_raw,
         available_tools=available_tools,
@@ -96,7 +109,9 @@ def _call_stage(
     return {
         "initial_response_received": True,
         "initial_raw": initial_raw,
+        "initial_response_metadata": initial_response_metadata,
         "raw": repair_raw,
+        "repair_response_metadata": repair_response_metadata,
         "parsed": asdict(repaired) if repaired_error is None else None,
         "valid": repaired_error is None,
         "repaired": True,

@@ -1,3 +1,5 @@
+import base64
+import io
 import json
 from pathlib import Path
 from types import SimpleNamespace
@@ -128,6 +130,52 @@ def _raw_case():
     }
 
 
+def _raw_parallel_case():
+    raw = _raw_case()
+    raw["tools"].append(
+        {
+            "name": "ImageDescription",
+            "description": "Describe image",
+            "inputs": [{"type": "image", "name": "image"}],
+        }
+    )
+    raw["dialogs"] = [
+        raw["dialogs"][0],
+        {
+            "role": "assistant",
+            "tool_calls": [
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "OCR",
+                        "arguments": {"image": "image/image_1.jpg"},
+                    },
+                },
+                {
+                    "type": "function",
+                    "function": {
+                        "name": "ImageDescription",
+                        "arguments": {"image": "image/image_1.jpg"},
+                    },
+                },
+            ],
+            "thought": "THIS MUST NOT BE ADAPTED",
+        },
+        {
+            "role": "tool",
+            "name": "OCR",
+            "content": {"type": "text", "content": "visible label"},
+        },
+        {
+            "role": "tool",
+            "name": "ImageDescription",
+            "content": {"type": "text", "content": "visible anatomy"},
+        },
+        {"role": "assistant", "content": "gold answer"},
+    ]
+    return raw
+
+
 def test_action_ontology_is_the_two_action_contract():
     assert ACTIONS == ("CALL_TOOL", "FINAL_ANSWER")
 
@@ -225,6 +273,27 @@ def test_adapter_rejects_mismatched_tool_observation():
     raw_case["dialogs"][2]["name"] = "ImageDescription"
     with pytest.raises(ValueError, match="call/observation tool mismatch"):
         adapt_raw_dataset({"0": raw_case}, ["0"])
+
+
+def test_adapter_sequentializes_parallel_tool_calls_in_source_order():
+    adapted = adapt_raw_dataset({"19": _raw_parallel_case()}, ["19"])
+    steps = adapted["cases"][0]["reference_steps"]
+    assert [step["tool_name"] for step in steps[:-1]] == [
+        "OCR",
+        "ImageDescription",
+    ]
+    assert [step["reference_observation"] for step in steps[:-1]] == [
+        "visible label",
+        "visible anatomy",
+    ]
+    assert [step["source_parallel_call"]["call_index"] for step in steps[:-1]] == [
+        0,
+        1,
+    ]
+    assert (
+        adapted["dataset"]["parallel_call_policy"]
+        == "sequentialized_in_source_order"
+    )
 
 
 def test_dataset_validation_rejects_nonterminal_final_action():
@@ -474,6 +543,44 @@ def test_invalid_and_inference_metrics_remain_separate():
     assert report["repair_count"] == 1
 
 
+def test_provider_usage_and_fingerprint_are_aggregated():
+    metadata = {
+        "provider_model": "gpt-5-mini-2025-08-07",
+        "system_fingerprint": "fp_test",
+        "usage": {
+            "prompt_tokens": 120,
+            "completion_tokens": 40,
+            "total_tokens": 160,
+            "prompt_tokens_details": {"cached_tokens": 20},
+            "completion_tokens_details": {"reasoning_tokens": 16},
+        },
+    }
+    trace = run_case(
+        _case(),
+        call_fn=_scripted(
+            llm.AzureJSONResponse(
+                _response("CALL_TOOL", "OCR"),
+                metadata=metadata,
+            ),
+            llm.AzureJSONResponse(
+                _response("FINAL_ANSWER", answer="gold answer"),
+                metadata=metadata,
+            ),
+        ),
+    )
+    report = build_report([trace], model="gpt-5-mini")
+    assert report["usage"] == {
+        "responses_with_metadata": 2,
+        "responses_with_usage": 2,
+        "prompt_tokens": 240,
+        "completion_tokens": 80,
+        "total_tokens": 320,
+        "cached_prompt_tokens": 40,
+        "reasoning_tokens": 32,
+        "system_fingerprint_counts": {"fp_test": 2},
+    }
+
+
 def test_inference_only_run_has_no_routing_rate_denominators():
     def fail(*_args):
         raise RuntimeError("provider unavailable")
@@ -690,25 +797,29 @@ def test_interrupted_run_keeps_reproducible_partial_report(tmp_path):
     assert [trace["case_id"] for trace in traces] == ["A"]
 
 
-def test_model_preflight_checks_visibility_without_inference(monkeypatch):
+def test_model_preflight_validates_azure_config_without_inference(monkeypatch):
     monkeypatch.setattr(
         llm,
-        "preflight_model",
-        lambda model: {"model": model, "available": True},
+        "preflight_config",
+        lambda model: {
+            "model": model,
+            "endpoint_host": "resource.services.ai.azure.com",
+            "check": "local_configuration_only",
+        },
     )
-    assert pipeline_module._preflight_groq_model("vision-model") == {
+    assert pipeline_module._preflight_azure_model("vision-model") == {
         "model": "vision-model",
-        "available": True,
-        "check": "model_list_only",
+        "endpoint_host": "resource.services.ai.azure.com",
+        "check": "local_configuration_only",
     }
 
     monkeypatch.setattr(
         llm,
-        "preflight_model",
-        lambda model: {"model": model, "available": False},
+        "preflight_config",
+        lambda _model: (_ for _ in ()).throw(RuntimeError("invalid Azure config")),
     )
-    with pytest.raises(RuntimeError, match="not available"):
-        pipeline_module._preflight_groq_model("missing-model")
+    with pytest.raises(RuntimeError, match="invalid Azure config"):
+        pipeline_module._preflight_azure_model("missing-model")
 
 
 def test_builtin_pipeline_preflight_fails_before_artifacts_or_inference(
@@ -722,10 +833,10 @@ def test_builtin_pipeline_preflight_fails_before_artifacts_or_inference(
         assert model == "missing-model"
         raise RuntimeError("configured model unavailable")
 
-    monkeypatch.setattr(pipeline_module, "_preflight_groq_model", unavailable)
+    monkeypatch.setattr(pipeline_module, "_preflight_azure_model", unavailable)
     monkeypatch.setattr(
         pipeline_module,
-        "_call_groq_json",
+        "_call_azure_json",
         lambda *_args, **_kwargs: inference_calls.append(True),
     )
 
@@ -742,32 +853,110 @@ def test_builtin_pipeline_preflight_fails_before_artifacts_or_inference(
     assert not (tmp_path / "runs").exists()
 
 
-def test_groq_adapter_sends_image_url_and_json_mode(monkeypatch):
+@pytest.mark.parametrize(
+    "endpoint, expected",
+    [
+        (
+            "https://resource.services.ai.azure.com",
+            "https://resource.services.ai.azure.com/openai/v1/",
+        ),
+        (
+            "https://resource.services.ai.azure.com/openai/v1/",
+            "https://resource.services.ai.azure.com/openai/v1/",
+        ),
+        (
+            "https://resource.services.ai.azure.com/openai/v1/chat/completions",
+            "https://resource.services.ai.azure.com/openai/v1/",
+        ),
+    ],
+)
+def test_azure_endpoint_normalization(endpoint, expected):
+    assert llm.normalize_base_url(endpoint) == expected
+
+
+def test_azure_adapter_sends_image_and_json_mode(monkeypatch):
     captured = {}
 
     class Completions:
         def create(self, **kwargs):
             captured.update(kwargs)
             return SimpleNamespace(
-                choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'))]
+                choices=[
+                    SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'))
+                ],
+                model="gpt-5-mini-2025-08-07",
+                system_fingerprint="fp_test",
+                usage=SimpleNamespace(
+                    prompt_tokens=100,
+                    completion_tokens=25,
+                    total_tokens=125,
+                    prompt_tokens_details=SimpleNamespace(cached_tokens=10),
+                    completion_tokens_details=SimpleNamespace(reasoning_tokens=8),
+                ),
             )
 
     client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
     monkeypatch.setattr(llm, "get_client", lambda: client)
     monkeypatch.setattr(llm, "resolve_image_url", lambda url: url)
+    monkeypatch.setattr(llm, "AZURE_SEED", 42)
     result = llm.call_json(
         "system",
         "user",
         "https://example.test/image.jpg",
-        model="vision-model",
+        model="gpt-5-mini",
     )
     assert result == '{"ok":true}'
-    assert captured["model"] == "vision-model"
+    assert captured["model"] == "gpt-5-mini"
     assert captured["response_format"] == {"type": "json_object"}
-    assert captured["reasoning_effort"] == "none"
+    assert captured["max_completion_tokens"] == 1024
+    assert captured["seed"] == 42
+    assert result.metadata == {
+        "provider_model": "gpt-5-mini-2025-08-07",
+        "system_fingerprint": "fp_test",
+        "usage": {
+            "prompt_tokens": 100,
+            "completion_tokens": 25,
+            "total_tokens": 125,
+            "prompt_tokens_details": {"cached_tokens": 10},
+            "completion_tokens_details": {"reasoning_tokens": 8},
+        },
+    }
     content = captured["messages"][1]["content"]
     assert content[0] == {"type": "text", "text": "user"}
-    assert content[1]["image_url"]["url"] == "https://example.test/image.jpg"
+    assert content[1]["image_url"] == {
+        "url": "https://example.test/image.jpg",
+        "detail": "auto",
+    }
+
+
+def test_azure_adapter_transcodes_unsupported_image_format_to_png(monkeypatch):
+    from PIL import Image
+
+    source = io.BytesIO()
+    Image.new("RGB", (2, 2), color=(12, 34, 56)).save(source, format="TIFF")
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self):
+            return source.getvalue()
+
+    monkeypatch.setattr(llm, "resolve_image_url", lambda url: url)
+    monkeypatch.setattr(
+        llm.urllib.request,
+        "urlopen",
+        lambda *_args, **_kwargs: FakeResponse(),
+    )
+    prepared = llm.prepare_image_url("https://example.test/image.tif")
+    assert prepared.startswith("data:image/png;base64,")
+    decoded = base64.b64decode(prepared.split(",", 1)[1])
+    with Image.open(io.BytesIO(decoded)) as image:
+        assert image.format == "PNG"
+        assert image.size == (2, 2)
 
 
 def test_huggingface_image_resolution_is_used_without_changing_other_hosts(monkeypatch):
@@ -833,36 +1022,3 @@ def test_huggingface_image_resolution_cache_expires_before_signed_url(monkeypatc
     assert first == cached == "https://cdn.example.test/resolved-1.jpg"
     assert refreshed == "https://cdn.example.test/resolved-2.jpg"
     assert len(requests) == 2
-
-
-def test_groq_json_validation_failure_falls_back_to_locally_validated_text(monkeypatch):
-    captured = []
-
-    class Completions:
-        def create(self, **kwargs):
-            captured.append(kwargs)
-            if len(captured) == 1:
-                raise RuntimeError("provider code=json_validate_failed")
-            return SimpleNamespace(
-                choices=[
-                    SimpleNamespace(
-                        message=SimpleNamespace(
-                            content=_response("CALL_TOOL", "OCR")
-                        )
-                    )
-                ]
-            )
-
-    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
-    monkeypatch.setattr(llm, "get_client", lambda: client)
-    monkeypatch.setattr(llm, "resolve_image_url", lambda url: url)
-    raw = llm.call_json("system", "user", None, model="vision-model")
-    assert json.loads(raw)["tool_name"] == "OCR"
-    assert captured[0]["response_format"] == {"type": "json_object"}
-    assert "response_format" not in captured[1]
-
-
-def test_retry_delay_parser_supports_minutes_and_long_wait_cap():
-    assert llm._parse_retry_after_message("Please try again in 20m33.5s") == 1233.5
-    assert llm._parse_retry_after_message("try again in 4.25s") == 4.25
-    assert 1233.5 > llm.MAX_RETRY_WAIT_SECONDS

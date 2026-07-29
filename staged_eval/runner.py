@@ -19,6 +19,11 @@ def _default_call_json(system: str, user: str) -> str:
     return call_json(system, user)
 
 
+def _response_metadata(response) -> Optional[dict]:
+    metadata = getattr(response, "metadata", None)
+    return metadata if isinstance(metadata, dict) else None
+
+
 def _call_stage(
     call_fn: Callable,
     system_prompt: str,
@@ -30,6 +35,7 @@ def _call_stage(
 ) -> dict:
     """Call once, repair once if needed, and preserve validation provenance."""
     initial_raw = call_fn(system_prompt, user_prompt)
+    initial_response_metadata = _response_metadata(initial_raw)
     parsed_raw, json_error = safe_json_loads(initial_raw)
     parsed, validation_error = validate(
         parsed_raw,
@@ -40,6 +46,8 @@ def _call_stage(
     if error is None:
         return {
             "raw": initial_raw,
+            "initial_response_metadata": initial_response_metadata,
+            "repair_response_metadata": None,
             "parsed": asdict(parsed),
             "valid": True,
             "repaired": False,
@@ -52,6 +60,7 @@ def _call_stage(
         ORIGINAL=user_prompt,
     )
     repair_raw = call_fn(system_prompt, repair_prompt)
+    repair_response_metadata = _response_metadata(repair_raw)
     repaired_raw, repaired_json_error = safe_json_loads(repair_raw)
     repaired, repaired_validation_error = validate(
         repaired_raw,
@@ -62,6 +71,8 @@ def _call_stage(
     return {
         "initial_raw": initial_raw,
         "raw": repair_raw,
+        "initial_response_metadata": initial_response_metadata,
+        "repair_response_metadata": repair_response_metadata,
         "parsed": asdict(repaired) if repaired_error is None else None,
         "valid": repaired_error is None,
         "repaired": True,

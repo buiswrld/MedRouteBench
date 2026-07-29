@@ -1,9 +1,12 @@
 """Offline tests for the fixed two-stage PubMedQA revision experiment."""
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
+import staged_eval.pipeline as pipeline_module
+from staged_eval import llm
 from staged_eval.data import (
     eligible_cases,
     load_cases,
@@ -483,6 +486,42 @@ def test_build_report_contains_exact_requested_metrics_and_counts():
     assert report["trace_label_counts"]["missed_revision"] == 2
 
 
+def test_provider_usage_and_fingerprint_are_aggregated():
+    metadata = {
+        "provider_model": "gpt-5-mini-2025-08-07",
+        "system_fingerprint": "fp_test",
+        "usage": {
+            "prompt_tokens": 120,
+            "completion_tokens": 40,
+            "total_tokens": 160,
+            "prompt_tokens_details": {"cached_tokens": 20},
+            "completion_tokens_details": {"reasoning_tokens": 16},
+        },
+    }
+    responses = iter(
+        [
+            llm.AzureJSONResponse(_output("ANSWER", "yes"), metadata=metadata),
+            llm.AzureJSONResponse(_output("KEEP_ANSWER", "yes"), metadata=metadata),
+        ]
+    )
+    trace = run_case(
+        _case(),
+        "yes",
+        call_fn=lambda *_args: next(responses),
+    )
+    report = build_report([trace], model="gpt-5-mini")
+    assert report["usage"] == {
+        "responses_with_metadata": 2,
+        "responses_with_usage": 2,
+        "prompt_tokens": 240,
+        "completion_tokens": 80,
+        "total_tokens": 320,
+        "cached_prompt_tokens": 40,
+        "reasoning_tokens": 32,
+        "system_fingerprint_counts": {"fp_test": 2},
+    }
+
+
 def test_pipeline_writes_report_and_one_trace_per_case(monkeypatch, tmp_path):
     cases = [_case("A"), _case("B")]
     monkeypatch.setattr(
@@ -575,7 +614,15 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
             return _output("ANSWER", "yes")
         return _output("KEEP_ANSWER", "yes")
 
-    monkeypatch.setattr("staged_eval.pipeline._call_groq_json", fake_call)
+    monkeypatch.setattr("staged_eval.pipeline._call_azure_json", fake_call)
+    monkeypatch.setattr(
+        "staged_eval.pipeline._preflight_azure_model",
+        lambda model: {
+            "model": model,
+            "endpoint_host": "resource.services.ai.azure.com",
+            "check": "local_configuration_only",
+        },
+    )
     report, _ = run_pipeline(
         n=1,
         stratify=False,
@@ -586,7 +633,100 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
 
     assert seen_models == ["chosen-model", "chosen-model"]
     assert report["model"] == "chosen-model"
-    assert report["backend"] == "groq"
+    assert report["backend"] == "azure-openai"
+
+
+@pytest.mark.parametrize(
+    "endpoint, expected",
+    [
+        (
+            "https://resource.services.ai.azure.com",
+            "https://resource.services.ai.azure.com/openai/v1/",
+        ),
+        (
+            "https://resource.services.ai.azure.com/openai/v1/",
+            "https://resource.services.ai.azure.com/openai/v1/",
+        ),
+        (
+            "https://resource.services.ai.azure.com/openai/v1/chat/completions",
+            "https://resource.services.ai.azure.com/openai/v1/",
+        ),
+    ],
+)
+def test_azure_endpoint_normalization(endpoint, expected):
+    assert llm.normalize_base_url(endpoint) == expected
+
+
+def test_azure_adapter_sends_json_mode_seed_and_usage(monkeypatch):
+    captured = {}
+
+    class Completions:
+        def create(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(
+                choices=[
+                    SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'))
+                ],
+                model="gpt-5-mini-2025-08-07",
+                system_fingerprint="fp_test",
+                usage=SimpleNamespace(
+                    prompt_tokens=100,
+                    completion_tokens=25,
+                    total_tokens=125,
+                    prompt_tokens_details=SimpleNamespace(cached_tokens=10),
+                    completion_tokens_details=SimpleNamespace(reasoning_tokens=8),
+                ),
+            )
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    monkeypatch.setattr(llm, "get_client", lambda: client)
+    monkeypatch.setattr(llm, "AZURE_SEED", 42)
+    result = llm.call_json("system", "user", model="gpt-5-mini")
+
+    assert result == '{"ok":true}'
+    assert captured["model"] == "gpt-5-mini"
+    assert captured["response_format"] == {"type": "json_object"}
+    assert captured["max_completion_tokens"] == 1024
+    assert captured["seed"] == 42
+    assert result.metadata["usage"]["completion_tokens_details"] == {
+        "reasoning_tokens": 8
+    }
+
+
+def test_builtin_pipeline_preflight_fails_before_artifacts_or_inference(
+    monkeypatch, tmp_path
+):
+    cases = [_case("A")]
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+    inference_calls = []
+    monkeypatch.setattr(
+        pipeline_module,
+        "_preflight_azure_model",
+        lambda _model: (_ for _ in ()).throw(RuntimeError("invalid Azure config")),
+    )
+    monkeypatch.setattr(
+        pipeline_module,
+        "_call_azure_json",
+        lambda *_args, **_kwargs: inference_calls.append(True),
+    )
+
+    with pytest.raises(RuntimeError, match="invalid Azure config"):
+        run_pipeline(
+            n=1,
+            stratify=False,
+            out_dir=tmp_path / "runs",
+            verbose=False,
+        )
+
+    assert inference_calls == []
+    assert not (tmp_path / "runs").exists()
 
 
 def test_run_directories_are_unique(monkeypatch, tmp_path):

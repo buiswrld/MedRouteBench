@@ -15,6 +15,54 @@ def _ratio(numerator: int, denominator: int) -> dict:
     }
 
 
+def _response_metadata(traces: List[dict]):
+    for trace in traces:
+        for stage in (1, 2):
+            output = trace.get(f"stage{stage}_model_output") or {}
+            for key in ("initial_response_metadata", "repair_response_metadata"):
+                metadata = output.get(key)
+                if isinstance(metadata, dict):
+                    yield metadata
+
+
+def usage_summary(traces: List[dict]) -> dict:
+    metadata = list(_response_metadata(traces))
+    usage = [
+        item["usage"]
+        for item in metadata
+        if isinstance(item.get("usage"), dict)
+    ]
+    return {
+        "responses_with_metadata": len(metadata),
+        "responses_with_usage": len(usage),
+        "prompt_tokens": sum(int(item.get("prompt_tokens") or 0) for item in usage),
+        "completion_tokens": sum(
+            int(item.get("completion_tokens") or 0) for item in usage
+        ),
+        "total_tokens": sum(int(item.get("total_tokens") or 0) for item in usage),
+        "cached_prompt_tokens": sum(
+            int((item.get("prompt_tokens_details") or {}).get("cached_tokens") or 0)
+            for item in usage
+        ),
+        "reasoning_tokens": sum(
+            int(
+                (item.get("completion_tokens_details") or {}).get(
+                    "reasoning_tokens"
+                )
+                or 0
+            )
+            for item in usage
+        ),
+        "system_fingerprint_counts": dict(
+            Counter(
+                item["system_fingerprint"]
+                for item in metadata
+                if item.get("system_fingerprint")
+            )
+        ),
+    }
+
+
 def _scorable(traces: List[dict]) -> List[dict]:
     """Return selected traces with a valid official gold label."""
     return [
@@ -188,4 +236,5 @@ def build_report(
         "kept_correct_rate": kept_correct_rate(traces),
         "final_abstention_rate": final_abstention_rate(traces),
         "maintenance_rate": maintenance_rate(traces),
+        "usage": usage_summary(traces),
     }
