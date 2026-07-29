@@ -348,11 +348,10 @@ def run_pipeline(
     )
     _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
-    traces = []
+    _case_id_order = {cid: i for i, cid in enumerate(selected_case_ids)}
     for index, case in enumerate(cases, 1):
         existing = existing_by_id.get(case["case_id"])
         if existing is not None:
-            traces.append(existing)
             continue
         if verbose:
             print(
@@ -372,6 +371,7 @@ def run_pipeline(
         )
         _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
+    traces.sort(key=lambda t: _case_id_order.get(t["case_id"], len(selected_case_ids)))
     report = _build_progress_report(
         traces,
         selected_case_ids=selected_case_ids,

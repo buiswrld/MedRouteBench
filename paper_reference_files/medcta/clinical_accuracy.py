@@ -14,7 +14,7 @@ from openai import OpenAI
 # =========================
 # HARDCODED CONFIG
 # =========================
-HF_TOKEN = os.getenv("HF_TOKEN") = ""
+HF_TOKEN = os.getenv("HF_TOKEN", "")
 EVAL_MODEL = "gpt-5.4"
 
 JSON_PATH = ""

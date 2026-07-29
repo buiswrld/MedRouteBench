@@ -50,8 +50,10 @@ python -m staged_eval.pipeline --n 50 --model gpt-5-mini
 
 # Resume an interrupted run
 python -m staged_eval.pipeline --n 50 --resume staged_eval/runs/<run_id>
+```
 
 # Backend-neutral usage
+```python
 from staged_eval.pipeline import run_pipeline
 
 report, traces = run_pipeline(
