@@ -1,21 +1,14 @@
-"""
-Centralised configuration for staged_eval.
-
-Path resolution is deterministic (based on this file's location) so the
-package works regardless of the caller's cwd.
-"""
+"""Centralised configuration for staged_eval."""
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
+from shared.config import (  # re-exported for package consumers
+    AZURE_DEPLOYMENT,
+    PROJECT_DIR,
+)
 
 # ── directory anchors ────────────────────────────────────────────────────────
 PACKAGE_DIR = Path(__file__).resolve().parent   # .../MedRouteBench/staged_eval/
-PROJECT_DIR = PACKAGE_DIR.parent                 # .../MedRouteBench/
-
-# Load local defaults without replacing values supplied by the calling process.
-# This keeps shell, scheduler, and CI configuration authoritative.
-load_dotenv(PROJECT_DIR / ".env", override=False)
 
 # ── data paths ───────────────────────────────────────────────────────────────
 _data_env = os.environ.get("PUBMEDQA_DATA_DIR")
@@ -32,16 +25,5 @@ FIXTURE_GROUND_TRUTH_PATH = FIXTURE_DATA_DIR / "test_ground_truth.json"
 RUNS_DIR = PACKAGE_DIR / "runs"
 
 # ── LLM settings ─────────────────────────────────────────────────────────────
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-GROQ_MODEL   = os.environ.get("GROQ_MODEL", "llama-3.1-8b-instant")
-TEMPERATURE  = float(os.environ.get("TEMPERATURE", "0.0"))
-MAX_TOKENS   = int(os.environ.get("MAX_TOKENS", "512"))
+MAX_TOKENS  = int(os.environ.get("MAX_TOKENS", "512"))
 
-# ── Azure OpenAI backend (takes precedence over Groq when endpoint is set) ───
-AZURE_OPENAI_ENDPOINT   = os.environ.get("AZURE_OPENAI_ENDPOINT")
-AZURE_OPENAI_API_KEY    = os.environ.get("AZURE_OPENAI_API_KEY")
-AZURE_OPENAI_DEPLOYMENT = os.environ.get("AZURE_OPENAI_DEPLOYMENT")
-# Azure v1 API (openai.azure.com/openai/v1/) does not require api_version.
-# Set AZURE_OPENAI_API_VERSION only if you need a legacy versioned endpoint.
-AZURE_OPENAI_API_VERSION = os.environ.get("AZURE_OPENAI_API_VERSION")
-BACKEND = "azure" if AZURE_OPENAI_ENDPOINT else "groq"

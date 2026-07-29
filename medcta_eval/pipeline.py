@@ -12,14 +12,11 @@ from pathlib import Path
 from typing import Callable, Optional, Tuple
 
 from .config import (
-    AZURE_OPENAI_DEPLOYMENT,
-    BACKEND,
-    GROQ_MODEL,
+    AZURE_DEPLOYMENT,
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
     MAX_TOKENS,
     PACKAGE_DIR,
-    REASONING_EFFORT,
     RUNS_DIR,
 )
 from .data import load_dataset, resolve_data_path
@@ -59,53 +56,24 @@ def _call_llm_json(
 
 def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
     if call_fn is None:
-        if BACKEND == "azure":
-            selected_model = model or AZURE_OPENAI_DEPLOYMENT
-            if not selected_model:
-                raise RuntimeError(
-                    "AZURE_OPENAI_DEPLOYMENT must be set when using the azure backend. "
-                    "Add it to MedRouteBench/.env or export in the calling environment."
-                )
-            return (
-                partial(_call_llm_json, model=selected_model),
-                selected_model,
-                "azure-vision",
-                {
-                    "max_completion_tokens": MAX_TOKENS,
-                    "max_retries": MAX_RETRIES,
-                    "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
-                },
+        selected_model = model or AZURE_DEPLOYMENT
+        if not selected_model:
+            raise RuntimeError(
+                "AZURE_DEPLOYMENT must be set. "
+                "Add it to MedRouteBench/.env or export in the calling environment."
             )
-        selected_model = model or GROQ_MODEL
         return (
             partial(_call_llm_json, model=selected_model),
             selected_model,
-            "groq-vision",
+            "azure-vision",
             {
                 "max_completion_tokens": MAX_TOKENS,
                 "max_retries": MAX_RETRIES,
                 "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
-                "reasoning_effort": REASONING_EFFORT,
             },
         )
     callable_id = _callable_id(call_fn)
     return call_fn, model or f"custom:{callable_id}", f"callable:{callable_id}", None
-
-
-def _preflight_groq_model(model: str) -> dict:
-    """Fail before inference when the selected model is not account-visible.
-
-    This deliberately uses only Groq's model-list endpoint. It consumes no
-    generation tokens, though it cannot diagnose an exhausted token quota.
-    """
-    from .llm import preflight_model
-
-    result = preflight_model(model)
-    if not result.get("available"):
-        raise RuntimeError(
-            f"configured Groq model is not available to this account: {model}"
-        )
-    return {**result, "check": "model_list_only"}
 
 
 def _build_provenance(
@@ -125,7 +93,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend in ("groq-vision", "azure-vision"):
+    if backend == "azure-vision":
         code_names.append("llm.py")
     return {
         "schema_version": RUN_SCHEMA_VERSION,
@@ -317,8 +285,6 @@ def run_pipeline(
     cases = _select_cases(payload, n, case_ids)
     selected_case_ids = [case["case_id"] for case in cases]
     model_preflight = None
-    if backend == "groq-vision" and cases and resume_dir is None:
-        model_preflight = _preflight_groq_model(selected_model)
     provenance = _build_provenance(
         resolved_data,
         payload["dataset"],
@@ -357,8 +323,6 @@ def run_pipeline(
             selected_case_ids,
             verbose=verbose,
         )
-        if backend == "groq-vision" and len(existing_by_id) < len(cases):
-            model_preflight = _preflight_groq_model(selected_model)
 
     if verbose:
         print(f"run_dir: {run_dir} | selected: {len(cases)}")
@@ -461,7 +425,7 @@ def _parse_args() -> argparse.Namespace:
         description="MedCTA reference-trajectory routing evaluator",
     )
     parser.add_argument("--n", type=int, default=11, help="number of adapted cases")
-    parser.add_argument("--model", default=None, help="Groq vision model identifier")
+    parser.add_argument("--model", default=None, help="model identifier")
     parser.add_argument("--out", default=None, help="artifact output directory")
     parser.add_argument("--cases", default=None, help="adapted MedCTA subset JSON")
     run_mode = parser.add_mutually_exclusive_group()

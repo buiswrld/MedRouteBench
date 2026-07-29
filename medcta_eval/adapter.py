@@ -1,22 +1,29 @@
-"""Reproducible adapter from the pinned MedCTA release to the v1 subset."""
+"""One-time adapter from the raw MedCTA release to the committed v1 subset.
+
+This module is a data-preparation tool, not part of the evaluation pipeline.
+The pipeline reads the pre-built file at data/medcta/subset_v1.json directly
+via data.py and never imports from here at runtime.
+
+Run this only if you need to regenerate or verify subset_v1.json:
+    python -m medcta_eval.adapter --source <raw_medcta.json> [--check]
+"""
 
 import argparse
 import json
 import os
 import tempfile
-import urllib.request
 from pathlib import Path
 from typing import Sequence
 
-from .config import (
-    DATA_PATH,
-    SOURCE_DATASET,
-    SOURCE_IMAGE_BASE_URL,
-    SOURCE_PAGE_URL,
-    SOURCE_RAW_URL,
-    SOURCE_REVISION,
-    STARTER_CASE_IDS,
-)
+from .config import DATA_PATH
+
+
+# ── pinned source provenance ──────────────────────────────────────────────────
+SOURCE_DATASET        = "IVUL-KAUST/MedCTA"
+SOURCE_REVISION       = "0be777092121a18ba2a85a0c4145a9d4fe8ed7db"
+_SOURCE_PAGE_URL      = f"https://huggingface.co/datasets/{SOURCE_DATASET}"
+_SOURCE_IMAGE_BASE_URL = f"{_SOURCE_PAGE_URL}/resolve/{SOURCE_REVISION}"
+STARTER_CASE_IDS      = tuple(str(i) for i in range(11))
 
 
 ALLOWED_TOOLS = {
@@ -26,20 +33,6 @@ ALLOWED_TOOLS = {
     "GoogleSearch",
     "Calculator",
 }
-
-
-def fetch_raw_dataset(source: str = SOURCE_RAW_URL) -> dict:
-    """Load the raw MedCTA JSON from a URL or local path."""
-    candidate = Path(source)
-    if candidate.is_file():
-        with open(candidate, encoding="utf-8") as handle:
-            return json.load(handle)
-    request = urllib.request.Request(
-        source,
-        headers={"User-Agent": "MedRouteBench-MedCTA-adapter/1.0"},
-    )
-    with urllib.request.urlopen(request, timeout=60) as response:
-        return json.loads(response.read().decode("utf-8"))
 
 
 def _flatten_strings(value) -> list[str]:
@@ -150,7 +143,7 @@ def _adapt_case(case_id: str, raw_case: dict, revision: str) -> dict:
         "case_id": case_id,
         "question": first["content"].strip(),
         "image_path": image_path,
-        "image_reference": f"{SOURCE_PAGE_URL}/resolve/{revision}/{image_path}",
+        "image_reference": f"{_SOURCE_PAGE_URL}/resolve/{revision}/{image_path}",
         "available_tools": [
             {
                 "name": tool["name"],
@@ -172,7 +165,6 @@ def adapt_raw_dataset(
     case_ids: Sequence[str] = STARTER_CASE_IDS,
     *,
     revision: str = SOURCE_REVISION,
-    source_url: str = SOURCE_RAW_URL,
 ) -> dict:
     """Adapt a deterministic subset and validate each trajectory."""
     if not isinstance(raw, dict):
@@ -189,10 +181,9 @@ def adapt_raw_dataset(
         "dataset": {
             "name": SOURCE_DATASET,
             "license": "apache-2.0",
-            "source_page": SOURCE_PAGE_URL,
-            "source_url": source_url,
+            "source_page": _SOURCE_PAGE_URL,
             "source_revision": revision,
-            "image_base_url": SOURCE_IMAGE_BASE_URL,
+            "image_base_url": _SOURCE_IMAGE_BASE_URL,
         },
         "selected_case_ids": normalized_ids,
         "cases": [_adapt_case(case_id, raw[case_id], revision) for case_id in normalized_ids],
@@ -238,7 +229,7 @@ def _parse_args() -> argparse.Namespace:
         prog="python -m medcta_eval.adapter",
         description="Build or verify the pinned MedCTA starter subset",
     )
-    parser.add_argument("--source", default=SOURCE_RAW_URL, help="raw JSON URL or path")
+    parser.add_argument("--source", required=True, help="local path to the raw MedCTA JSON file")
     parser.add_argument("--output", default=str(DATA_PATH), help="adapted JSON path")
     parser.add_argument("--ids", default="0-10", help="comma-separated IDs/ranges")
     parser.add_argument(
@@ -252,11 +243,13 @@ def _parse_args() -> argparse.Namespace:
 def main() -> int:
     args = _parse_args()
     case_ids = _parse_case_ids(args.ids)
-    adapted = adapt_raw_dataset(
-        fetch_raw_dataset(args.source),
-        case_ids,
-        source_url=args.source,
-    )
+    source = Path(args.source)
+    if not source.is_file():
+        print(f"source file not found: {source}")
+        return 1
+    with open(source, encoding="utf-8") as handle:
+        raw = json.load(handle)
+    adapted = adapt_raw_dataset(raw, case_ids)
     output = Path(args.output)
     if args.check:
         if not output.is_file():

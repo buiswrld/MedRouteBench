@@ -6,8 +6,8 @@ import pytest
 
 import medcta_eval.pipeline as pipeline_module
 from medcta_eval import llm
-from medcta_eval.adapter import ALLOWED_TOOLS, adapt_raw_dataset
-from medcta_eval.config import DATA_PATH, SOURCE_REVISION, STARTER_CASE_IDS
+from medcta_eval.adapter import ALLOWED_TOOLS, SOURCE_REVISION, STARTER_CASE_IDS, adapt_raw_dataset
+from medcta_eval.config import DATA_PATH, PROJECT_DIR
 from medcta_eval.data import load_dataset, validate_dataset
 from medcta_eval.metrics import build_report
 from medcta_eval.pipeline import report_existing_run, run_pipeline
@@ -15,8 +15,6 @@ from medcta_eval.prompts import build_user_prompt
 from medcta_eval.runner import run_case
 from medcta_eval.schema import (
     ACTIONS,
-    answer_matches,
-    normalize_answer,
     safe_json_loads,
     validate,
 )
@@ -190,14 +188,10 @@ def test_safe_json_loads_never_raises():
     assert parsed is None and error.startswith("json_parse:")
 
 
-def test_final_answer_matching_is_transparent_normalized_exact():
-    assert normalize_answer("  GOBLET  Cells. ") == "goblet cells"
-    assert answer_matches("GOBLET cells!", ["goblet cells."])
-    assert not answer_matches("goblet", ["goblet cells"])
-
 
 def test_pinned_subset_contains_exact_ids_tools_and_no_thoughts():
-    payload = load_dataset(DATA_PATH)
+    subset_path = PROJECT_DIR / "data" / "medcta" / "subset_v1.json"
+    payload = load_dataset(subset_path)
     assert payload["selected_case_ids"] == list(STARTER_CASE_IDS)
     assert {tool["name"] for case in payload["cases"] for tool in case["available_tools"]} == ALLOWED_TOOLS
     assert all(SOURCE_REVISION in case["image_reference"] for case in payload["cases"])
@@ -270,7 +264,8 @@ def test_prompt_includes_actual_prior_actions_and_only_revealed_observations():
     assert "observation-1-ImageDescription" not in prompt
 
 
-def test_perfect_replay_matches_tools_finalization_and_answer():
+def test_perfect_replay_matches_tools_finalization_and_answer(monkeypatch):
+    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
     case = _case(reference_tools=("OCR", "ImageDescription"))
     trace = run_case(
         case,
@@ -309,7 +304,8 @@ def test_wrong_tool_continues_with_expected_reference_observation():
     assert '"tool_name": "ImageDescription"' in second_prompt
 
 
-def test_premature_finalization_stops_and_keeps_answer_accuracy_separate():
+def test_premature_finalization_stops_and_keeps_answer_accuracy_separate(monkeypatch):
+    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
     trace = run_case(
         _case(reference_tools=("OCR", "ImageDescription")),
         call_fn=_scripted(_response("FINAL_ANSWER", answer="gold answer")),
@@ -391,7 +387,8 @@ def test_repair_inference_failure_preserves_initial_invalidity():
     assert output["repaired"] is True
 
 
-def test_requested_metrics_use_the_locked_denominators():
+def test_requested_metrics_use_the_locked_denominators(monkeypatch):
+    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
     perfect = run_case(
         _case("perfect", ("OCR",), ("OCR", "ImageDescription")),
         call_fn=_scripted(
@@ -413,9 +410,9 @@ def test_requested_metrics_use_the_locked_denominators():
     report = build_report([perfect, premature, missed], model="test")
 
     assert report["next_tool_accuracy"] == {
-        "rate": 0.25,
+        "rate": 1 / 3,
         "numerator": 1,
-        "denominator": 4,
+        "denominator": 3,
     }
     assert report["trajectory_step_accuracy"] == {
         "rate": 2 / 7,
@@ -498,7 +495,8 @@ def test_inference_only_run_has_no_routing_rate_denominators():
         assert report[metric] == {"rate": None, "numerator": 0, "denominator": 0}
 
 
-def test_inference_failure_does_not_dilute_evaluable_case_metrics():
+def test_inference_failure_does_not_dilute_evaluable_case_metrics(monkeypatch):
+    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
     perfect = run_case(
         _case("perfect"),
         call_fn=_scripted(
@@ -690,59 +688,7 @@ def test_interrupted_run_keeps_reproducible_partial_report(tmp_path):
     assert [trace["case_id"] for trace in traces] == ["A"]
 
 
-def test_model_preflight_checks_visibility_without_inference(monkeypatch):
-    monkeypatch.setattr(
-        llm,
-        "preflight_model",
-        lambda model: {"model": model, "available": True},
-    )
-    assert pipeline_module._preflight_groq_model("vision-model") == {
-        "model": "vision-model",
-        "available": True,
-        "check": "model_list_only",
-    }
-
-    monkeypatch.setattr(
-        llm,
-        "preflight_model",
-        lambda model: {"model": model, "available": False},
-    )
-    with pytest.raises(RuntimeError, match="not available"):
-        pipeline_module._preflight_groq_model("missing-model")
-
-
-def test_builtin_pipeline_preflight_fails_before_artifacts_or_inference(
-    tmp_path, monkeypatch
-):
-    data_path = tmp_path / "cases.json"
-    _write_payload(data_path, _case("A"))
-    inference_calls = []
-
-    def unavailable(model):
-        assert model == "missing-model"
-        raise RuntimeError("configured model unavailable")
-
-    monkeypatch.setattr(pipeline_module, "_preflight_groq_model", unavailable)
-    monkeypatch.setattr(
-        pipeline_module,
-        "_call_groq_json",
-        lambda *_args, **_kwargs: inference_calls.append(True),
-    )
-
-    with pytest.raises(RuntimeError, match="configured model unavailable"):
-        run_pipeline(
-            n=1,
-            model="missing-model",
-            out_dir=tmp_path / "runs",
-            cases_path=data_path,
-            verbose=False,
-        )
-
-    assert inference_calls == []
-    assert not (tmp_path / "runs").exists()
-
-
-def test_groq_adapter_sends_image_url_and_json_mode(monkeypatch):
+def test_builtin_adapter_sends_image_url_and_json_mode(monkeypatch):
     captured = {}
 
     class Completions:
@@ -764,7 +710,7 @@ def test_groq_adapter_sends_image_url_and_json_mode(monkeypatch):
     assert result == '{"ok":true}'
     assert captured["model"] == "vision-model"
     assert captured["response_format"] == {"type": "json_object"}
-    assert captured["reasoning_effort"] == "none"
+    assert "reasoning_effort" not in captured
     content = captured["messages"][1]["content"]
     assert content[0] == {"type": "text", "text": "user"}
     assert content[1]["image_url"]["url"] == "https://example.test/image.jpg"
@@ -835,7 +781,7 @@ def test_huggingface_image_resolution_cache_expires_before_signed_url(monkeypatc
     assert len(requests) == 2
 
 
-def test_groq_json_validation_failure_falls_back_to_locally_validated_text(monkeypatch):
+def test_json_validation_failure_falls_back_to_text(monkeypatch):
     captured = []
 
     class Completions:

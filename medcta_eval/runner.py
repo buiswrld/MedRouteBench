@@ -5,13 +5,23 @@ from typing import Callable, Optional
 
 from .data import reference_tool_sequence, tool_names
 from .prompts import REPAIR_TEMPLATE, SYSTEM_PROMPT, build_user_prompt
-from .schema import answer_matches, safe_json_loads, validate
+from .config import FINAL_ACCURACY_CONFIDENCE_THRESHOLD
+from .schema import safe_json_loads, validate
 
 
 def _default_call_json(system: str, user: str, image_url: str | None) -> str:
     from .llm import call_json
 
     return call_json(system, user, image_url)
+
+
+def _judge_final_answer(answer: str | None, accepted_answers: list[str]) -> float | None:
+    from .llm import judge_answer
+
+    gold = accepted_answers[0] if accepted_answers else ""
+    if not gold or not answer:
+        return None
+    return judge_answer(gold, answer)
 
 
 def _exception_summary(exc: Exception) -> dict:
@@ -145,7 +155,8 @@ def run_case(
         "trajectory_exact_match": False,
         "final_answer": None,
         "final_answer_match": False,
-        "final_answer_match_method": "normalized_exact_whitelist",
+        "final_answer_match_method": f"llm_judge_threshold_{FINAL_ACCURACY_CONFIDENCE_THRESHOLD}",
+        "final_answer_score": None,
     }
 
     for expected in case["reference_steps"]:
@@ -194,8 +205,11 @@ def run_case(
             if actual["action"] == "FINAL_ANSWER":
                 step_trace["reference_tool_match"] = False
                 trace["final_answer"] = actual["answer"]
-                trace["final_answer_match"] = answer_matches(
-                    actual["answer"], accepted_answers
+                _score = _judge_final_answer(actual["answer"], accepted_answers)
+                trace["final_answer_score"] = _score
+                trace["final_answer_match"] = (
+                    _score >= FINAL_ACCURACY_CONFIDENCE_THRESHOLD
+                    if _score is not None else False
                 )
                 trace["status"] = "premature_finalization"
                 trace["termination_reason"] = "model finalized before reference tools ended"
@@ -222,7 +236,12 @@ def run_case(
 
         step_trace["action_match"] = True
         trace["final_answer"] = actual["answer"]
-        trace["final_answer_match"] = answer_matches(actual["answer"], accepted_answers)
+        _score = _judge_final_answer(actual["answer"], accepted_answers)
+        trace["final_answer_score"] = _score
+        trace["final_answer_match"] = (
+            _score >= FINAL_ACCURACY_CONFIDENCE_THRESHOLD
+            if _score is not None else False
+        )
         trace["completed_reference_finalization"] = True
         trace["status"] = "completed"
         trace["termination_reason"] = "model finalized at the reference final step"

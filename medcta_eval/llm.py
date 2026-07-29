@@ -1,114 +1,37 @@
-"""LLM vision client — routes to Azure OpenAI or Groq based on BACKEND configuration."""
+"""LLM vision client for MedCTA evaluation."""
 
-import re
+import json
 import time
 import urllib.request
 from collections import OrderedDict
 from urllib.parse import urlparse
 
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
+from tenacity import retry, retry_if_exception, stop_after_attempt
+from openai import RateLimitError as _OAIRateLimitError
 
+from shared.llm import (
+    _parse_retry_after_message,
+    _reported_retry_delay,
+    _retry_wait,
+    _retryable_errors,
+    get_client,
+)
 from .config import (
-    AZURE_OPENAI_API_KEY,
-    AZURE_OPENAI_DEPLOYMENT,
-    AZURE_OPENAI_ENDPOINT,
-    BACKEND,
-    GROQ_API_KEY,
-    GROQ_MODEL,
+    AZURE_DEPLOYMENT,
     IMAGE_URL_CACHE_TTL_SECONDS,
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
     MAX_TOKENS,
-    REASONING_EFFORT,
 )
 
-from openai import OpenAI
-from openai import (
-    APIConnectionError as _OAIConnectionError,
-    APITimeoutError as _OAITimeoutError,
-    InternalServerError as _OAIInternalServerError,
-    RateLimitError as _OAIRateLimitError,
-)
-from groq import Groq
-from groq import (
-    APIConnectionError as _GroqConnectionError,
-    APITimeoutError as _GroqTimeoutError,
-    InternalServerError as _GroqInternalServerError,
-    RateLimitError as _GroqRateLimitError,
-)
-
-_client = None
 _IMAGE_URL_CACHE_MAX_SIZE = 128
 _image_url_cache: OrderedDict[str, tuple[float, str]] = OrderedDict()
-_fallback_wait = wait_exponential(multiplier=1, min=1, max=60)
-_retryable_errors = (
-    _OAIRateLimitError,
-    _OAIConnectionError,
-    _OAITimeoutError,
-    _OAIInternalServerError,
-    _GroqRateLimitError,
-    _GroqConnectionError,
-    _GroqTimeoutError,
-    _GroqInternalServerError,
-)
-
-
-def get_client():
-    global _client
-    if _client is None:
-        if BACKEND == "azure":
-            if not AZURE_OPENAI_ENDPOINT or not AZURE_OPENAI_API_KEY:
-                raise RuntimeError(
-                    "AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY must be set. "
-                    "Add them to MedRouteBench/.env or export in the calling environment."
-                )
-            # Azure v1 API: append /openai/v1/ if not already present.
-            base = AZURE_OPENAI_ENDPOINT.rstrip("/")
-            if not base.endswith("/openai/v1"):
-                base = base + "/openai/v1"
-            base = base + "/"  # OpenAI client requires trailing slash
-            _client = OpenAI(
-                base_url=base,
-                api_key=AZURE_OPENAI_API_KEY,
-            )
-        else:
-            if not GROQ_API_KEY:
-                raise RuntimeError(
-                    "GROQ_API_KEY is not set. Add it to MedRouteBench/.env or "
-                    "export it in the calling environment."
-                )
-            _client = Groq(api_key=GROQ_API_KEY)
-    return _client
-
-
-
-def _parse_retry_after_message(message: str) -> float | None:
-    match = re.search(
-        r"try again in\s+(?:(?P<minutes>\d+)m)?(?P<seconds>[\d.]+)s",
-        message,
-        flags=re.IGNORECASE,
-    )
-    if not match:
-        return None
-    return 60 * int(match.group("minutes") or 0) + float(match.group("seconds"))
-
-
-def _reported_retry_delay(exception: Exception) -> float | None:
-    response = getattr(exception, "response", None)
-    headers = getattr(response, "headers", {}) or {}
-    retry_after = headers.get("retry-after")
-    if retry_after is not None:
-        try:
-            return float(retry_after)
-        except (TypeError, ValueError):
-            pass
-    return _parse_retry_after_message(str(exception))
 
 
 def _should_retry(exception: Exception) -> bool:
     if not isinstance(exception, _retryable_errors):
         return False
-    if isinstance(exception, (_OAIRateLimitError, _GroqRateLimitError)):
+    if isinstance(exception, _OAIRateLimitError):
         reported = _reported_retry_delay(exception)
         if reported is not None and reported > MAX_RETRY_WAIT_SECONDS:
             print(
@@ -120,31 +43,15 @@ def _should_retry(exception: Exception) -> bool:
     return True
 
 
-def _retry_wait(retry_state) -> float:
-    exception = retry_state.outcome.exception()
-    seconds = None
-    if isinstance(exception, (_OAIRateLimitError, _GroqRateLimitError)):
-        seconds = _reported_retry_delay(exception)
-    if seconds is None:
-        seconds = float(_fallback_wait(retry_state))
-    seconds = max(1.0, seconds) + 0.5
-    print(
-        f"[RETRY] {type(exception).__name__}; waiting {seconds:.1f}s "
-        f"(attempt {retry_state.attempt_number}/{MAX_RETRIES})",
-        flush=True,
-    )
-    return seconds
-
-
 def clear_image_url_cache() -> None:
     """Clear resolved image redirects (primarily useful for tests)."""
     _image_url_cache.clear()
 
 
 def resolve_image_url(image_url: str) -> str:
-    """Resolve Hugging Face's redirect before giving the URL to Groq.
+    """Resolve Hugging Face's redirect to its final CDN URL.
 
-    Groq's media fetcher currently rejects the initial 302 returned by
+    Some model APIs reject the initial 302 returned by
     ``huggingface.co/.../resolve/...``. The final CDN URL is resolved in memory
     and cached for less than the signed URL lifetime; the pinned source URL
     remains the auditable reference stored in prompts, traces, and manifests.
@@ -196,7 +103,7 @@ def call_json(
     *,
     model: str | None = None,
 ) -> str:
-    """Call a Groq vision model and return its raw JSON response text."""
+    """Call the configured vision model and return its raw JSON response text."""
     user_content: str | list[dict]
     if image_url:
         resolved_image_url = resolve_image_url(image_url)
@@ -206,7 +113,7 @@ def call_json(
         ]
     else:
         user_content = user
-    effective_model = model or (AZURE_OPENAI_DEPLOYMENT if BACKEND == "azure" else GROQ_MODEL)
+    effective_model = model or AZURE_DEPLOYMENT
     request_kwargs = dict(
         model=effective_model,
         messages=[
@@ -216,15 +123,12 @@ def call_json(
         max_completion_tokens=MAX_TOKENS,
         response_format={"type": "json_object"},
     )
-    # reasoning_effort is Groq-specific; omit it for Azure deployments
-    if BACKEND != "azure" and REASONING_EFFORT and REASONING_EFFORT != "none":
-        request_kwargs["reasoning_effort"] = REASONING_EFFORT
     try:
         response = get_client().chat.completions.create(**request_kwargs)
     except Exception as exc:
         if "json_validate_failed" in str(exc):
-            # Groq can reject an otherwise valid request when JSON-mode generation
-            # is empty. Retry without JSON mode.
+            # Some providers reject JSON-mode requests when generation is empty.
+            # Retry without JSON mode.
             request_kwargs.pop("response_format")
             response = get_client().chat.completions.create(**request_kwargs)
         else:
@@ -232,16 +136,32 @@ def call_json(
     return response.choices[0].message.content
 
 
-def preflight_model(model: str | None = None) -> dict:
-    """Confirm the configured model is accessible.
+def judge_answer(gold: str, pred: str) -> float | None:
+    """Score a predicted answer against the gold using LLM-as-judge.
 
-    For Azure, the deployment name is validated by a lightweight chat call
-    rather than a model-list endpoint (which Azure does not expose in the same
-    way). For Groq, the model-list endpoint is used as before.
+    Uses FINAL_ACCURACY_SYSTEM_PROMPT and the same backend client as inference.
+    Returns a float in [0.0, 1.0], or None on failure.
     """
-    if BACKEND == "azure":
-        # Azure deployments are account-scoped; skip the model-list check.
-        return {"model": model or AZURE_OPENAI_DEPLOYMENT, "available": True, "note": "preflight skipped for azure backend"}
-    selected = model or GROQ_MODEL
-    available = {entry.id for entry in get_client().models.list().data}
-    return {"model": selected, "available": selected in available}
+    from .prompts import FINAL_ACCURACY_SYSTEM_PROMPT
+
+    if not gold or not pred:
+        return None
+    user = f"Gold final answer:\n{gold}\n\nPredicted final answer:\n{pred}"
+    effective_model = AZURE_DEPLOYMENT
+    try:
+        response = get_client().chat.completions.create(
+            model=effective_model,
+            messages=[
+                {"role": "system", "content": FINAL_ACCURACY_SYSTEM_PROMPT},
+                {"role": "user", "content": user},
+            ],
+            max_completion_tokens=64,
+            response_format={"type": "json_object"},
+        )
+        parsed = json.loads(response.choices[0].message.content)
+        score = parsed.get("score")
+        if isinstance(score, (int, float)):
+            return max(0.0, min(1.0, float(score)))
+    except Exception:
+        return None
+    return None

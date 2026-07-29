@@ -36,8 +36,14 @@ def _valid_actual(step: dict):
 
 def next_tool_accuracy(traces: list[dict]) -> dict:
     traces = _evaluable_traces(traces)
-    denominator = sum(len(trace.get("reference_tool_sequence") or []) for trace in traces)
-    numerator = sum(step.get("reference_tool_match") is True for step in _steps(traces))
+    # Count only steps where the reference expected a tool call and the model
+    # was actually evaluated (i.e., a step_trace exists for that position).
+    evaluated_tool_steps = [
+        step for step in _steps(traces)
+        if step.get("expected_action") == "CALL_TOOL"
+    ]
+    denominator = len(evaluated_tool_steps)
+    numerator = sum(step.get("reference_tool_match") is True for step in evaluated_tool_steps)
     return _ratio(numerator, denominator)
 
 
@@ -101,6 +107,19 @@ def final_answer_accuracy(traces: list[dict]) -> dict:
     return _ratio(numerator, len(traces))
 
 
+def llm_final_answer_accuracy(traces: list[dict]) -> dict:
+    """Mean LLM judge score over evaluable traces that received a final answer."""
+    traces = _evaluable_traces(traces)
+    scored = [
+        trace for trace in traces
+        if isinstance(trace.get("final_answer_score"), (int, float))
+    ]
+    if not scored:
+        return {"mean_score": None, "n_scored": len(scored), "n_evaluable": len(traces)}
+    mean = sum(t["final_answer_score"] for t in scored) / len(scored)
+    return {"mean_score": round(mean, 4), "n_scored": len(scored), "n_evaluable": len(traces)}
+
+
 def invalid_action_rate(traces: list[dict]) -> dict:
     traces = _evaluable_traces(traces)
     responded = [
@@ -148,6 +167,7 @@ def build_report(
         "unnecessary_tool_rate": unnecessary_tool_rate(traces),
         "trajectory_exact_match_rate": trajectory_exact_match_rate(traces),
         "final_answer_accuracy": final_answer_accuracy(traces),
+        "llm_final_answer_accuracy": llm_final_answer_accuracy(traces),
         "invalid_action_rate": invalid_action_rate(traces),
         "inference_failure_count": inference_failure_count,
         "inference_failure_case_count": sum(

@@ -1,8 +1,6 @@
-"""Action validation and answer matching for MedCTA replay."""
+"""Action validation for MedCTA replay."""
 
 import json
-import re
-import unicodedata
 from dataclasses import dataclass
 from typing import Optional, Sequence, Tuple
 
@@ -71,17 +69,3 @@ def validate(
             return None, "FINAL_ANSWER requires a nonempty answer"
 
     return AgentOutput(action=action, tool_name=tool_name, answer=answer), None
-
-
-def normalize_answer(value: str) -> str:
-    """Normalize a short answer for transparent whitelist exact matching."""
-    normalized = unicodedata.normalize("NFKC", str(value)).casefold()
-    normalized = re.sub(r"\s+", " ", normalized).strip()
-    return re.sub(r"[\s\.,;:!?]+$", "", normalized)
-
-
-def answer_matches(answer: Optional[str], accepted_answers: Sequence[str]) -> bool:
-    if not isinstance(answer, str) or not answer.strip():
-        return False
-    candidate = normalize_answer(answer)
-    return any(candidate == normalize_answer(gold) for gold in accepted_answers)

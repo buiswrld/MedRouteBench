@@ -576,7 +576,6 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
         return _output("KEEP_ANSWER", "yes")
 
     monkeypatch.setattr("staged_eval.pipeline._call_llm_json", fake_call)
-    monkeypatch.setattr("staged_eval.pipeline.BACKEND", "groq")
     report, _ = run_pipeline(
         n=1,
         stratify=False,
@@ -587,7 +586,7 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
 
     assert seen_models == ["chosen-model", "chosen-model"]
     assert report["model"] == "chosen-model"
-    assert report["backend"] == "groq"
+    assert report["backend"] == "azure"
 
 
 def test_run_directories_are_unique(monkeypatch, tmp_path):

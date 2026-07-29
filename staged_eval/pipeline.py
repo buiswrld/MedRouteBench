@@ -12,7 +12,7 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import GROQ_MODEL, MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_OPENAI_DEPLOYMENT, BACKEND
+from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT
 from .data import (
     FINAL_ANSWERS,
     eligible_cases,
@@ -46,7 +46,7 @@ def _callable_id(call_fn: Callable) -> str:
 
 
 def _call_llm_json(system: str, user: str, *, model: str) -> str:
-    """Load the built-in provider adapter (Groq or Azure) only when selected."""
+    """Load the built-in provider adapter only when selected."""
     from .llm import call_json
 
     return call_json(system, user, model=model)
@@ -54,24 +54,16 @@ def _call_llm_json(system: str, user: str, *, model: str) -> str:
 
 def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
     if call_fn is None:
-        if BACKEND == "azure":
-            selected_model = model or AZURE_OPENAI_DEPLOYMENT
-            if not selected_model:
-                raise RuntimeError(
-                    "AZURE_OPENAI_DEPLOYMENT must be set when using the azure backend. "
-                    "Add it to MedRouteBench/.env or export in your shell."
-                )
-            return (
-                partial(_call_llm_json, model=selected_model),
-                selected_model,
-                "azure",
-                {"max_completion_tokens": MAX_TOKENS},
+        selected_model = model or AZURE_DEPLOYMENT
+        if not selected_model:
+            raise RuntimeError(
+                "AZURE_DEPLOYMENT must be set. "
+                "Add it to MedRouteBench/.env or export in your shell."
             )
-        selected_model = model or GROQ_MODEL
         return (
             partial(_call_llm_json, model=selected_model),
             selected_model,
-            "groq",
+            "azure",
             {"max_completion_tokens": MAX_TOKENS},
         )
 
@@ -96,7 +88,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend in ("groq", "azure"):
+    if backend == "azure":
         code_names.append("llm.py")
     code_files = {name: PACKAGE_DIR / name for name in code_names}
     return {
@@ -168,6 +160,38 @@ def _write_json_atomic(path: Path, payload: dict) -> None:
     finally:
         if temporary.exists():
             temporary.unlink()
+
+
+def _build_progress_report(
+    traces: List[dict],
+    *,
+    selected_pmids: List[str],
+    model: str,
+    backend: str,
+    run_id: str,
+    provenance: dict,
+    sample_counts: Optional[dict],
+    dataset_counts: Optional[dict],
+) -> dict:
+    report = build_report(
+        traces,
+        model=model,
+        backend=backend,
+        run_id=run_id,
+        provenance=provenance,
+        sample_counts=sample_counts,
+        dataset_counts=dataset_counts,
+    )
+    traced = {t["pmid"] for t in traces}
+    missing = [pmid for pmid in selected_pmids if pmid not in traced]
+    report.update(
+        {
+            "n_planned_cases": len(selected_pmids),
+            "run_complete": not missing,
+            "missing_pmids": missing,
+        }
+    )
+    return report
 
 
 def run_pipeline(
@@ -285,11 +309,26 @@ def run_pipeline(
                 f"remaining: {len(cases) - len(existing_by_pmid)}"
             )
 
-    traces: List[dict] = []
+    selected_pmids = [case["pmid"] for case in cases]
+    traces: List[dict] = [
+        existing_by_pmid[pmid]
+        for pmid in selected_pmids
+        if pmid in existing_by_pmid
+    ]
+    partial_report = _build_progress_report(
+        traces,
+        selected_pmids=selected_pmids,
+        model=selected_model,
+        backend=backend,
+        run_id=run_id,
+        provenance=provenance,
+        sample_counts=sample_counts,
+        dataset_counts=dataset_counts,
+    )
+    _write_json_atomic(run_dir / "partial_report.json", partial_report)
+
     for index, case in enumerate(cases, 1):
-        existing = existing_by_pmid.get(case["pmid"])
-        if existing is not None:
-            traces.append(existing)
+        if case["pmid"] in existing_by_pmid:
             continue
         if verbose:
             print(f"[{index}/{len(cases)}] pmid={case['pmid']} | fixed stages=2")
@@ -300,6 +339,17 @@ def run_pipeline(
         )
         traces.append(trace)
         _write_json_atomic(run_dir / f"trace_{case['pmid']}.json", trace)
+        partial_report = _build_progress_report(
+            traces,
+            selected_pmids=selected_pmids,
+            model=selected_model,
+            backend=backend,
+            run_id=run_id,
+            provenance=provenance,
+            sample_counts=sample_counts,
+            dataset_counts=dataset_counts,
+        )
+        _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
     report = build_report(
         traces,
@@ -311,6 +361,9 @@ def run_pipeline(
         dataset_counts=dataset_counts,
     )
     _write_json_atomic(run_dir / "report.json", report)
+    partial_path = run_dir / "partial_report.json"
+    if partial_path.exists():
+        partial_path.unlink()
     if verbose:
         print(json.dumps(report, indent=2))
     return report, traces

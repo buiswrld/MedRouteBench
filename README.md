@@ -21,10 +21,10 @@ the prompts. `LONG_ANSWER`, `final_decision`, `test_ground_truth`, and gold
 labels are never included. Official labels from
 `data/pubmedqa/test_ground_truth.json` are used only for scoring and traces.
 
-Run an evaluation with the built-in Groq adapter:
+Run an evaluation with the built-in Azure adapter:
 
-```powershell
-python -m staged_eval.pipeline --n 50 --model llama-3.1-8b-instant --inspect 0
+```bash
+python -m staged_eval.pipeline --n 50 --model gpt-4o-mini --inspect 0
 ```
 
 The selected model is passed to the backend that performs the request and is
@@ -60,6 +60,6 @@ from the final-accuracy cohort.
 
 Run offline verification:
 
-```powershell
+```bash
 python -m pytest staged_eval/tests -q
 ```
