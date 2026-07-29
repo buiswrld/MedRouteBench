@@ -15,6 +15,7 @@ from openai import OpenAI
 # HARDCODED CONFIG
 # =========================
 HF_TOKEN = os.getenv("HF_TOKEN", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 EVAL_MODEL = "gpt-5.4"
 
 JSON_PATH = ""
@@ -580,8 +581,6 @@ def save_all(results: List[Dict[str, Any]], paths: Dict[str, str]) -> None:
 # MAIN
 # =========================================================
 def main() -> None:
-    os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-
     ensure_dir(OUT_DIR)
     paths = get_output_paths(OUT_DIR, EVAL_MODEL)
     samples = load_samples(JSON_PATH)
