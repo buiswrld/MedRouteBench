@@ -6,6 +6,7 @@ import pytest
 
 import medcta_eval.pipeline as pipeline_module
 from medcta_eval import llm
+import shared.llm as shared_llm
 from medcta_eval.adapter import ALLOWED_TOOLS, SOURCE_REVISION, STARTER_CASE_IDS, adapt_raw_dataset
 from medcta_eval.config import DATA_PATH, PROJECT_DIR
 from medcta_eval.data import load_dataset, validate_dataset
@@ -410,9 +411,9 @@ def test_requested_metrics_use_the_locked_denominators(monkeypatch):
     report = build_report([perfect, premature, missed], model="test")
 
     assert report["next_tool_accuracy"] == {
-        "rate": 1 / 3,
+        "rate": 1 / 4,
         "numerator": 1,
-        "denominator": 3,
+        "denominator": 4,
     }
     assert report["trajectory_step_accuracy"] == {
         "rate": 2 / 7,
@@ -809,6 +810,6 @@ def test_json_validation_failure_falls_back_to_text(monkeypatch):
 
 
 def test_retry_delay_parser_supports_minutes_and_long_wait_cap():
-    assert llm._parse_retry_after_message("Please try again in 20m33.5s") == 1233.5
-    assert llm._parse_retry_after_message("try again in 4.25s") == 4.25
-    assert 1233.5 > llm.MAX_RETRY_WAIT_SECONDS
+    assert shared_llm._parse_retry_after_message("Please try again in 20m33.5s") == 1233.5
+    assert shared_llm._parse_retry_after_message("try again in 4.25s") == 4.25
+    assert 1233.5 > shared_llm.MAX_RETRY_WAIT_SECONDS

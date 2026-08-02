@@ -2,8 +2,8 @@
 
 import re
 
-from tenacity import wait_exponential
-from openai import OpenAI, AzureOpenAI
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
+from openai import OpenAI
 from openai import (
     APIConnectionError as _OAIConnectionError,
     APITimeoutError as _OAITimeoutError,
@@ -13,8 +13,9 @@ from openai import (
 
 from .config import (
     AZURE_API_KEY,
-    AZURE_API_VERSION,
     AZURE_ENDPOINT,
+    MAX_RETRIES,
+    MAX_RETRY_WAIT_SECONDS,
 )
 
 _client = None
@@ -35,20 +36,11 @@ def get_client():
                 "AZURE_ENDPOINT and AZURE_API_KEY must be set. "
                 "Add them to MedRouteBench/.env or export in your environment."
             )
-        if AZURE_API_VERSION:
-            # Legacy versioned endpoint.
-            _client = AzureOpenAI(
-                azure_endpoint=AZURE_ENDPOINT,
-                api_key=AZURE_API_KEY,
-                api_version=AZURE_API_VERSION,
-            )
-        else:
-            # Azure AI Foundry v1 API — append /openai/v1/ if not already present.
-            base = AZURE_ENDPOINT.rstrip("/")
-            if not base.endswith("/openai/v1"):
-                base = base + "/openai/v1"
-            base = base + "/"  # OpenAI client requires trailing slash
-            _client = OpenAI(base_url=base, api_key=AZURE_API_KEY)
+        base = AZURE_ENDPOINT.rstrip("/")
+        if not base.endswith("/openai/v1"):
+            base = base + "/openai/v1"
+        base = base + "/"  # OpenAI client requires trailing slash
+        _client = OpenAI(base_url=base, api_key=AZURE_API_KEY)
     return _client
 
 
@@ -75,6 +67,22 @@ def _reported_retry_delay(exception: Exception) -> float | None:
     return _parse_retry_after_message(str(exception))
 
 
+def _should_retry(exception: Exception) -> bool:
+    """Return True iff the exception is retryable and within the wait budget."""
+    if not isinstance(exception, _retryable_errors):
+        return False
+    if isinstance(exception, _OAIRateLimitError):
+        reported = _reported_retry_delay(exception)
+        if reported is not None and reported > MAX_RETRY_WAIT_SECONDS:
+            print(
+                f"[NO RETRY] RateLimitError requested {reported:.1f}s, above "
+                f"MAX_RETRY_WAIT_SECONDS={MAX_RETRY_WAIT_SECONDS:.1f}s",
+                flush=True,
+            )
+            return False
+    return True
+
+
 def _retry_wait(retry_state) -> float:
     """Honor Retry-After headers, including rolling daily-token limits."""
     exception = retry_state.outcome.exception()
@@ -90,3 +98,13 @@ def _retry_wait(retry_state) -> float:
         flush=True,
     )
     return seconds
+
+
+def make_retry_decorator():
+    """Return the standard Tenacity retry decorator for LLM calls."""
+    return retry(
+        wait=_retry_wait,
+        stop=stop_after_attempt(MAX_RETRIES),
+        retry=retry_if_exception(_should_retry),
+        reraise=True,
+    )

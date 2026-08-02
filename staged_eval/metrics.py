@@ -3,15 +3,8 @@
 from collections import Counter
 from typing import List, Optional
 
+from shared.pipeline_utils import ratio as _ratio
 from staged_eval.data import FINAL_ANSWERS
-
-
-def _ratio(numerator: int, denominator: int) -> dict:
-    return {
-        "rate": numerator / denominator if denominator else None,
-        "numerator": numerator,
-        "denominator": denominator,
-    }
 
 
 def _scorable(traces: List[dict]) -> List[dict]:

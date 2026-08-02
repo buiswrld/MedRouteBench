@@ -2,17 +2,20 @@
 
 import argparse
 import datetime
-import hashlib
 import json
-import os
 import sys
-import uuid
 from collections import Counter
 from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
 from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT
+from shared.pipeline_utils import (
+    callable_id as _callable_id,
+    create_run_dir as _create_run_dir,
+    sha256_file as _sha256_file,
+    write_json_atomic as _write_json_atomic,
+)
 from .data import (
     FINAL_ANSWERS,
     eligible_cases,
@@ -29,20 +32,6 @@ from .schema import ACTIONS
 
 
 RUN_SCHEMA_VERSION = 1
-
-
-def _sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with open(path, "rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def _callable_id(call_fn: Callable) -> str:
-    module = getattr(call_fn, "__module__", type(call_fn).__module__)
-    name = getattr(call_fn, "__qualname__", type(call_fn).__qualname__)
-    return f"{module}.{name}"
 
 
 def _call_llm_json(system: str, user: str, *, model: str) -> str:
@@ -67,8 +56,8 @@ def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
             {"max_completion_tokens": MAX_TOKENS},
         )
 
-    callable_id = _callable_id(call_fn)
-    return call_fn, model or f"custom:{callable_id}", f"callable:{callable_id}", None
+    cid = _callable_id(call_fn)
+    return call_fn, model or f"custom:{cid}", f"callable:{cid}", None
 
 
 def _build_provenance(
@@ -136,30 +125,6 @@ def _validate_resume_provenance(saved: Optional[dict], current: dict) -> None:
             "resume provenance does not match the current run configuration: "
             f"saved={saved_signature}, current={current_signature}"
         )
-
-
-def _create_run_dir(runs_dir: Path) -> Tuple[Path, str]:
-    runs_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.datetime.now(datetime.timezone.utc).strftime(
-        "%Y%m%dT%H%M%S.%fZ"
-    )
-    run_id = f"{timestamp}_{uuid.uuid4().hex[:8]}"
-    run_dir = runs_dir / run_id
-    run_dir.mkdir(exist_ok=False)
-    return run_dir, run_id
-
-
-def _write_json_atomic(path: Path, payload: dict) -> None:
-    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
-    try:
-        with open(temporary, "w", encoding="utf-8") as handle:
-            json.dump(payload, handle, indent=2, ensure_ascii=False)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temporary, path)
-    finally:
-        if temporary.exists():
-            temporary.unlink()
 
 
 def _build_progress_report(

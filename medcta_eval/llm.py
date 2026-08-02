@@ -1,51 +1,56 @@
 """LLM vision client for MedCTA evaluation."""
 
+import base64
+import io
 import json
 import time
 import urllib.request
 from collections import OrderedDict
 from urllib.parse import urlparse
 
-from tenacity import retry, retry_if_exception, stop_after_attempt
-from openai import RateLimitError as _OAIRateLimitError
+from PIL import Image
 
 from shared.llm import (
-    _parse_retry_after_message,
-    _reported_retry_delay,
-    _retry_wait,
-    _retryable_errors,
     get_client,
+    make_retry_decorator,
 )
 from .config import (
     AZURE_DEPLOYMENT,
     IMAGE_URL_CACHE_TTL_SECONDS,
-    MAX_RETRIES,
-    MAX_RETRY_WAIT_SECONDS,
+    JUDGE_DEPLOYMENT,
     MAX_TOKENS,
 )
 
 _IMAGE_URL_CACHE_MAX_SIZE = 128
 _image_url_cache: OrderedDict[str, tuple[float, str]] = OrderedDict()
 
-
-def _should_retry(exception: Exception) -> bool:
-    if not isinstance(exception, _retryable_errors):
-        return False
-    if isinstance(exception, _OAIRateLimitError):
-        reported = _reported_retry_delay(exception)
-        if reported is not None and reported > MAX_RETRY_WAIT_SECONDS:
-            print(
-                f"[NO RETRY] RateLimitError requested {reported:.1f}s, above "
-                f"MEDCTA_MAX_RETRY_WAIT_SECONDS={MAX_RETRY_WAIT_SECONDS:.1f}s",
-                flush=True,
-            )
-            return False
-    return True
+# Content-types that the OpenAI vision API cannot render natively.
+_CONVERT_TO_PNG_TYPES = frozenset({
+    "image/tiff",
+    "image/bmp",
+    "image/x-bmp",
+    "image/x-ms-bmp",
+})
 
 
 def clear_image_url_cache() -> None:
     """Clear resolved image redirects (primarily useful for tests)."""
     _image_url_cache.clear()
+
+
+def _png_data_url(url: str) -> str:
+    """Download a non-web-compatible image and return it as a PNG data URL."""
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "MedRouteBench-MedCTA-evaluator/1.0"},
+    )
+    with urllib.request.urlopen(request, timeout=60) as response:
+        raw = response.read()
+    image = Image.open(io.BytesIO(raw)).convert("RGB")
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    encoded = base64.b64encode(buf.getvalue()).decode("ascii")
+    return f"data:image/png;base64,{encoded}"
 
 
 def resolve_image_url(image_url: str) -> str:
@@ -55,6 +60,9 @@ def resolve_image_url(image_url: str) -> str:
     ``huggingface.co/.../resolve/...``. The final CDN URL is resolved in memory
     and cached for less than the signed URL lifetime; the pinned source URL
     remains the auditable reference stored in prompts, traces, and manifests.
+
+    For TIFF/BMP images (which the OpenAI vision API does not support), the
+    image is downloaded, converted to PNG, and returned as a data URL.
     """
     if urlparse(image_url).hostname != "huggingface.co":
         return image_url
@@ -73,13 +81,20 @@ def resolve_image_url(image_url: str) -> str:
         headers={"User-Agent": "MedRouteBench-MedCTA-evaluator/1.0"},
     )
     with urllib.request.urlopen(request, timeout=30) as response:
-        resolved = response.geturl()
+        cdn_url = response.geturl()
         if response.status != 200:
             raise RuntimeError(
                 f"MedCTA image resolution failed with HTTP {response.status}"
             )
-        if not str(response.headers.get("Content-Type", "")).startswith("image/"):
+        content_type = str(response.headers.get("Content-Type", ""))
+        if not content_type.startswith("image/"):
             raise RuntimeError("MedCTA image URL did not resolve to image content")
+
+    if content_type in _CONVERT_TO_PNG_TYPES:
+        resolved = _png_data_url(cdn_url)
+    else:
+        resolved = cdn_url
+
     _image_url_cache[image_url] = (
         now + IMAGE_URL_CACHE_TTL_SECONDS,
         resolved,
@@ -90,12 +105,7 @@ def resolve_image_url(image_url: str) -> str:
     return resolved
 
 
-@retry(
-    wait=_retry_wait,
-    stop=stop_after_attempt(MAX_RETRIES),
-    retry=retry_if_exception(_should_retry),
-    reraise=True,
-)
+@make_retry_decorator()
 def call_json(
     system: str,
     user: str,
@@ -147,7 +157,7 @@ def judge_answer(gold: str, pred: str) -> float | None:
     if not gold or not pred:
         return None
     user = f"Gold final answer:\n{gold}\n\nPredicted final answer:\n{pred}"
-    effective_model = AZURE_DEPLOYMENT
+    effective_model = JUDGE_DEPLOYMENT or AZURE_DEPLOYMENT
     try:
         response = get_client().chat.completions.create(
             model=effective_model,

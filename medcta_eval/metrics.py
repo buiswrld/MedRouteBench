@@ -3,13 +3,7 @@
 from collections import Counter
 from typing import Optional
 
-
-def _ratio(numerator: int, denominator: int) -> dict:
-    return {
-        "rate": numerator / denominator if denominator else None,
-        "numerator": numerator,
-        "denominator": denominator,
-    }
+from shared.pipeline_utils import ratio as _ratio
 
 
 def _steps(traces: list[dict]):
@@ -36,13 +30,15 @@ def _valid_actual(step: dict):
 
 def next_tool_accuracy(traces: list[dict]) -> dict:
     traces = _evaluable_traces(traces)
-    # Count only steps where the reference expected a tool call and the model
-    # was actually evaluated (i.e., a step_trace exists for that position).
+    # Denominator is all reference CALL_TOOL steps, including those never reached
+    # due to premature finalization. Unreached steps score zero per the MedCTA paper.
+    denominator = sum(
+        len(trace.get("reference_tool_sequence") or []) for trace in traces
+    )
     evaluated_tool_steps = [
         step for step in _steps(traces)
         if step.get("expected_action") == "CALL_TOOL"
     ]
-    denominator = len(evaluated_tool_steps)
     numerator = sum(step.get("reference_tool_match") is True for step in evaluated_tool_steps)
     return _ratio(numerator, denominator)
 

@@ -183,37 +183,27 @@ def test_split_uses_first_label_containing_result():
     ]
 
 
-def test_split_falls_back_to_floor_half_without_results():
+def test_split_returns_none_without_results_section():
     case = _case(
         contexts=["one", "two", "three", "four", "five"],
         labels=["A", "B", "C", "D", "E"],
     )
-    split = split_evidence(case)
-    assert split["strategy"] == "half_split"
-    assert len(split["stage1_evidence"]) == 2
-    assert len(split["stage2_added_evidence"]) == 3
+    assert split_evidence(case) is None
 
 
-def test_results_at_first_section_falls_back_instead_of_empty_stage1():
-    split = split_evidence(
+def test_results_at_first_section_is_excluded():
+    assert split_evidence(
         _case(contexts=["results", "discussion"], labels=["RESULTS", "DISCUSSION"])
-    )
-    assert split["strategy"] == "half_split"
-    assert len(split["stage1_evidence"]) == len(split["stage2_added_evidence"]) == 1
+    ) is None
 
 
-def test_unusable_results_boundary_tries_half_split_before_skipping():
-    split = split_evidence(
+def test_empty_results_context_is_excluded():
+    assert split_evidence(
         _case(
             contexts=["background", "methods", ""],
             labels=["BACKGROUND", "METHODS", "RESULTS"],
         )
-    )
-    assert split["strategy"] == "half_split"
-    assert [item["context"] for item in split["stage2_added_evidence"]] == [
-        "methods",
-        "",
-    ]
+    ) is None
 
 
 @pytest.mark.parametrize(

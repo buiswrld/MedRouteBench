@@ -25,6 +25,17 @@ _SOURCE_PAGE_URL      = f"https://huggingface.co/datasets/{SOURCE_DATASET}"
 _SOURCE_IMAGE_BASE_URL = f"{_SOURCE_PAGE_URL}/resolve/{SOURCE_REVISION}"
 STARTER_CASE_IDS      = tuple(str(i) for i in range(11))
 
+# ── known data errata ─────────────────────────────────────────────────────────
+# Case 19 (fullset only): reference_steps[3] (RegionAttributeDescription, step
+# index 3) contains a duplicate of step 2's left-lung observation instead of
+# the correct right-lung (IL-17R-/-, 18h) observation. This bug is present in
+# the committed fullset_v1.json and cannot be corrected without the original
+# raw MedCTA source file. Evaluation results for case 19 should be interpreted
+# with this limitation in mind.
+KNOWN_ERRATA = {
+    "19": "step 3 RegionAttributeDescription duplicates step 2 (left-lung) instead of right-lung",
+}
+
 
 ALLOWED_TOOLS = {
     "OCR",

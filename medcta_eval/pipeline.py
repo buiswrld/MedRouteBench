@@ -2,22 +2,27 @@
 
 import argparse
 import datetime
-import hashlib
 import json
-import os
 import sys
-import uuid
 from functools import partial
 from pathlib import Path
 from typing import Callable, Optional, Tuple
 
 from .config import (
     AZURE_DEPLOYMENT,
-    MAX_RETRIES,
-    MAX_RETRY_WAIT_SECONDS,
     MAX_TOKENS,
     PACKAGE_DIR,
     RUNS_DIR,
+)
+from shared.config import (
+    MAX_RETRIES,
+    MAX_RETRY_WAIT_SECONDS,
+)
+from shared.pipeline_utils import (
+    callable_id as _callable_id,
+    create_run_dir as _create_run_dir,
+    sha256_file as _sha256_file,
+    write_json_atomic as _write_json_atomic,
 )
 from .data import load_dataset, resolve_data_path
 from .metrics import build_report
@@ -26,20 +31,6 @@ from .schema import ACTIONS
 
 
 RUN_SCHEMA_VERSION = 1
-
-
-def _sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with open(path, "rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
-def _callable_id(call_fn: Callable) -> str:
-    module = getattr(call_fn, "__module__", type(call_fn).__module__)
-    name = getattr(call_fn, "__qualname__", type(call_fn).__qualname__)
-    return f"{module}.{name}"
 
 
 def _call_llm_json(
@@ -72,8 +63,8 @@ def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
                 "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
             },
         )
-    callable_id = _callable_id(call_fn)
-    return call_fn, model or f"custom:{callable_id}", f"callable:{callable_id}", None
+    cid = _callable_id(call_fn)
+    return call_fn, model or f"custom:{cid}", f"callable:{cid}", None
 
 
 def _build_provenance(
@@ -131,30 +122,6 @@ def _validate_resume_provenance(saved: Optional[dict], current: dict) -> None:
         raise ValueError("resume manifest is missing a valid provenance object")
     if _resume_signature(saved) != _resume_signature(current):
         raise ValueError("resume provenance does not match the current MedCTA run")
-
-
-def _create_run_dir(runs_dir: Path) -> Tuple[Path, str]:
-    runs_dir.mkdir(parents=True, exist_ok=True)
-    timestamp = datetime.datetime.now(datetime.timezone.utc).strftime(
-        "%Y%m%dT%H%M%S.%fZ"
-    )
-    run_id = f"{timestamp}_{uuid.uuid4().hex[:8]}"
-    run_dir = runs_dir / run_id
-    run_dir.mkdir(exist_ok=False)
-    return run_dir, run_id
-
-
-def _write_json_atomic(path: Path, payload: dict) -> None:
-    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
-    try:
-        with open(temporary, "w", encoding="utf-8") as handle:
-            json.dump(payload, handle, indent=2, ensure_ascii=False)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temporary, path)
-    finally:
-        if temporary.exists():
-            temporary.unlink()
 
 
 def _select_cases(payload: dict, n: int, case_ids: Optional[list[str]]) -> list[dict]:

@@ -126,9 +126,9 @@ def split_evidence(case: dict) -> Optional[dict]:
     """
     Split a PubMedQA case into fixed preliminary and added evidence.
 
-    Prefer the first normalized label containing ``RESULT`` as the boundary.
-    If that would not create two non-empty groups, split the context list at
-    ``len(CONTEXTS) // 2``. Return ``None`` when either side has no text.
+    Uses the first normalized label containing ``RESULT`` as the boundary.
+    Returns ``None`` when no usable RESULT section is found or either side has no text.
+    Cases where the RESULT section is first (no preliminary evidence) are also excluded.
     """
     contexts = [str(context or "").strip() for context in (case.get("CONTEXTS") or [])]
     labels = normalized_labels(case)
@@ -140,34 +140,28 @@ def split_evidence(case: dict) -> Optional[dict]:
         (index for index, label in enumerate(labels) if "RESULT" in label),
         None,
     )
-    candidates = []
-    if result_index is not None and 0 < result_index < n_contexts:
-        candidates.append((result_index, "first_results_section"))
-    half_index = n_contexts // 2
-    if not candidates or candidates[0][0] != half_index:
-        candidates.append((half_index, "half_split"))
+    if result_index is None or not (0 < result_index < n_contexts):
+        return None
 
-    for split_index, strategy in candidates:
-        preliminary = [
-            {"label": labels[index], "context": contexts[index]}
-            for index in range(split_index)
-        ]
-        added = [
-            {"label": labels[index], "context": contexts[index]}
-            for index in range(split_index, n_contexts)
-        ]
-        if not any(item["context"] for item in preliminary):
-            continue
-        if not any(item["context"] for item in added):
-            continue
-        return {
-            "strategy": strategy,
-            "split_index": split_index,
-            "stage1_evidence": preliminary,
-            "stage2_added_evidence": added,
-            "full_context": preliminary + added,
-        }
-    return None
+    preliminary = [
+        {"label": labels[index], "context": contexts[index]}
+        for index in range(result_index)
+    ]
+    added = [
+        {"label": labels[index], "context": contexts[index]}
+        for index in range(result_index, n_contexts)
+    ]
+    if not any(item["context"] for item in preliminary):
+        return None
+    if not any(item["context"] for item in added):
+        return None
+    return {
+        "strategy": "first_results_section",
+        "split_index": result_index,
+        "stage1_evidence": preliminary,
+        "stage2_added_evidence": added,
+        "full_context": preliminary + added,
+    }
 
 
 def eligible_cases(cases: List[dict], gt: dict) -> List[dict]:

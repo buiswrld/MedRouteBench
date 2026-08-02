@@ -15,5 +15,7 @@ load_dotenv(PROJECT_DIR / ".env", override=False)
 AZURE_ENDPOINT    = os.environ.get("AZURE_ENDPOINT")
 AZURE_API_KEY     = os.environ.get("AZURE_API_KEY")
 AZURE_DEPLOYMENT  = os.environ.get("AZURE_DEPLOYMENT")
-# Set only for legacy versioned Azure endpoints; leave unset for the v1 API.
-AZURE_API_VERSION = os.environ.get("AZURE_API_VERSION")
+
+# ── Shared retry settings ────────────────────────────────────────────────────
+MAX_RETRIES            = int(os.environ.get("MAX_RETRIES", "5"))
+MAX_RETRY_WAIT_SECONDS = float(os.environ.get("MAX_RETRY_WAIT_SECONDS", "60"))
