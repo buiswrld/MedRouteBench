@@ -21,6 +21,7 @@ from .config import (
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
     MAX_TOKENS,
+    REASONING_EFFORT,
 )
 
 _IMAGE_URL_CACHE_MAX_SIZE = 128
@@ -122,6 +123,8 @@ def call_json(
         max_completion_tokens=MAX_TOKENS,
         response_format={"type": "json_object"},
     )
+    if REASONING_EFFORT:
+        request_kwargs["reasoning_effort"] = REASONING_EFFORT
     try:
         response = get_client().chat.completions.create(**request_kwargs)
     except Exception as exc:

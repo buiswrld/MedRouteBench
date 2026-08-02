@@ -191,12 +191,31 @@ def test_openai_backend_pins_temperature_and_json_mode():
         api_key="secret",
         model="judge-model",
         model_family="other",
+        reasoning_effort="none",
     )
     raw = OpenAIJudgeBackend(config, client=client)("system", "user")
     assert json.loads(raw)["label"] == "correct"
     assert captured["temperature"] == 0.0
+    assert captured["reasoning_effort"] == "none"
     assert captured["response_format"] == {"type": "json_object"}
     assert captured["model"] == "judge-model"
+
+
+def test_pipeline_records_bounded_parallelism(tmp_path):
+    report, _results, _run_dir = run_judge_pipeline(
+        [_item(item_id="item-1"), _item(item_id="item-2")],
+        _rubric(),
+        lambda *_args: _response(),
+        judge_model="claude-test-judge",
+        judge_family="anthropic",
+        judge_backend="test",
+        judge_generation={"temperature": 0},
+        out_dir=tmp_path,
+        repeats=1,
+        max_workers=2,
+        verbose=False,
+    )
+    assert report["provenance"]["max_concurrent_items"] == 2
 
 
 def test_blinded_human_sample_omits_judge_and_model_identity(tmp_path):

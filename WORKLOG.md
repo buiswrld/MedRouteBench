@@ -25,6 +25,11 @@ future contributors should know. Dates use the project timezone
 - Added judge/model/generation metadata, rubric and prompt hashes, source-run
   manifest hash, code hashes, raw prompts/responses, Wilson intervals, and exact
   denominators to judge artifacts.
+- Wired optional reasoning-effort controls into both MedCTA inference and judge
+  calls, and records those controls in run provenance. This prevents reasoning
+  models from silently exhausting the structured-output token budget.
+- Added bounded, provenance-recorded judge concurrency so independent items can
+  be evaluated efficiently without changing their deterministic output order.
 - Documented the full protocol and compared FastChat/MT-Bench, OpenAI Evals,
   DeepEval, OpenEvals, Prometheus Eval, and AlpacaEval. None replaces the need to
   validate this biomedical rubric against blinded humans.
@@ -41,9 +46,12 @@ future contributors should know. Dates use the project timezone
 
 ### Verification
 
-- `.venv/bin/python -m pytest -q`: **104 passed**.
+- `.venv/bin/python -m pytest -q`: **106 passed**.
 - The judge and human-validation suites use injected offline backends; tests
   make no paid API calls.
+- A full 107-case GPT-5-mini MedCTA run and a three-repeat Kimi-K2.6 judge run
+  completed against live Azure deployments. Generated traces remain local and
+  gitignored; no credentials or result artifacts are committed.
 
 ## 2026-07-12 — Staged evaluation reliability hardening
 

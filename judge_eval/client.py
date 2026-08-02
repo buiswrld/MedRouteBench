@@ -42,6 +42,7 @@ class JudgeClientConfig:
     model_family: str
     api_version: Optional[str] = None
     temperature: float = 0.0
+    reasoning_effort: Optional[str] = None
     max_completion_tokens: int = 512
     max_retries: int = 5
     max_retry_wait_seconds: float = 60.0
@@ -53,6 +54,7 @@ class JudgeClientConfig:
             "model_family": self.model_family,
             "api_version": self.api_version,
             "temperature": self.temperature,
+            "reasoning_effort": self.reasoning_effort,
             "max_completion_tokens": self.max_completion_tokens,
             "max_retries": self.max_retries,
             "max_retry_wait_seconds": self.max_retry_wait_seconds,
@@ -90,6 +92,7 @@ def config_from_env(
         model_family=str(family).casefold(),
         api_version=api_version,
         temperature=float(os.environ.get("JUDGE_TEMPERATURE", "0")),
+        reasoning_effort=os.environ.get("JUDGE_REASONING_EFFORT"),
         max_completion_tokens=int(os.environ.get("JUDGE_MAX_TOKENS", "512")),
         max_retries=int(os.environ.get("JUDGE_MAX_RETRIES", "5")),
         max_retry_wait_seconds=float(
@@ -120,7 +123,7 @@ class OpenAIJudgeBackend:
         last_error = None
         for attempt in range(1, self.config.max_retries + 1):
             try:
-                response = self.client.chat.completions.create(
+                request = dict(
                     model=self.config.model,
                     messages=[
                         {"role": "system", "content": system},
@@ -130,6 +133,9 @@ class OpenAIJudgeBackend:
                     max_completion_tokens=self.config.max_completion_tokens,
                     response_format={"type": "json_object"},
                 )
+                if self.config.reasoning_effort:
+                    request["reasoning_effort"] = self.config.reasoning_effort
+                response = self.client.chat.completions.create(**request)
                 return response.choices[0].message.content
             except RETRYABLE_ERRORS as exc:
                 last_error = exc

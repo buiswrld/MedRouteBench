@@ -178,6 +178,9 @@ JUDGE_AZURE_API_KEY=...
 JUDGE_AZURE_DEPLOYMENT=...
 JUDGE_MODEL_FAMILY=anthropic
 JUDGE_TEMPERATURE=0
+# Set for reasoning models when supported so reasoning does not consume the
+# structured-answer budget.
+JUDGE_REASONING_EFFORT=none
 ```
 
 Then score a completed run and create a blinded human sample:
@@ -187,6 +190,7 @@ python -m medcta_eval.judge score medcta_eval/runs/<run_id> \
   --judge-model <deployment> \
   --judge-family <provider-family> \
   --repeats 3 \
+  --max-workers 4 \
   --human-sample-size 30
 ```
 

@@ -21,6 +21,7 @@ RUNS_DIR = PACKAGE_DIR / "runs"
 MAX_TOKENS             = int(os.environ.get("MEDCTA_MAX_TOKENS", "512"))
 MAX_RETRIES            = int(os.environ.get("MEDCTA_MAX_RETRIES", "5"))
 MAX_RETRY_WAIT_SECONDS = float(os.environ.get("MEDCTA_MAX_RETRY_WAIT_SECONDS", "60"))
+REASONING_EFFORT       = os.environ.get("MEDCTA_REASONING_EFFORT")
 IMAGE_URL_CACHE_TTL_SECONDS = float(
     os.environ.get("MEDCTA_IMAGE_URL_CACHE_TTL_SECONDS", "2700")
 )

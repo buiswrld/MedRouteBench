@@ -712,6 +712,25 @@ def test_builtin_adapter_sends_image_url_and_json_mode(monkeypatch):
     assert content[1]["image_url"]["url"] == "https://example.test/image.jpg"
 
 
+def test_builtin_adapter_sends_configured_reasoning_effort(monkeypatch):
+    captured = {}
+
+    class Completions:
+        def create(self, **kwargs):
+            captured.update(kwargs)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'))]
+            )
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+    monkeypatch.setattr(llm, "get_client", lambda: client)
+    monkeypatch.setattr(llm, "REASONING_EFFORT", "none")
+    result = llm.call_json("system", "user", None, model="gpt-5-mini")
+
+    assert result == '{"ok":true}'
+    assert captured["reasoning_effort"] == "none"
+
+
 def test_huggingface_image_resolution_is_used_without_changing_other_hosts(monkeypatch):
     assert llm.resolve_image_url("https://example.test/image.jpg") == (
         "https://example.test/image.jpg"

@@ -9,6 +9,7 @@ import math
 import os
 import uuid
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -185,12 +186,15 @@ def run_judge_pipeline(
     judge_generation: dict,
     out_dir,
     repeats: int = 3,
+    max_workers: int = 1,
     allow_same_family: bool = False,
     source_provenance: Optional[dict] = None,
     verbose: bool = True,
 ) -> tuple[dict, list[dict], Path]:
     if not items:
         raise ValueError("judge pipeline requires at least one item")
+    if max_workers < 1:
+        raise ValueError("max_workers must be at least 1")
     item_ids = [item.item_id for item in items]
     if len(item_ids) != len(set(item_ids)):
         raise ValueError("judge item IDs must be unique")
@@ -220,6 +224,7 @@ def run_judge_pipeline(
             "system_prompt_sha256": sha256_text(build_system_prompt(rubric)),
         },
         "repeats_per_item": repeats,
+        "max_concurrent_items": max_workers,
         "repair_invalid_response_once": True,
         "item_ids": item_ids,
         "candidate_identity_in_prompt": False,
@@ -247,20 +252,25 @@ def run_judge_pipeline(
     }
     write_json_atomic(run_dir / "manifest.json", manifest)
 
+    def evaluate(selected_item: JudgeItem) -> dict:
+        return evaluate_item(selected_item, rubric, call_fn, repeats=repeats)
+
     results = []
-    for index, item in enumerate(items, 1):
-        if verbose:
-            print(f"[{index}/{len(items)}] judging item_id={item.item_id}")
-        result = evaluate_item(item, rubric, call_fn, repeats=repeats)
-        results.append(result)
-        write_json_atomic(run_dir / _safe_item_filename(item.item_id), result)
-        partial = build_report(results, run_id=run_id, provenance=provenance)
-        partial.update(
-            run_complete=False,
-            n_planned_items=len(items),
-            missing_item_ids=item_ids[index:],
-        )
-        write_json_atomic(run_dir / "partial_report.json", partial)
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        evaluated = executor.map(evaluate, items)
+        ordered_pairs = zip(items, evaluated)
+        for index, (item, result) in enumerate(ordered_pairs, 1):
+            if verbose:
+                print(f"[{index}/{len(items)}] judged item_id={item.item_id}")
+            results.append(result)
+            write_json_atomic(run_dir / _safe_item_filename(item.item_id), result)
+            partial = build_report(results, run_id=run_id, provenance=provenance)
+            partial.update(
+                run_complete=False,
+                n_planned_items=len(items),
+                missing_item_ids=item_ids[index:],
+            )
+            write_json_atomic(run_dir / "partial_report.json", partial)
 
     report = build_report(results, run_id=run_id, provenance=provenance)
     report.update(

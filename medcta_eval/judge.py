@@ -90,6 +90,7 @@ def score_existing_run(
     judge_family: Optional[str] = None,
     rubric_path=DEFAULT_RUBRIC,
     repeats: int = 3,
+    max_workers: int = 1,
     human_sample_size: int = 30,
     human_sample_seed: int = 0,
     allow_same_family: bool = False,
@@ -151,6 +152,7 @@ def score_existing_run(
         judge_generation=generation,
         out_dir=destination,
         repeats=repeats,
+        max_workers=max_workers,
         allow_same_family=allow_same_family,
         source_provenance=source,
         verbose=verbose,
@@ -234,6 +236,7 @@ def _build_parser() -> argparse.ArgumentParser:
     score.add_argument("--judge-family")
     score.add_argument("--rubric", default=str(DEFAULT_RUBRIC))
     score.add_argument("--repeats", type=int, default=3)
+    score.add_argument("--max-workers", type=int, default=1)
     score.add_argument("--human-sample-size", type=int, default=30)
     score.add_argument("--human-sample-seed", type=int, default=0)
     score.add_argument("--allow-same-family", action="store_true")
@@ -256,6 +259,7 @@ def main() -> None:
             judge_family=args.judge_family,
             rubric_path=args.rubric,
             repeats=args.repeats,
+            max_workers=args.max_workers,
             human_sample_size=args.human_sample_size,
             human_sample_seed=args.human_sample_seed,
             allow_same_family=args.allow_same_family,
