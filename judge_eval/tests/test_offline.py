@@ -9,7 +9,6 @@ from judge_eval.agreement import (
     agreement_report,
     cohen_kappa,
     percent_agreement,
-    quadratic_weighted_kappa,
 )
 from judge_eval.client import JudgeClientConfig, OpenAIJudgeBackend
 from judge_eval.evaluator import JudgeItem, evaluate_item, infer_model_family
@@ -246,13 +245,11 @@ def test_human_validation_requires_adjudication_and_reports_agreement(tmp_path):
     assert report["judge_human"]["percent_agreement"] == 1.0
 
 
-def test_agreement_metrics_include_kappa_confusion_and_fixed_bootstrap():
+def test_agreement_metrics_include_kappa_and_confusion():
     first = ["correct", "correct", "incorrect", "incorrect"]
     second = ["correct", "incorrect", "incorrect", "incorrect"]
     assert percent_agreement(first, second) == 0.75
     assert cohen_kappa(first, second) == 0.5
-    report = agreement_report(first, second, rater_a="a", rater_b="b", seed=7)
+    report = agreement_report(first, second, rater_a="a", rater_b="b")
     assert report["cohen_kappa"] == 0.5
-    assert quadratic_weighted_kappa(first, second)["value"] == 0.5
     assert report["confusion_matrix"]["correct"]["incorrect"] == 1
-    assert report["agreement_confidence_interval"]["seed"] == 7

@@ -17,7 +17,6 @@ from .config import (
     MAX_RETRY_WAIT_SECONDS,
     MAX_TOKENS,
     PACKAGE_DIR,
-    REASONING_EFFORT,
     RUNS_DIR,
 )
 from .data import load_dataset, resolve_data_path
@@ -69,7 +68,6 @@ def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
             "azure-vision",
             {
                 "max_completion_tokens": MAX_TOKENS,
-                "reasoning_effort": REASONING_EFFORT,
                 "max_retries": MAX_RETRIES,
                 "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
             },

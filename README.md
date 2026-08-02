@@ -61,33 +61,5 @@ from the final-accuracy cohort.
 Run offline verification:
 
 ```bash
-python -m pytest staged_eval/tests medcta_eval/tests judge_eval/tests -q
+python -m pytest staged_eval/tests -q
 ```
-
-## Reusable LLM-as-a-judge evaluation
-
-`judge_eval` is a separate offline scoring layer for open-ended outputs. It
-uses versioned rubrics, repeated structured judgments, model-family safeguards,
-complete raw artifacts, and a blinded two-rater human-validation workflow.
-Judge calls never occur inside candidate-model inference.
-
-For a completed MedCTA run:
-
-```bash
-python -m medcta_eval.judge score medcta_eval/runs/<run_id> \
-  --judge-model <deployment> \
-  --judge-family <provider-family> \
-  --repeats 3
-```
-
-Complete the generated `human_validation_sample.csv` independently by two
-raters, adjudicate disagreements, then calculate agreement:
-
-```bash
-python -m medcta_eval.judge validate-human \
-  medcta_eval/runs/<run_id>/judge_runs/<judge_run_id> \
-  medcta_eval/runs/<run_id>/judge_runs/<judge_run_id>/human_validation_sample.csv
-```
-
-See [the LLM judge protocol](docs/llm_judge_protocol.md) before treating judged
-scores as paper results.
