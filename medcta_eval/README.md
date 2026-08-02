@@ -34,8 +34,8 @@ whether a live tool would succeed.
 # Run the default 11-case starter subset
 python -m medcta_eval.pipeline
 
-# Run a larger set
-python -m medcta_eval.pipeline --n 100
+# Run 100 cases from the explicitly selected full data file
+python -m medcta_eval.pipeline --cases data/medcta/fullset_v1.json --n 100
 
 # Specify the Azure deployment to use
 python -m medcta_eval.pipeline --n 50 --model gpt-5-mini
@@ -87,20 +87,24 @@ For each case, the runner:
 4. Checks whether the model's action matches the reference step's expected
    action and tool.
 5. If `CALL_TOOL`: appends the reference observation and continues.
-6. If `FINAL_ANSWER` at the correct step: scores the answer and marks
-   `completed`.
+6. If `FINAL_ANSWER` at the correct step: records the answer, computes a strict
+   normalized-whitelist diagnostic, and marks `completed`.
 7. Terminates early on inference failure, persistent invalidity, or premature
    finalization.
 
 ### Final answer scoring
 
-The final answer goes through **two independent scoring passes**:
+Inference and semantic evaluation are intentionally separate:
 
-- **Heuristic match** — included for diagnostics but not the primary metric.
-- **LLM-as-judge** — the same Azure deployment evaluates the predicted answer
-  against the gold answer on a 0–1 semantic correctness scale using
-  `FINAL_ACCURACY_SYSTEM_PROMPT`. A score ≥ 0.8 sets `final_answer_match = True`.
-  The mean score across all cases is reported as `llm_final_answer_accuracy`.
+- The trajectory run records `strict_final_answer_match_rate`, a normalized
+  equality check against every accepted answer. This remains a transparent
+  diagnostic, not a semantic clinical-accuracy claim.
+- After candidate outputs are saved, `python -m medcta_eval.judge score ...`
+  runs the versioned LLM judge. This permits rescoring without paying to rerun
+  the candidate, and keeps judge failures out of inference metrics.
+- The judge defaults to three repeated calls, preserves raw responses, rotates
+  accepted-reference order, and refuses a detectable same-family judge unless
+  the override is explicit in provenance.
 
 ---
 
@@ -126,8 +130,12 @@ separately and excluded to avoid penalising model quality for provider issues.
 
 | Metric | Description |
 |---|---|
-| `final_answer_accuracy` | Fraction of evaluable cases where `final_answer_match` is True (LLM judge ≥ 0.8) |
-| `llm_final_answer_accuracy` | Mean LLM judge score (0–1) across all evaluable cases that received a final answer |
+| `strict_final_answer_match_rate` | Fraction of evaluable cases exactly equal to an accepted answer after conservative normalization |
+
+Semantic judge reports are stored under the source run's `judge_runs/`
+directory. They report `correct`, `partially_correct`, `incorrect`,
+`not_scorable`, and `inconclusive` separately, together with judge failure and
+stability counts.
 
 ### Operational metrics
 
@@ -148,8 +156,47 @@ The report includes this note in every output:
 > not absolute clinical correctness or uniqueness of the tool path."*
 
 A model may use a different but equally valid tool order and score poorly on
-routing while still arriving at the correct clinical answer. `llm_final_answer_accuracy`
-is the most clinically meaningful single number.
+routing while still arriving at a correct clinical answer. Conversely, a model
+may answer correctly while stopping before obtaining the reference evidence.
+Report routing and answer correctness as separate axes; neither is a sufficient
+single-number summary.
+
+LLM-judged correctness is provisional until the generated blinded sample has
+two independent human labels, disagreements are adjudicated, and judge-human
+agreement is reported. See `docs/llm_judge_protocol.md`.
+
+---
+
+## Offline semantic judging
+
+Configure a separate judge deployment in `.env`, preferably from a different
+model family:
+
+```dotenv
+JUDGE_AZURE_ENDPOINT=...
+JUDGE_AZURE_API_KEY=...
+JUDGE_AZURE_DEPLOYMENT=...
+JUDGE_MODEL_FAMILY=anthropic
+JUDGE_TEMPERATURE=0
+```
+
+Then score a completed run and create a blinded human sample:
+
+```bash
+python -m medcta_eval.judge score medcta_eval/runs/<run_id> \
+  --judge-model <deployment> \
+  --judge-family <provider-family> \
+  --repeats 3 \
+  --human-sample-size 30
+```
+
+After two raters complete the CSV and adjudicate disagreements:
+
+```bash
+python -m medcta_eval.judge validate-human \
+  medcta_eval/runs/<run_id>/judge_runs/<judge_run_id> \
+  medcta_eval/runs/<run_id>/judge_runs/<judge_run_id>/human_validation_sample.csv
+```
 
 ---
 

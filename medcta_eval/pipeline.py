@@ -86,6 +86,7 @@ def _build_provenance(
     generation: Optional[dict],
 ) -> dict:
     code_names = [
+        "answer_scoring.py",
         "data.py",
         "metrics.py",
         "pipeline.py",

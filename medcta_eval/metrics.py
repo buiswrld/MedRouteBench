@@ -3,6 +3,8 @@
 from collections import Counter
 from typing import Optional
 
+from .answer_scoring import strict_answer_match
+
 
 def _ratio(numerator: int, denominator: int) -> dict:
     return {
@@ -101,23 +103,16 @@ def trajectory_exact_match_rate(traces: list[dict]) -> dict:
     return _ratio(numerator, len(traces))
 
 
-def final_answer_accuracy(traces: list[dict]) -> dict:
+def strict_final_answer_match_rate(traces: list[dict]) -> dict:
     traces = _evaluable_traces(traces)
-    numerator = sum(bool(trace.get("final_answer_match")) for trace in traces)
+    numerator = sum(
+        strict_answer_match(
+            trace.get("final_answer"),
+            trace.get("accepted_ground_truth_answers") or [],
+        )
+        for trace in traces
+    )
     return _ratio(numerator, len(traces))
-
-
-def llm_final_answer_accuracy(traces: list[dict]) -> dict:
-    """Mean LLM judge score over evaluable traces that received a final answer."""
-    traces = _evaluable_traces(traces)
-    scored = [
-        trace for trace in traces
-        if isinstance(trace.get("final_answer_score"), (int, float))
-    ]
-    if not scored:
-        return {"mean_score": None, "n_scored": len(scored), "n_evaluable": len(traces)}
-    mean = sum(t["final_answer_score"] for t in scored) / len(scored)
-    return {"mean_score": round(mean, 4), "n_scored": len(scored), "n_evaluable": len(traces)}
 
 
 def invalid_action_rate(traces: list[dict]) -> dict:
@@ -155,6 +150,11 @@ def build_report(
             "Routing metrics measure agreement with one MedCTA reference trajectory, "
             "not absolute clinical correctness or uniqueness of the tool path."
         ),
+        "answer_scoring_note": (
+            "The inference run records normalized exact-whitelist matching only. "
+            "Semantic answer correctness is produced by the separate, versioned "
+            "judge_eval pipeline and must be human-validated."
+        ),
         "n_selected_cases": len(traces),
         "n_evaluable_cases": len(evaluable_traces),
         "n_completed_cases": sum(trace.get("status") == "completed" for trace in traces),
@@ -166,8 +166,7 @@ def build_report(
         "tool_precision": tool_precision(traces),
         "unnecessary_tool_rate": unnecessary_tool_rate(traces),
         "trajectory_exact_match_rate": trajectory_exact_match_rate(traces),
-        "final_answer_accuracy": final_answer_accuracy(traces),
-        "llm_final_answer_accuracy": llm_final_answer_accuracy(traces),
+        "strict_final_answer_match_rate": strict_final_answer_match_rate(traces),
         "invalid_action_rate": invalid_action_rate(traces),
         "inference_failure_count": inference_failure_count,
         "inference_failure_case_count": sum(

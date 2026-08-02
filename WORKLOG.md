@@ -4,6 +4,47 @@ This file records repository changes, verification evidence, and decisions that
 future contributors should know. Dates use the project timezone
 (`America/New_York`).
 
+## 2026-08-01 — Offline, validated LLM-as-a-judge layer
+
+### What was done
+
+- Removed the same-model, in-trajectory MedCTA judge call. Candidate inference
+  now saves answers first and computes only a transparent normalized exact-match
+  diagnostic.
+- Added `judge_eval`, a reusable offline judge package with a frozen JSON rubric,
+  blinded prompts, strict response validation, one formatting repair, repeated
+  calls, accepted-reference order variation, and atomic raw artifacts.
+- Added a default safeguard against using the same model family as both
+  candidate and judge. An override is possible but is explicit in provenance.
+- Added `medcta_eval.judge` to rescore saved Idea 3 traces without rerunning the
+  candidate model. Judge failures, `not_scorable` items, inconsistent repeats,
+  and candidate inference failures remain separate.
+- Added a seeded blinded human-audit sample requiring two independent labels
+  and adjudication, plus percent agreement, unweighted and quadratic-weighted
+  Cohen's kappa, confusion matrices, and bootstrap intervals.
+- Added judge/model/generation metadata, rubric and prompt hashes, source-run
+  manifest hash, code hashes, raw prompts/responses, Wilson intervals, and exact
+  denominators to judge artifacts.
+- Documented the full protocol and compared FastChat/MT-Bench, OpenAI Evals,
+  DeepEval, OpenEvals, Prometheus Eval, and AlpacaEval. None replaces the need to
+  validate this biomedical rubric against blinded humans.
+
+### Decisions
+
+- Keep deterministic routing metrics deterministic. Use LLM judging only for
+  open-ended clinical answer correctness.
+- Preserve exact matching as a diagnostic and publish semantic judged results
+  only after human validation.
+- Treat routing agreement and answer correctness as separate Idea 3 outcomes.
+- Prefer a small internal layer tied to MedRouteBench artifacts over adopting a
+  large general framework that does not enforce the research protocol.
+
+### Verification
+
+- `.venv/bin/python -m pytest -q`: **104 passed**.
+- The judge and human-validation suites use injected offline backends; tests
+  make no paid API calls.
+
 ## 2026-07-12 — Staged evaluation reliability hardening
 
 ### What was done

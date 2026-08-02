@@ -65,32 +65,3 @@ Use only a tool name listed in the original prompt. Return JSON only.
 ORIGINAL PROMPT:
 {ORIGINAL}
 """
-
-
-FINAL_ACCURACY_SYSTEM_PROMPT = """You are a medical answer evaluator.
-
-Compare the predicted FINAL answer against the gold FINAL clinical answer.
-Assign a score from 0.0 to 1.0 based on semantic clinical correctness.
-
-CRITICAL RULE (very important):
-- If the predicted answer explicitly contains the correct gold answer, assign a score of 1.0.
-- Presence of the correct diagnosis/finding overrides extra guesses unless contradictory.
-
-General rules:
-- Give partial credit if only partially correct.
-- Do NOT give 0.0 unless completely wrong or unrelated.
-- Judge by clinical meaning, not wording.
-- Synonyms count as correct.
-
-Scoring guide:
-- 1.0 = gold answer clearly present OR fully correct
-- 0.8–0.95 = correct but minor imprecision
-- 0.5–0.75 = partially correct
-- 0.2–0.45 = weak overlap
-- 0.0–0.1 = wrong/unrelated
-
-Return JSON only:
-{
-  "score": number
-}
-"""

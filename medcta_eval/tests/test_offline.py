@@ -264,8 +264,7 @@ def test_prompt_includes_actual_prior_actions_and_only_revealed_observations():
     assert "observation-1-ImageDescription" not in prompt
 
 
-def test_perfect_replay_matches_tools_finalization_and_answer(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
+def test_perfect_replay_matches_tools_finalization_and_answer():
     case = _case(reference_tools=("OCR", "ImageDescription"))
     trace = run_case(
         case,
@@ -304,8 +303,7 @@ def test_wrong_tool_continues_with_expected_reference_observation():
     assert '"tool_name": "ImageDescription"' in second_prompt
 
 
-def test_premature_finalization_stops_and_keeps_answer_accuracy_separate(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
+def test_premature_finalization_stops_and_keeps_answer_accuracy_separate():
     trace = run_case(
         _case(reference_tools=("OCR", "ImageDescription")),
         call_fn=_scripted(_response("FINAL_ANSWER", answer="gold answer")),
@@ -387,8 +385,7 @@ def test_repair_inference_failure_preserves_initial_invalidity():
     assert output["repaired"] is True
 
 
-def test_requested_metrics_use_the_locked_denominators(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
+def test_requested_metrics_use_the_locked_denominators():
     perfect = run_case(
         _case("perfect", ("OCR",), ("OCR", "ImageDescription")),
         call_fn=_scripted(
@@ -436,7 +433,7 @@ def test_requested_metrics_use_the_locked_denominators(monkeypatch):
         "denominator": 3,
     }
     assert report["trajectory_exact_match_rate"]["numerator"] == 1
-    assert report["final_answer_accuracy"]["numerator"] == 2
+    assert report["strict_final_answer_match_rate"]["numerator"] == 2
     assert report["invalid_action_rate"] == {
         "rate": 0.0,
         "numerator": 0,
@@ -489,14 +486,13 @@ def test_inference_only_run_has_no_routing_rate_denominators():
         "tool_precision",
         "unnecessary_tool_rate",
         "trajectory_exact_match_rate",
-        "final_answer_accuracy",
+        "strict_final_answer_match_rate",
         "invalid_action_rate",
     ):
         assert report[metric] == {"rate": None, "numerator": 0, "denominator": 0}
 
 
-def test_inference_failure_does_not_dilute_evaluable_case_metrics(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_final_answer", lambda answer, accepted: 1.0)
+def test_inference_failure_does_not_dilute_evaluable_case_metrics():
     perfect = run_case(
         _case("perfect"),
         call_fn=_scripted(
@@ -515,8 +511,8 @@ def test_inference_failure_does_not_dilute_evaluable_case_metrics(monkeypatch):
     assert report["n_evaluable_cases"] == 1
     assert report["next_tool_accuracy"]["rate"] == 1.0
     assert report["next_tool_accuracy"]["denominator"] == 1
-    assert report["final_answer_accuracy"]["rate"] == 1.0
-    assert report["final_answer_accuracy"]["denominator"] == 1
+    assert report["strict_final_answer_match_rate"]["rate"] == 1.0
+    assert report["strict_final_answer_match_rate"]["denominator"] == 1
 
 
 class PerfectBackend:

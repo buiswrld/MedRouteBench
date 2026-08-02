@@ -4,6 +4,6 @@
 # local evaluation artifacts
 staged_eval/runs/
 medcta_eval/runs/
+judge_eval/runs/
 analysis/
 __pycache__/
-

@@ -1,6 +1,5 @@
-"""LLM vision client for MedCTA evaluation."""
+"""LLM vision client for MedCTA trajectory inference."""
 
-import json
 import time
 import urllib.request
 from collections import OrderedDict
@@ -134,34 +133,3 @@ def call_json(
         else:
             raise
     return response.choices[0].message.content
-
-
-def judge_answer(gold: str, pred: str) -> float | None:
-    """Score a predicted answer against the gold using LLM-as-judge.
-
-    Uses FINAL_ACCURACY_SYSTEM_PROMPT and the same backend client as inference.
-    Returns a float in [0.0, 1.0], or None on failure.
-    """
-    from .prompts import FINAL_ACCURACY_SYSTEM_PROMPT
-
-    if not gold or not pred:
-        return None
-    user = f"Gold final answer:\n{gold}\n\nPredicted final answer:\n{pred}"
-    effective_model = AZURE_DEPLOYMENT
-    try:
-        response = get_client().chat.completions.create(
-            model=effective_model,
-            messages=[
-                {"role": "system", "content": FINAL_ACCURACY_SYSTEM_PROMPT},
-                {"role": "user", "content": user},
-            ],
-            max_completion_tokens=64,
-            response_format={"type": "json_object"},
-        )
-        parsed = json.loads(response.choices[0].message.content)
-        score = parsed.get("score")
-        if isinstance(score, (int, float)):
-            return max(0.0, min(1.0, float(score)))
-    except Exception:
-        return None
-    return None
