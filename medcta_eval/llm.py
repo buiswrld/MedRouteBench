@@ -146,23 +146,13 @@ def call_json(
     return response.choices[0].message.content
 
 
-def judge_answer(gold: str, pred: str) -> float | None:
-    """Score a predicted answer against the gold using LLM-as-judge.
-
-    Uses FINAL_ACCURACY_SYSTEM_PROMPT and the same backend client as inference.
-    Returns a float in [0.0, 1.0], or None on failure.
-    """
-    from .prompts import FINAL_ACCURACY_SYSTEM_PROMPT
-
-    if not gold or not pred:
-        return None
-    user = f"Gold final answer:\n{gold}\n\nPredicted final answer:\n{pred}"
+def _run_judge(system_prompt: str, user: str) -> float | None:
     effective_model = JUDGE_DEPLOYMENT or AZURE_DEPLOYMENT
     try:
         response = get_client().chat.completions.create(
             model=effective_model,
             messages=[
-                {"role": "system", "content": FINAL_ACCURACY_SYSTEM_PROMPT},
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user},
             ],
             max_completion_tokens=64,
@@ -175,3 +165,33 @@ def judge_answer(gold: str, pred: str) -> float | None:
     except Exception:
         return None
     return None
+
+
+def judge_answer(gold: str, pred: str) -> float | None:
+    """Score a predicted answer against the gold using LLM-as-judge.
+
+    Uses FINAL_ACCURACY_SYSTEM_PROMPT and the same backend client as inference.
+    Returns a float in [0.0, 1.0], or None on failure.
+    """
+    from .prompts import FINAL_ACCURACY_SYSTEM_PROMPT
+
+    if not gold or not pred:
+        return None
+    user = f"Gold final answer:\n{gold}\n\nPredicted final answer:\n{pred}"
+    return _run_judge(FINAL_ACCURACY_SYSTEM_PROMPT, user)
+
+
+def judge_equivalence(previous: str, current: str) -> float | None:
+    """Score whether two of the agent's own answers express the same conclusion.
+
+    Uses ANSWER_EQUIVALENCE_SYSTEM_PROMPT, a symmetric equivalence check —
+    distinct from judge_answer, which grades correctness against a gold
+    answer and is a poor fit here (its "contains the gold answer" rule
+    biases toward scoring refinements as unchanged).
+    """
+    from .prompts import ANSWER_EQUIVALENCE_SYSTEM_PROMPT
+
+    if not previous or not current:
+        return None
+    user = f"ANSWER A:\n{previous}\n\nANSWER B:\n{current}"
+    return _run_judge(ANSWER_EQUIVALENCE_SYSTEM_PROMPT, user)

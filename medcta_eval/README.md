@@ -79,28 +79,58 @@ step sequences including per-step observations and the ground-truth answer.
 For each case, the runner:
 
 1. Builds a step prompt showing the question, image URL, available tools, and
-   all prior model actions and reference observations.
+   all prior model actions (`action`/`tool_name` only) and reference
+   observations. The model's own prior `answer`/`reasoning` are tracked for
+   scoring but deliberately **not** shown back to it, so its current guess
+   isn't anchored on an earlier pre-evidence guess.
 2. Calls the model, expecting a JSON object with exactly `action`,
-   `tool_name`, and `answer`.
+   `tool_name`, `answer`, and `reasoning`. `answer` is required and nonempty
+   at **every** step, not just `FINAL_ANSWER` — it doubles as the model's
+   current-best clinical hypothesis (before evidence is gathered) and, at
+   `FINAL_ANSWER`, its final answer. `reasoning` is a brief justification,
+   also required at every step.
 3. If the response is invalid (bad JSON or constraint violation), attempts
    **one repair call** with the error and original prompt included.
 4. Checks whether the model's action matches the reference step's expected
    action and tool.
-5. If `CALL_TOOL`: appends the reference observation and continues.
-6. If `FINAL_ANSWER` at the correct step: scores the answer and marks
-   `completed`.
-7. Terminates early on inference failure, persistent invalidity, or premature
+5. Scores that step's `answer` against the ground truth via the LLM judge
+   (see below) — uniformly, whether the step was `CALL_TOOL` or
+   `FINAL_ANSWER` — and records `current_answer`/`current_answer_score`/
+   `current_answer_correct` on the step trace.
+6. If `CALL_TOOL`: appends the reference observation and continues.
+7. If `FINAL_ANSWER` at the correct step: reuses that step's already-computed
+   score/correctness as the case's final answer and marks `completed`.
+8. Terminates early on inference failure, persistent invalidity, or premature
    finalization.
+9. After the loop, walks consecutive scored steps to build
+   `stage_transitions` — one entry per pair, labelling how the current
+   answer evolved as new tool evidence arrived (see "Revision behaviour"
+   below).
 
-### Final answer scoring
+### Answer scoring
 
-The final answer goes through **two independent scoring passes**:
+Every step's `answer` is scored once via **LLM-as-judge** — the same Azure
+deployment evaluates the predicted answer against the gold answer on a 0–1
+semantic correctness scale using `FINAL_ACCURACY_SYSTEM_PROMPT`. A score
+≥ `FINAL_ACCURACY_CONFIDENCE_THRESHOLD` (0.8) sets `current_answer_correct =
+True` (and, at the terminal step, `final_answer_match = True`). The mean
+final-step score across all cases is reported (unthresholded) as
+`final_answer_mean_score`.
 
-- **Heuristic match** — included for diagnostics but not the primary metric.
-- **LLM-as-judge** — the same Azure deployment evaluates the predicted answer
-  against the gold answer on a 0–1 semantic correctness scale using
-  `FINAL_ACCURACY_SYSTEM_PROMPT`. A score ≥ 0.8 sets `final_answer_match = True`.
-  The mean score across all cases is reported as `llm_final_answer_accuracy`.
+Consecutive steps' answers are also compared to each other, to detect
+whether the model's answer actually changed between steps — used by the
+revision metrics below. This uses a **separate** judge call,
+`judge_equivalence(previous, current)` with `ANSWER_EQUIVALENCE_SYSTEM_PROMPT`,
+not `judge_answer`/`FINAL_ACCURACY_SYSTEM_PROMPT`: the correctness prompt is
+asymmetric (predicted-vs-gold, with a rule that scores 1.0 whenever the
+predicted answer contains the gold answer), which would bias a same/changed
+check toward calling refinements "unchanged" while calling generalizations
+"changed". The equivalence prompt instead asks symmetrically whether two of
+the model's own answers express the same conclusion, and is thresholded by
+its own separate constant, `ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD` (also
+0.8 by default, but tunable independently of the correctness threshold).
+Identical text (after whitespace/case normalization) skips this judge call
+entirely, since it's trivially unchanged.
 
 ---
 
@@ -118,16 +148,49 @@ separately and excluded to avoid penalising model quality for provider issues.
 | `trajectory_step_accuracy` | All reference steps (tool calls + final answer) | Steps where model action matched reference |
 | `trajectory_exact_match_rate` | All evaluable cases | Cases where the full tool sequence matched AND model finalized at the right step |
 | `tool_precision` | All model `CALL_TOOL` decisions | Those that matched the reference-expected tool |
-| `unnecessary_tool_rate` | All model `CALL_TOOL` decisions | Those made when the reference expected `FINAL_ANSWER` |
+| `unnecessary_tool_rate` | All model `CALL_TOOL` decisions | Those made when the reference expected `FINAL_ANSWER` (reference-position-based — see `unnecessary_tool_calls` below for the correctness-based counterpart) |
 | `premature_finalization_rate` | All evaluable cases | Cases where model gave `FINAL_ANSWER` before the reference expected it |
 | `missed_finalization_rate` | Steps where reference expected `FINAL_ANSWER` and model gave a valid response | Model chose `CALL_TOOL` instead |
 
 ### Final answer metrics
 
-| Metric | Description |
-|---|---|
-| `final_answer_accuracy` | Fraction of evaluable cases where `final_answer_match` is True (LLM judge ≥ 0.8) |
-| `llm_final_answer_accuracy` | Mean LLM judge score (0–1) across all evaluable cases that received a final answer |
+| Metric | Thresholded? | Description |
+|---|---|---|
+| `final_answer_accuracy` | Yes — rate | Fraction of evaluable cases where `final_answer_match` is True (LLM judge ≥ 0.8) |
+| `final_answer_mean_score` | No — raw mean | Mean LLM judge score (0–1, un-thresholded) across all evaluable cases that received a final answer |
+
+### Revision behaviour
+
+These track the model's *evolving* answer across steps, not just its final
+one — do new tool observations fix wrong hypotheses, corrupt right ones, or
+get ignored? Denominators are counted over `stage_transitions` (one entry
+per consecutive pair of scored steps) unless noted otherwise.
+
+| Metric | Denominator | Numerator |
+|---|---|---|
+| `stage_answer_accuracy` | All scored steps (`answer` present) across evaluable traces | Steps where `current_answer_correct` is True |
+| `successful_revision_rate` | Transitions where the prior step's answer was wrong | Those that become correct at the next step |
+| `missed_revision_rate` | Same denominator as above | Those still wrong at the next step |
+| `overreaction_rate` | Transitions where the prior step's answer was correct | Those that become wrong at the next step |
+| `kept_correct_rate` | Same denominator as above | Those that remain correct |
+| `answer_change_rate` | All transitions | Those where `answer_changed` is True (LLM-judged non-equivalence) |
+| `maintenance_rate` | All transitions | Those where the answer did not change — complement of `answer_change_rate`, reported separately for symmetry |
+| `maintained_wrong_rate` | Transitions where the prior step's answer was wrong | Those that stayed wrong *and* the answer didn't change |
+| `answer_stability` | Evaluable traces with ≥2 scored steps | Traces where the answer never changed across any transition |
+
+### Stopping / confidence metrics
+
+A secondary, distinct set from the revision metrics above — these study
+*when* the model decides it has gathered enough evidence to stop, rather
+than whether its answer improves as evidence arrives. Use the two sets
+together: e.g. a model with high `stage_answer_accuracy` but also high
+`unnecessary_tool_calls` is accurate but over-cautious about stopping.
+
+| Metric | Denominator | Numerator |
+|---|---|---|
+| `premature_finalization_wrong` | Cases with status `premature_finalization` | Those where `final_answer_match` is False |
+| `early_correct_finalization` | Same denominator | Those where `final_answer_match` is True |
+| `unnecessary_tool_calls` | All scored steps where `current_answer_correct` is True | Those where the model's actual action was `CALL_TOOL` anyway |
 
 ### Operational metrics
 
@@ -148,8 +211,9 @@ The report includes this note in every output:
 > not absolute clinical correctness or uniqueness of the tool path."*
 
 A model may use a different but equally valid tool order and score poorly on
-routing while still arriving at the correct clinical answer. `llm_final_answer_accuracy`
-is the most clinically meaningful single number.
+routing while still arriving at the correct clinical answer. `final_answer_mean_score`
+(the raw, un-thresholded judge score — see "Final answer metrics" above) is
+the most clinically meaningful single number.
 
 ---
 

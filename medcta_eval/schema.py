@@ -6,14 +6,15 @@ from typing import Optional, Sequence, Tuple
 
 
 ACTIONS = ("CALL_TOOL", "FINAL_ANSWER")
-REQUIRED_KEYS = {"action", "tool_name", "answer"}
+REQUIRED_KEYS = {"action", "tool_name", "answer", "reasoning"}
 
 
 @dataclass(frozen=True)
 class AgentOutput:
     action: str
     tool_name: Optional[str]
-    answer: Optional[str]
+    answer: str
+    reasoning: str
 
 
 def safe_json_loads(value: str) -> Tuple[Optional[dict], Optional[str]]:
@@ -57,15 +58,31 @@ def validate(
     elif answer is not None:
         return None, "answer must be a string or null"
 
+    reasoning = raw["reasoning"]
+    if isinstance(reasoning, str):
+        reasoning = reasoning.strip() or None
+    elif reasoning is not None:
+        return None, "reasoning must be a string or null"
+    if reasoning is None:
+        return None, "reasoning is required at every step"
+
     if action == "CALL_TOOL":
         if tool_name not in available_tools:
             return None, f"invalid or unavailable tool_name '{tool_name}'"
-        if answer is not None:
-            return None, "CALL_TOOL requires answer null"
+        if answer is None:
+            return None, "CALL_TOOL requires a nonempty current-best answer"
     else:
         if tool_name is not None:
             return None, "FINAL_ANSWER requires tool_name null"
         if answer is None:
             return None, "FINAL_ANSWER requires a nonempty answer"
 
-    return AgentOutput(action=action, tool_name=tool_name, answer=answer), None
+    return (
+        AgentOutput(
+            action=action,
+            tool_name=tool_name,
+            answer=answer,
+            reasoning=reasoning,
+        ),
+        None,
+    )

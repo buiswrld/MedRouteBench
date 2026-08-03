@@ -5,7 +5,10 @@ from typing import Callable, Optional
 
 from .data import reference_tool_sequence, tool_names
 from .prompts import REPAIR_TEMPLATE, SYSTEM_PROMPT, build_user_prompt
-from .config import FINAL_ACCURACY_CONFIDENCE_THRESHOLD
+from .config import (
+    ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD,
+    FINAL_ACCURACY_CONFIDENCE_THRESHOLD,
+)
 from .schema import safe_json_loads, validate
 
 
@@ -15,13 +18,60 @@ def _default_call_json(system: str, user: str, image_url: str | None) -> str:
     return call_json(system, user, image_url)
 
 
-def _judge_final_answer(answer: str | None, accepted_answers: list[str]) -> float | None:
+def _judge_answer_correctness(answer: str | None, accepted_answers: list[str]) -> float | None:
     from .llm import judge_answer
 
     gold = accepted_answers[0] if accepted_answers else ""
     if not gold or not answer:
         return None
     return judge_answer(gold, answer)
+
+
+def _normalize_answer_text(text: str) -> str:
+    return " ".join(text.split()).casefold()
+
+
+def _judge_answer_correctness_cached(
+    cache: dict[str, float | None],
+    answer: str | None,
+    accepted_answers: list[str],
+) -> float | None:
+    """Memoized wrapper around _judge_answer_correctness, keyed by normalized answer text.
+
+    Scoped to one case's cache dict (gold is fixed for the whole trajectory,
+    so keying by answer text alone is safe within a single run). Repeating
+    the same current-best answer across consecutive steps — common while a
+    model holds a hypothesis steady across tool calls — reuses the prior
+    score instead of re-issuing an identical judge call. This is the
+    correctness-check analogue of the identical-text short circuit
+    _judge_answer_equivalence already uses below.
+    """
+    if not answer:
+        return _judge_answer_correctness(answer, accepted_answers)
+    key = _normalize_answer_text(answer)
+    if key in cache:
+        return cache[key]
+    score = _judge_answer_correctness(answer, accepted_answers)
+    cache[key] = score
+    return score
+
+
+def _judge_answer_equivalence(previous: str | None, current: str | None) -> float | None:
+    """Score whether two consecutive current-best answers mean the same thing.
+
+    Identical text (after whitespace/case normalization) is trivially
+    unchanged and skips the judge call entirely to save cost. Otherwise
+    uses judge_equivalence, a symmetric same-conclusion check — not
+    judge_answer, which grades correctness against a gold answer and is
+    asymmetrically biased toward scoring refinements as unchanged.
+    """
+    from .llm import judge_equivalence
+
+    if not previous or not current:
+        return None
+    if _normalize_answer_text(previous) == _normalize_answer_text(current):
+        return 1.0
+    return judge_equivalence(previous, current)
 
 
 def _exception_summary(exc: Exception) -> dict:
@@ -137,6 +187,7 @@ def run_case(
     prior_observations: list[dict] = []
     model_tool_sequence: list[str] = []
     step_traces: list[dict] = []
+    answer_score_cache: dict[str, float | None] = {}
 
     trace = {
         "case_id": case["case_id"],
@@ -180,6 +231,11 @@ def run_case(
             "action_match": False,
             "reference_tool_match": None,
             "reference_observation_revealed": None,
+            "current_answer": None,
+            "reasoning": None,
+            "current_answer_score": None,
+            "current_answer_correct": False,
+            "evidence_shown": list(prior_observations),
         }
         step_traces.append(step_trace)
 
@@ -198,19 +254,31 @@ def run_case(
             "action": actual["action"],
             "tool_name": actual["tool_name"],
             "answer": actual["answer"],
+            "reasoning": actual["reasoning"],
         }
         prior_actions.append(action_record)
+
+        # current_answer_score: raw 0-1 judge score (or None on judge failure).
+        # current_answer_correct: that score thresholded at
+        # FINAL_ACCURACY_CONFIDENCE_THRESHOLD; None defaults to False (not
+        # "unknown") so a failed judge call can't silently count as correct.
+        score = _judge_answer_correctness_cached(
+            answer_score_cache, actual["answer"], accepted_answers
+        )
+        correct = (
+            score >= FINAL_ACCURACY_CONFIDENCE_THRESHOLD if score is not None else False
+        )
+        step_trace["current_answer"] = actual["answer"]
+        step_trace["reasoning"] = actual["reasoning"]
+        step_trace["current_answer_score"] = score
+        step_trace["current_answer_correct"] = correct
 
         if expected["action"] == "CALL_TOOL":
             if actual["action"] == "FINAL_ANSWER":
                 step_trace["reference_tool_match"] = False
                 trace["final_answer"] = actual["answer"]
-                _score = _judge_final_answer(actual["answer"], accepted_answers)
-                trace["final_answer_score"] = _score
-                trace["final_answer_match"] = (
-                    _score >= FINAL_ACCURACY_CONFIDENCE_THRESHOLD
-                    if _score is not None else False
-                )
+                trace["final_answer_score"] = score
+                trace["final_answer_match"] = correct
                 trace["status"] = "premature_finalization"
                 trace["termination_reason"] = "model finalized before reference tools ended"
                 break
@@ -236,12 +304,8 @@ def run_case(
 
         step_trace["action_match"] = True
         trace["final_answer"] = actual["answer"]
-        _score = _judge_final_answer(actual["answer"], accepted_answers)
-        trace["final_answer_score"] = _score
-        trace["final_answer_match"] = (
-            _score >= FINAL_ACCURACY_CONFIDENCE_THRESHOLD
-            if _score is not None else False
-        )
+        trace["final_answer_score"] = score
+        trace["final_answer_match"] = correct
         trace["completed_reference_finalization"] = True
         trace["status"] = "completed"
         trace["termination_reason"] = "model finalized at the reference final step"
@@ -255,6 +319,55 @@ def run_case(
         model_tool_sequence == reference_sequence
         and trace["completed_reference_finalization"]
     )
+
+    scored_steps = [s for s in step_traces if s.get("current_answer") is not None]
+    stage_transitions = []
+    for prev, nxt in zip(scored_steps, scored_steps[1:]):
+        prev_correct = bool(prev["current_answer_correct"])
+        new_correct = bool(nxt["current_answer_correct"])
+        if not prev_correct and new_correct:
+            label = "successful_revision"
+        elif not prev_correct and not new_correct:
+            label = "missed_revision"
+        elif prev_correct and not new_correct:
+            label = "overreaction"
+        else:
+            label = "kept_correct"
+        # answer_equivalence_score: raw 0-1 "same conclusion?" judge score (or
+        # None on judge failure). answer_changed: that score thresholded at
+        # ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD, but inverted-default from
+        # current_answer_correct above: None defaults to answer_changed=True,
+        # since assuming a change we can't verify is the conservative failure
+        # mode for answer_stability (vs. defaulting to False and silently
+        # claiming stability).
+        equivalence_score = _judge_answer_equivalence(
+            prev["current_answer"], nxt["current_answer"]
+        )
+        answer_changed = not (
+            equivalence_score is not None
+            and equivalence_score >= ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD
+        )
+        stage_transitions.append(
+            {
+                "prev_step_index": prev["step_index"],
+                "next_step_index": nxt["step_index"],
+                "prev_current_answer": prev["current_answer"],
+                "new_current_answer": nxt["current_answer"],
+                "prev_correct": prev_correct,
+                "new_correct": new_correct,
+                "label": label,
+                "answer_equivalence_score": equivalence_score,
+                "answer_changed": answer_changed,
+                "maintained_wrong": label == "missed_revision" and not answer_changed,
+            }
+        )
+    trace["stage_transitions"] = stage_transitions
+    trace["answer_stable_throughout"] = (
+        None
+        if not stage_transitions
+        else all(not t["answer_changed"] for t in stage_transitions)
+    )
+
     trace["matched_reference_steps"] = sum(
         bool(step["action_match"]) for step in step_traces
     )
