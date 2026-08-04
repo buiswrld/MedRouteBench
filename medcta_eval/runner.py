@@ -18,13 +18,26 @@ def _default_call_json(system: str, user: str, image_url: str | None) -> str:
     return call_json(system, user, image_url)
 
 
-def _judge_answer_correctness(answer: str | None, accepted_answers: list[str]) -> float | None:
+def _judge_answer_correctness(
+    answer: str | None,
+    accepted_answers: list[str],
+) -> float | None:
+    """Score `answer` against every accepted gold answer via one merged judge.
+
+    Uses the single llm.judge_answer function/prompt for every step,
+    whether `answer` is a genuine FINAL_ANSWER or an intermediate
+    current-best hypothesis, so identical answer text always scores
+    identically regardless of which stage it came from — stage-transition
+    labels can only change because the answer actually changed, not
+    because of a judge framing difference across the FINAL_ANSWER
+    boundary. All accepted answers are passed through (matching any one is
+    sufficient), not just the first.
+    """
     from .llm import judge_answer
 
-    gold = accepted_answers[0] if accepted_answers else ""
-    if not gold or not answer:
+    if not accepted_answers or not answer:
         return None
-    return judge_answer(gold, answer)
+    return judge_answer(accepted_answers, answer)
 
 
 def _normalize_answer_text(text: str) -> str:
@@ -36,15 +49,14 @@ def _judge_answer_correctness_cached(
     answer: str | None,
     accepted_answers: list[str],
 ) -> float | None:
-    """Memoized wrapper around _judge_answer_correctness, keyed by normalized answer text.
+    """Memoized wrapper around _judge_answer_correctness.
 
-    Scoped to one case's cache dict (gold is fixed for the whole trajectory,
-    so keying by answer text alone is safe within a single run). Repeating
-    the same current-best answer across consecutive steps — common while a
-    model holds a hypothesis steady across tool calls — reuses the prior
-    score instead of re-issuing an identical judge call. This is the
-    correctness-check analogue of the identical-text short circuit
-    _judge_answer_equivalence already uses below.
+    Keyed by normalized answer text alone — scoped to one case's cache
+    dict, so keying without the gold answer is safe within a single run.
+    Since every step uses the same judge function/prompt regardless of
+    whether it's an intermediate current-best hypothesis or the genuine
+    FINAL_ANSWER, identical answer text always shares one cache entry and
+    one score, anywhere in the trajectory.
     """
     if not answer:
         return _judge_answer_correctness(answer, accepted_answers)
@@ -262,8 +274,13 @@ def run_case(
         # current_answer_correct: that score thresholded at
         # FINAL_ACCURACY_CONFIDENCE_THRESHOLD; None defaults to False (not
         # "unknown") so a failed judge call can't silently count as correct.
+        # Every step's answer -- CALL_TOOL or FINAL_ANSWER alike -- is graded
+        # by the same judge_answer function/prompt, so identical answer text
+        # always scores identically regardless of which stage it came from.
         score = _judge_answer_correctness_cached(
-            answer_score_cache, actual["answer"], accepted_answers
+            answer_score_cache,
+            actual["answer"],
+            accepted_answers,
         )
         correct = (
             score >= FINAL_ACCURACY_CONFIDENCE_THRESHOLD if score is not None else False

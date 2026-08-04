@@ -258,7 +258,19 @@ def early_correct_finalization(traces: list[dict]) -> dict:
 
 
 def unnecessary_tool_calls(traces: list[dict]) -> dict:
-    steps = [s for s in _steps(_evaluable_traces(traces)) if s.get("current_answer_correct") is True]
+    """Steps with a correct current answer, backed by evidence, but chose CALL_TOOL anyway.
+
+    Requires evidence_shown to be non-empty, excluding each trace's step 0
+    (before any reference observation has been revealed): a correct answer
+    formed with zero evidence is a lucky guess, not a signal the model was
+    ready to stop, and counting it would flag a model that dutifully follows
+    the full reference tool sequence as "unnecessary" purely because it
+    happened to guess right before gathering anything.
+    """
+    steps = [
+        s for s in _steps(_evaluable_traces(traces))
+        if s.get("current_answer_correct") is True and s.get("evidence_shown")
+    ]
 
     def _action(step):
         actual = _valid_actual(step)
@@ -306,9 +318,12 @@ def build_report(
         "invalid_action_rate": invalid_action_rate(traces),
         "stage_metrics_note": (
             "unnecessary_tool_calls (correctness-based: the model already had a "
-            "correct current answer but still called a tool) is distinct from "
+            "correct current answer, backed by at least one revealed piece of "
+            "evidence, but still called a tool) is distinct from "
             "unnecessary_tool_rate above (reference-position-based: the model "
-            "called a tool when the reference trajectory expected FINAL_ANSWER)."
+            "called a tool when the reference trajectory expected FINAL_ANSWER). "
+            "A zero-evidence step-0 guess never counts toward "
+            "unnecessary_tool_calls, even if it happens to be correct."
         ),
         "stage_answer_accuracy": stage_answer_accuracy(traces),
         "stage_answer_accuracy_by_step": stage_answer_accuracy_by_step(traces),

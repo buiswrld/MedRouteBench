@@ -57,18 +57,27 @@ def _run_judge(system_prompt: str, user: str) -> float | None:
     return None
 
 
-def judge_answer(gold: str, pred: str) -> float | None:
-    """Score a predicted answer against the gold using LLM-as-judge.
+def judge_answer(golds: list[str], pred: str) -> float | None:
+    """Score an agent's answer against one or more accepted gold answers.
 
-    Uses FINAL_ACCURACY_SYSTEM_PROMPT and the same backend client as inference.
-    Returns a float in [0.0, 1.0], or None on failure.
+    Uses ANSWER_ACCURACY_SYSTEM_PROMPT for every call, whether `pred` is a
+    genuine FINAL_ANSWER or an intermediate current-best hypothesis: using
+    one prompt/function for both means identical answer text always
+    receives the same score, so a stage-transition label can't flip purely
+    because of which judge framing was used across the FINAL_ANSWER
+    boundary — only because the answer actually changed. Returns a float
+    in [0.0, 1.0], or None on failure.
     """
-    from .prompts import FINAL_ACCURACY_SYSTEM_PROMPT
+    from .prompts import ANSWER_ACCURACY_SYSTEM_PROMPT
 
-    if not gold or not pred:
+    if not golds or not pred:
         return None
-    user = f"Gold final answer:\n{gold}\n\nPredicted final answer:\n{pred}"
-    return _run_judge(FINAL_ACCURACY_SYSTEM_PROMPT, user)
+    gold_text = "\n".join(f"- {gold}" for gold in golds)
+    user = (
+        f"Accepted gold answers (matching any one is sufficient):\n{gold_text}"
+        f"\n\nAgent's answer:\n{pred}"
+    )
+    return _run_judge(ANSWER_ACCURACY_SYSTEM_PROMPT, user)
 
 
 def judge_equivalence(previous: str, current: str) -> float | None:

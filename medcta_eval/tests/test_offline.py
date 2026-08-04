@@ -31,7 +31,7 @@ def _stub_judges(monkeypatch):
     """
     monkeypatch.setattr(
         "medcta_eval.runner._judge_answer_correctness",
-        lambda answer, accepted: 1.0 if answer in (accepted or []) else 0.0,
+        lambda answer, accepted, **_: 1.0 if answer in (accepted or []) else 0.0,
     )
     monkeypatch.setattr(
         "medcta_eval.runner._judge_answer_equivalence",
@@ -337,7 +337,7 @@ def test_prompt_hides_prior_answer_and_reasoning_to_avoid_anchoring():
 
 
 def test_perfect_replay_matches_tools_finalization_and_answer(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     case = _case(reference_tools=("OCR", "ImageDescription"))
     trace = run_case(
         case,
@@ -377,7 +377,7 @@ def test_wrong_tool_continues_with_expected_reference_observation():
 
 
 def test_premature_finalization_stops_and_keeps_answer_accuracy_separate(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     trace = run_case(
         _case(reference_tools=("OCR", "ImageDescription")),
         call_fn=_scripted(_response("FINAL_ANSWER", answer="gold answer")),
@@ -462,7 +462,7 @@ def test_repair_inference_failure_preserves_initial_invalidity():
 
 
 def test_requested_metrics_use_the_locked_denominators(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     perfect = run_case(
         _case("perfect", ("OCR",), ("OCR", "ImageDescription")),
         call_fn=_scripted(
@@ -582,7 +582,7 @@ def test_inference_only_run_has_no_routing_rate_denominators():
 
 
 def test_inference_failure_does_not_dilute_evaluable_case_metrics(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     perfect = run_case(
         _case("perfect"),
         call_fn=_scripted(
@@ -622,7 +622,7 @@ def test_equivalence_short_circuit_skips_judge_call_for_identical_text(monkeypat
         "medcta_eval.runner._judge_answer_equivalence", _real_judge_answer_equivalence
     )
     monkeypatch.setattr("medcta_eval.llm.judge_equivalence", _boom)
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     case = _case(reference_tools=("OCR",))
     trace = run_case(
         case,
@@ -654,7 +654,7 @@ def test_equivalence_short_circuit_calls_judge_for_differing_text(monkeypatch):
         "medcta_eval.runner._judge_answer_equivalence", _real_judge_answer_equivalence
     )
     monkeypatch.setattr("medcta_eval.llm.judge_equivalence", _spy)
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     case = _case(reference_tools=("OCR",))
     trace = run_case(
         case,
@@ -669,19 +669,43 @@ def test_equivalence_short_circuit_calls_judge_for_differing_text(monkeypatch):
     assert transition["answer_changed"] is True
 
 
+def test_judge_answer_correctness_uses_single_merged_judge_with_all_accepted_answers(
+    monkeypatch,
+):
+    """CALL_TOOL and FINAL_ANSWER steps both route through the one merged
+
+    llm.judge_answer function/prompt (no more is_final_answer routing), and
+    every accepted answer is passed through, not just the first — matching
+    any one of them is sufficient.
+    """
+    calls = []
+
+    def _spy(golds, pred):
+        calls.append((golds, pred))
+        return 0.6
+
+    monkeypatch.setattr("medcta_eval.llm.judge_answer", _spy)
+    assert _real_judge_answer_correctness("x", ["gold-a", "gold-b"]) == 0.6
+    assert calls == [(["gold-a", "gold-b"], "x")]
+
+
 def test_correctness_cache_skips_judge_call_for_repeated_identical_answer_text(monkeypatch):
     """Exercises the real _judge_answer_correctness_cached, not the autouse stub.
 
     The autouse `_stub_judges` fixture replaces
     `medcta_eval.runner._judge_answer_correctness` wholesale, so without
-    restoring the real function here, patching `medcta_eval.llm.judge_answer`
-    below would be dead code and this test would pass even if the cache
-    were deleted.
+    restoring the real function here, patching llm.judge_answer below would
+    be dead code and this test would pass even if the cache were deleted.
+    All three steps (two CALL_TOOL, one FINAL_ANSWER) share the same
+    hypothesis text, so they must share exactly one cache entry and one
+    judge call — there's no longer a separate cache slot for the
+    FINAL_ANSWER step, since one merged judge function/prompt is used
+    throughout.
     """
     calls = []
 
-    def _spy(gold, pred):
-        calls.append((gold, pred))
+    def _spy(golds, pred):
+        calls.append((golds, pred))
         return 0.9
 
     monkeypatch.setattr(
@@ -698,7 +722,7 @@ def test_correctness_cache_skips_judge_call_for_repeated_identical_answer_text(m
         ),
     )
     assert trace["status"] == "completed"
-    assert calls == [("gold answer", "Same Hypothesis")]
+    assert calls == [(["gold answer"], "Same Hypothesis")]
     assert [step["current_answer_score"] for step in trace["steps"]] == [0.9, 0.9, 0.9]
     assert trace["final_answer_score"] == 0.9
 
@@ -711,8 +735,8 @@ def test_correctness_cache_calls_judge_separately_for_differing_answer_text(monk
     """
     calls = []
 
-    def _spy(gold, pred):
-        calls.append((gold, pred))
+    def _spy(golds, pred):
+        calls.append((golds, pred))
         return 0.5
 
     monkeypatch.setattr(
@@ -729,16 +753,16 @@ def test_correctness_cache_calls_judge_separately_for_differing_answer_text(monk
         ),
     )
     assert calls == [
-        ("gold answer", "Hypothesis A"),
-        ("gold answer", "Hypothesis B"),
-        ("gold answer", "Hypothesis C"),
+        (["gold answer"], "Hypothesis A"),
+        (["gold answer"], "Hypothesis B"),
+        (["gold answer"], "Hypothesis C"),
     ]
 
 
 def test_correctness_cache_key_normalizes_whitespace_and_case(monkeypatch):
     calls = []
 
-    def _spy(gold, pred):
+    def _spy(golds, pred):
         calls.append(pred)
         return 0.7
 
@@ -761,7 +785,7 @@ def test_correctness_cache_key_normalizes_whitespace_and_case(monkeypatch):
 def _two_step_transition(prev_correct, new_correct, monkeypatch):
     monkeypatch.setattr(
         "medcta_eval.runner._judge_answer_correctness",
-        lambda answer, accepted: (
+        lambda answer, accepted, **_: (
             1.0 if (answer == "prev" and prev_correct) or (answer == "new" and new_correct) else 0.0
         ),
     )
@@ -801,7 +825,7 @@ def test_transition_label_kept_correct(monkeypatch):
 
 
 def test_maintained_wrong_true_when_missed_revision_and_unchanged(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 0.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 0.0)
     case = _case(reference_tools=("OCR",))
     trace = run_case(
         case,
@@ -817,7 +841,7 @@ def test_maintained_wrong_true_when_missed_revision_and_unchanged(monkeypatch):
 
 
 def test_maintained_wrong_false_when_missed_revision_but_changed(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 0.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 0.0)
     monkeypatch.setattr("medcta_eval.runner._judge_answer_equivalence", lambda previous, current: 0.0)
     case = _case(reference_tools=("OCR",))
     trace = run_case(
@@ -834,7 +858,7 @@ def test_maintained_wrong_false_when_missed_revision_but_changed(monkeypatch):
 
 
 def test_answer_stable_throughout_is_none_with_fewer_than_two_scored_steps(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     trace = run_case(
         _case(reference_tools=("OCR", "ImageDescription")),
         call_fn=_scripted(_response("FINAL_ANSWER", answer="gold answer")),
@@ -845,7 +869,7 @@ def test_answer_stable_throughout_is_none_with_fewer_than_two_scored_steps(monke
 
 
 def test_answer_stable_throughout_true_when_no_transition_changes(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     case = _case(reference_tools=("OCR",))
     trace = run_case(
         case,
@@ -859,7 +883,7 @@ def test_answer_stable_throughout_true_when_no_transition_changes(monkeypatch):
 
 
 def test_answer_stable_throughout_false_when_a_transition_changes(monkeypatch):
-    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted: 1.0)
+    monkeypatch.setattr("medcta_eval.runner._judge_answer_correctness", lambda answer, accepted, **_: 1.0)
     monkeypatch.setattr("medcta_eval.runner._judge_answer_equivalence", lambda previous, current: 0.0)
     case = _case(reference_tools=("OCR",))
     trace = run_case(
@@ -876,7 +900,7 @@ def test_answer_stable_throughout_false_when_a_transition_changes(monkeypatch):
 def test_stage_answer_accuracy_counts_all_scored_steps(monkeypatch):
     monkeypatch.setattr(
         "medcta_eval.runner._judge_answer_correctness",
-        lambda answer, accepted: 1.0 if answer == "right" else 0.0,
+        lambda answer, accepted, **_: 1.0 if answer == "right" else 0.0,
     )
     case = _case(reference_tools=("OCR",))
     trace = run_case(
@@ -893,7 +917,7 @@ def test_stage_answer_accuracy_counts_all_scored_steps(monkeypatch):
 def test_premature_finalization_wrong_and_early_correct_finalization_partition(monkeypatch):
     monkeypatch.setattr(
         "medcta_eval.runner._judge_answer_correctness",
-        lambda answer, accepted: 1.0 if answer == "gold answer" else 0.0,
+        lambda answer, accepted, **_: 1.0 if answer == "gold answer" else 0.0,
     )
     wrong = run_case(
         _case("wrong", reference_tools=("OCR", "ImageDescription")),
@@ -911,7 +935,7 @@ def test_premature_finalization_wrong_and_early_correct_finalization_partition(m
 def test_unnecessary_tool_calls_counts_tool_calls_despite_correct_answer(monkeypatch):
     monkeypatch.setattr(
         "medcta_eval.runner._judge_answer_correctness",
-        lambda answer, accepted: 1.0 if answer == "correct" else 0.0,
+        lambda answer, accepted, **_: 1.0 if answer == "correct" else 0.0,
     )
     case = _case(reference_tools=("OCR", "ImageDescription"))
     trace = run_case(
@@ -923,8 +947,36 @@ def test_unnecessary_tool_calls_counts_tool_calls_despite_correct_answer(monkeyp
         ),
     )
     report = build_report([trace], model="test")
-    # 3 steps score correct=True (2 CALL_TOOL + 1 FINAL_ANSWER); 2 of those chose CALL_TOOL anyway
-    assert report["unnecessary_tool_calls"] == {"rate": 2 / 3, "numerator": 2, "denominator": 3}
+    # Step 0 (OCR) scores correct=True but has no revealed evidence yet, so it's
+    # excluded entirely (see test below). Step 1 (ImageDescription) has one piece
+    # of evidence, scores correct, and still chose CALL_TOOL: counts as unnecessary.
+    # Step 2 (FINAL_ANSWER) has evidence and scores correct, but didn't call a tool.
+    assert report["unnecessary_tool_calls"] == {"rate": 0.5, "numerator": 1, "denominator": 2}
+
+
+def test_unnecessary_tool_calls_excludes_zero_evidence_step_zero_guess(monkeypatch):
+    """A step-0 guess made before any evidence is revealed is a lucky guess,
+
+    not a sign the model was ready to stop — it must not count toward
+    unnecessary_tool_calls even when the judge marks it correct, or a model
+    that dutifully follows the entire reference tool sequence would be
+    flagged as making "unnecessary" calls purely for guessing right early.
+    """
+    monkeypatch.setattr(
+        "medcta_eval.runner._judge_answer_correctness",
+        lambda answer, accepted, **_: 1.0 if answer == "correct" else 0.0,
+    )
+    case = _case(reference_tools=("OCR",))
+    trace = run_case(
+        case,
+        call_fn=_scripted(
+            _response("CALL_TOOL", "OCR", answer="correct", reasoning="guessing before evidence"),
+            _response("FINAL_ANSWER", answer="correct", reasoning="confirmed"),
+        ),
+    )
+    assert trace["steps"][0]["evidence_shown"] == []
+    report = build_report([trace], model="test")
+    assert report["unnecessary_tool_calls"] == {"rate": 0.0, "numerator": 0, "denominator": 1}
 
 
 class PerfectBackend:
@@ -1164,6 +1216,25 @@ def test_run_judge_returns_none_on_missing_score_or_failure(monkeypatch):
 
     monkeypatch.setattr(llm, "call_responses_json", _boom)
     assert llm._run_judge("system", "user") is None
+
+
+def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeypatch):
+    """judge_answer must forward all accepted answers, not just the first,
+
+    since the gold answer for a case can have multiple valid phrasings and
+    matching any single one of them is meant to be sufficient.
+    """
+    captured = {}
+
+    def _spy(system, user, *, model, max_output_tokens):
+        captured.update(system=system, user=user)
+        return '{"score": 1.0}'
+
+    monkeypatch.setattr(llm, "call_responses_json", _spy)
+    score = llm.judge_answer(["Liver mass", "Hepatic lesion"], "Hepatic lesion")
+    assert score == 1.0
+    assert "Liver mass" in captured["user"]
+    assert "Hepatic lesion" in captured["user"]
 
 
 def test_retry_delay_parser_supports_minutes_and_long_wait_cap():

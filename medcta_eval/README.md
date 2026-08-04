@@ -109,19 +109,40 @@ For each case, the runner:
 
 ### Answer scoring
 
-Every step's `answer` is scored once via **LLM-as-judge** — the same Azure
-deployment evaluates the predicted answer against the gold answer on a 0–1
-semantic correctness scale using `FINAL_ACCURACY_SYSTEM_PROMPT`. A score
-≥ `FINAL_ACCURACY_CONFIDENCE_THRESHOLD` (0.8) sets `current_answer_correct =
-True` (and, at the terminal step, `final_answer_match = True`). The mean
-final-step score across all cases is reported (unthresholded) as
-`final_answer_mean_score`.
+Every step's `answer` — `CALL_TOOL` or `FINAL_ANSWER` alike — is scored via
+one **LLM-as-judge** function, `judge_answer` (`ANSWER_ACCURACY_SYSTEM_PROMPT`).
+There is deliberately no separate prompt for intermediate vs. final answers:
+an earlier two-prompt design (one framed as "the predicted FINAL answer,"
+one framed as "current-best hypothesis") let the *same literal answer text*
+score differently purely because of which prompt graded it — which could
+flip a stage-transition label (e.g. `successful_revision`) across the
+`FINAL_ANSWER` boundary even when the model's answer never actually
+changed. Using one prompt for every step means identical answer text always
+receives an identical score, so transition labels can only change because
+the answer itself changed.
+
+`judge_answer` is also given every entry in `accepted_answers`, not just the
+first — a case's gold answer may have more than one valid phrasing, and
+matching any single one of them is sufficient for a 1.0.
+
+`judge_answer` uses the same Azure deployment, the same 0–1 semantic
+correctness scale and scoring rubric, and the same threshold
+(`FINAL_ACCURACY_CONFIDENCE_THRESHOLD`, 0.8) at every step. A score ≥ the
+threshold sets `current_answer_correct = True` (and, at the terminal step,
+`final_answer_match = True`). The mean final-step score across all cases is
+reported (unthresholded) as `final_answer_mean_score`.
+
+The per-case correctness cache (`answer_score_cache` in `runner.py`) keys on
+normalized answer text alone: since one judge function/prompt is used
+throughout, identical text always shares one cache entry and one judge
+call, regardless of whether it recurs across `CALL_TOOL` steps, at the
+`FINAL_ANSWER` step, or both.
 
 Consecutive steps' answers are also compared to each other, to detect
 whether the model's answer actually changed between steps — used by the
 revision metrics below. This uses a **separate** judge call,
 `judge_equivalence(previous, current)` with `ANSWER_EQUIVALENCE_SYSTEM_PROMPT`,
-not `judge_answer`/`FINAL_ACCURACY_SYSTEM_PROMPT`: the correctness prompt is
+not `judge_answer`/`ANSWER_ACCURACY_SYSTEM_PROMPT`: the correctness prompt is
 asymmetric (predicted-vs-gold, with a rule that scores 1.0 whenever the
 predicted answer contains the gold answer), which would bias a same/changed
 check toward calling refinements "unchanged" while calling generalizations
@@ -190,7 +211,14 @@ together: e.g. a model with high `stage_answer_accuracy` but also high
 |---|---|---|
 | `premature_finalization_wrong` | Cases with status `premature_finalization` | Those where `final_answer_match` is False |
 | `early_correct_finalization` | Same denominator | Those where `final_answer_match` is True |
-| `unnecessary_tool_calls` | All scored steps where `current_answer_correct` is True | Those where the model's actual action was `CALL_TOOL` anyway |
+| `unnecessary_tool_calls` | Scored steps where `current_answer_correct` is True *and* `evidence_shown` is non-empty | Those where the model's actual action was `CALL_TOOL` anyway |
+
+Each trace's step 0 is always excluded from `unnecessary_tool_calls`'
+denominator: it precedes any revealed reference observation, so a correct
+answer there is a lucky guess rather than a sign the model had gathered
+enough evidence to stop. Without this, a model that dutifully calls every
+reference-expected tool — the ideal routing behavior — would still be
+flagged as "unnecessary" purely for guessing right before evidence existed.
 
 ### Operational metrics
 

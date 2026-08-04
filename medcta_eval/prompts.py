@@ -88,13 +88,25 @@ ORIGINAL PROMPT:
 """
 
 
-FINAL_ACCURACY_SYSTEM_PROMPT = """You are a medical answer evaluator.
+ANSWER_ACCURACY_SYSTEM_PROMPT = """You are a medical answer evaluator.
 
-Compare the predicted FINAL answer against the gold FINAL clinical answer.
-Assign a score from 0.0 to 1.0 based on semantic clinical correctness.
+You will be shown an agent's clinical answer at one point in its reasoning
+about a case. This may be its final, committed answer, or its current-best
+hypothesis at an earlier stage before all evidence was reviewed. Grade it
+identically either way, based only on its clinical content — do not
+penalize hedging, tentative language, or explicit uncertainty by itself;
+judge only whether the underlying clinical conclusion matches one of the
+gold answers. This uniform grading is deliberate: the same answer text
+must always receive the same score, whether it appears mid-trajectory or
+as the final answer, so that a model repeating the same hypothesis
+verbatim is never scored as if its answer had improved or worsened.
+
+Compare it against the gold clinical answer(s) and assign a score from 0.0
+to 1.0 based on semantic clinical correctness. One or more gold answers may
+be given; matching any single one of them is sufficient.
 
 CRITICAL RULE (very important):
-- If the predicted answer explicitly contains the correct gold answer, assign a score of 1.0.
+- If the answer explicitly contains one of the gold answers, assign a score of 1.0.
 - Presence of the correct diagnosis/finding overrides extra guesses unless contradictory.
 
 General rules:
@@ -104,7 +116,7 @@ General rules:
 - Synonyms count as correct.
 
 Scoring guide:
-- 1.0 = gold answer clearly present OR fully correct
+- 1.0 = a gold answer clearly present OR fully correct
 - 0.8–0.95 = correct but minor imprecision
 - 0.5–0.75 = partially correct
 - 0.2–0.45 = weak overlap
