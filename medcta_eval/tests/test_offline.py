@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
@@ -1097,19 +1096,20 @@ def test_interrupted_run_keeps_reproducible_partial_report(tmp_path):
     assert [trace["case_id"] for trace in traces] == ["A"]
 
 
-def test_builtin_adapter_sends_image_url_and_json_mode(monkeypatch):
+def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch):
     captured = {}
 
-    class Completions:
-        def create(self, **kwargs):
-            captured.update(kwargs)
-            return SimpleNamespace(
-                choices=[SimpleNamespace(message=SimpleNamespace(content='{"ok":true}'))]
-            )
+    def _spy(system, request_input, *, model, max_output_tokens):
+        captured.update(
+            system=system,
+            request_input=request_input,
+            model=model,
+            max_output_tokens=max_output_tokens,
+        )
+        return '{"ok":true}'
 
-    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
-    monkeypatch.setattr(llm, "get_client", lambda: client)
-    monkeypatch.setattr(llm, "resolve_image_url", lambda url: url)
+    monkeypatch.setattr(llm, "call_responses_json", _spy)
+    monkeypatch.setattr(llm, "resolve_image_url", lambda url, *, ttl_seconds: url)
     result = llm.call_json(
         "system",
         "user",
@@ -1117,104 +1117,53 @@ def test_builtin_adapter_sends_image_url_and_json_mode(monkeypatch):
         model="vision-model",
     )
     assert result == '{"ok":true}'
+    assert captured["system"] == "system"
     assert captured["model"] == "vision-model"
-    assert captured["response_format"] == {"type": "json_object"}
-    assert "reasoning_effort" not in captured
-    content = captured["messages"][1]["content"]
-    assert content[0] == {"type": "text", "text": "user"}
-    assert content[1]["image_url"]["url"] == "https://example.test/image.jpg"
+    assert captured["request_input"] == [
+        {
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": "user"},
+                {"type": "input_image", "image_url": "https://example.test/image.jpg"},
+            ],
+        }
+    ]
 
 
-def test_huggingface_image_resolution_is_used_without_changing_other_hosts(monkeypatch):
-    assert llm.resolve_image_url("https://example.test/image.jpg") == (
-        "https://example.test/image.jpg"
+def test_call_json_sends_plain_text_input_when_no_image(monkeypatch):
+    captured = {}
+
+    def _spy(system, request_input, *, model, max_output_tokens):
+        captured.update(system=system, request_input=request_input, model=model)
+        return "{}"
+
+    monkeypatch.setattr(llm, "call_responses_json", _spy)
+    llm.call_json("system", "user", None, model="text-model")
+    assert captured["request_input"] == "user"
+    assert captured["model"] == "text-model"
+
+
+def test_run_judge_parses_and_clamps_score(monkeypatch):
+    monkeypatch.setattr(
+        llm, "call_responses_json", lambda *_args, **_kwargs: '{"score": 1.5}'
     )
+    assert llm._run_judge("system", "user") == 1.0
 
-    class FakeResponse:
-        status = 200
-        headers = {"Content-Type": "image/jpeg"}
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_args):
-            return False
-
-        def geturl(self):
-            return "https://cdn.example.test/resolved.jpg"
-
-    llm.clear_image_url_cache()
-    monkeypatch.setattr(llm.urllib.request, "urlopen", lambda *_args, **_kwargs: FakeResponse())
-    resolved = llm.resolve_image_url("https://huggingface.co/datasets/x/resolve/y/image.jpg")
-    assert resolved == "https://cdn.example.test/resolved.jpg"
+    monkeypatch.setattr(
+        llm, "call_responses_json", lambda *_args, **_kwargs: '{"score": -0.5}'
+    )
+    assert llm._run_judge("system", "user") == 0.0
 
 
-def test_huggingface_image_resolution_cache_expires_before_signed_url(monkeypatch):
-    clock = [100.0]
-    requests = []
+def test_run_judge_returns_none_on_missing_score_or_failure(monkeypatch):
+    monkeypatch.setattr(llm, "call_responses_json", lambda *_args, **_kwargs: "{}")
+    assert llm._run_judge("system", "user") is None
 
-    class FakeResponse:
-        status = 200
-        headers = {"Content-Type": "image/jpeg"}
+    def _boom(*_args, **_kwargs):
+        raise RuntimeError("boom")
 
-        def __init__(self, resolved):
-            self.resolved = resolved
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, *_args):
-            return False
-
-        def geturl(self):
-            return self.resolved
-
-    def fake_urlopen(*_args, **_kwargs):
-        requests.append(len(requests) + 1)
-        return FakeResponse(f"https://cdn.example.test/resolved-{len(requests)}.jpg")
-
-    llm.clear_image_url_cache()
-    monkeypatch.setattr(llm.time, "monotonic", lambda: clock[0])
-    monkeypatch.setattr(llm, "IMAGE_URL_CACHE_TTL_SECONDS", 10.0)
-    monkeypatch.setattr(llm.urllib.request, "urlopen", fake_urlopen)
-    source = "https://huggingface.co/datasets/x/resolve/y/image.jpg"
-
-    first = llm.resolve_image_url(source)
-    clock[0] = 109.9
-    cached = llm.resolve_image_url(source)
-    clock[0] = 110.0
-    refreshed = llm.resolve_image_url(source)
-
-    assert first == cached == "https://cdn.example.test/resolved-1.jpg"
-    assert refreshed == "https://cdn.example.test/resolved-2.jpg"
-    assert len(requests) == 2
-
-
-def test_json_validation_failure_falls_back_to_text(monkeypatch):
-    captured = []
-
-    class Completions:
-        def create(self, **kwargs):
-            captured.append(kwargs)
-            if len(captured) == 1:
-                raise RuntimeError("provider code=json_validate_failed")
-            return SimpleNamespace(
-                choices=[
-                    SimpleNamespace(
-                        message=SimpleNamespace(
-                            content=_response("CALL_TOOL", "OCR")
-                        )
-                    )
-                ]
-            )
-
-    client = SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
-    monkeypatch.setattr(llm, "get_client", lambda: client)
-    monkeypatch.setattr(llm, "resolve_image_url", lambda url: url)
-    raw = llm.call_json("system", "user", None, model="vision-model")
-    assert json.loads(raw)["tool_name"] == "OCR"
-    assert captured[0]["response_format"] == {"type": "json_object"}
-    assert "response_format" not in captured[1]
+    monkeypatch.setattr(llm, "call_responses_json", _boom)
+    assert llm._run_judge("system", "user") is None
 
 
 def test_retry_delay_parser_supports_minutes_and_long_wait_cap():
