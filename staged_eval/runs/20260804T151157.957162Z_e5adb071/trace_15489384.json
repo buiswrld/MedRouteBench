@@ -1,0 +1,58 @@
+{
+  "pmid": "15489384",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Spasticity and loss of function in an affected arm are common after stroke. Although botulinum toxin is used to reduce spasticity, its functional benefits are less easily demonstrated. This paper reports an exploratory meta-analysis to investigate the relationship between reduced arm spasticity and improved arm function."
+    },
+    {
+      "label": "METHOD",
+      "context": "Individual data from stroke patients in two randomised controlled trials of intra-muscular botulinum toxin were pooled. The Modified Ashworth Scale (elbow, wrist, fingers) was used to calculate a \"Composite Spasticity Index\". Data from the arm section of the Barthel Activities of Daily Living Index (dressing, grooming, and feeding) and three subjective measures (putting arm through sleeve, cleaning palm, cutting fingernails) were summed to give a \"Composite Functional Index\". Change scores and the time of maximum change were also calculated."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Maximum changes in both composite measures occurred concurrently in 47 patients. In 26 patients the improvement in spasticity preceded the improvement in function with 18 showing the reverse. There was a definite relationship between the maximum change in spasticity and the maximum change in arm function, independent of treatment (rho = -0.2822, p = 0.0008, n = 137). There was a clear relationship between the changes in spasticity and in arm function in patients treated with botulinum toxin (Dysport) at 500 or 1000 units (rho = -0.5679, p = 0.0090, n = 22; rho = -0.4430, p = 0.0018, n = 47), but not in those treated with placebo or 1500 units."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Spasticity and loss of function in an affected arm are common after stroke. Although botulinum toxin is used to reduce spasticity, its functional benefits are less easily demonstrated. This paper reports an exploratory meta-analysis to investigate the relationship between reduced arm spasticity and improved arm function."
+    },
+    {
+      "label": "METHOD",
+      "context": "Individual data from stroke patients in two randomised controlled trials of intra-muscular botulinum toxin were pooled. The Modified Ashworth Scale (elbow, wrist, fingers) was used to calculate a \"Composite Spasticity Index\". Data from the arm section of the Barthel Activities of Daily Living Index (dressing, grooming, and feeding) and three subjective measures (putting arm through sleeve, cleaning palm, cutting fingernails) were summed to give a \"Composite Functional Index\". Change scores and the time of maximum change were also calculated."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Maximum changes in both composite measures occurred concurrently in 47 patients. In 26 patients the improvement in spasticity preceded the improvement in function with 18 showing the reverse. There was a definite relationship between the maximum change in spasticity and the maximum change in arm function, independent of treatment (rho = -0.2822, p = 0.0008, n = 137). There was a clear relationship between the changes in spasticity and in arm function in patients treated with botulinum toxin (Dysport) at 500 or 1000 units (rho = -0.5679, p = 0.0090, n = 22; rho = -0.4430, p = 0.0018, n = 47), but not in those treated with placebo or 1500 units."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 5.327
+}

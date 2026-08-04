@@ -1,0 +1,62 @@
+{
+  "pmid": "26126304",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To compare in vitro fertilization (IVF) outcomes in low responders stimulated with microdose leuprolide protocol (ML) following pretreatment with either oral contraceptive pill (OCP) or luteal estradiol (E2) + GnRH antagonist (E2 + antag) for follicular synchronization prior to controlled ovarian hyperstimulation (COH)."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "This was a retrospective study of 130 women, who were poor responders, undergoing IVF with either OCP/ML or E2+ antag/ML protocols. The main outcome measures were ongoing pregnancy rates, number of oocytes retrieved, and cancellation rate."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.50,\"reason_for_action\":\"The provided information describes study design and outcomes measured but gives no results. Without reported data on pregnancy rates, oocytes retrieved, or cancellations, benefit cannot be determined.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "The provided information describes study design and outcomes measured but gives no results. Without reported data on pregnancy rates, oocytes retrieved, or cancellations, benefit cannot be determined."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Both groups were similar in baseline characteristics. There were no significant differences in gonadotropin requirement, cancellation rate, and number of embryos transferred. Ongoing pregnancy rates (40% vs. 15%) were significantly higher in the OCP/ML group. Trends toward greater number of oocytes retrieved (7.7 ± 3.4 vs. 5.9 ± 4.2) and improved implantation rates (20% vs. 12%) were also noted, but these did not reach statistical significance."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To compare in vitro fertilization (IVF) outcomes in low responders stimulated with microdose leuprolide protocol (ML) following pretreatment with either oral contraceptive pill (OCP) or luteal estradiol (E2) + GnRH antagonist (E2 + antag) for follicular synchronization prior to controlled ovarian hyperstimulation (COH)."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "This was a retrospective study of 130 women, who were poor responders, undergoing IVF with either OCP/ML or E2+ antag/ML protocols. The main outcome measures were ongoing pregnancy rates, number of oocytes retrieved, and cancellation rate."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Both groups were similar in baseline characteristics. There were no significant differences in gonadotropin requirement, cancellation rate, and number of embryos transferred. Ongoing pregnancy rates (40% vs. 15%) were significantly higher in the OCP/ML group. Trends toward greater number of oocytes retrieved (7.7 ± 3.4 vs. 5.9 ± 4.2) and improved implantation rates (20% vs. 12%) were also noted, but these did not reach statistical significance."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.88,\"reason_for_action\":\"The study found OCP/ML had significantly higher ongoing pregnancy rates (40% vs 15%) and trends toward more oocytes and higher implantation; E2+antag did not improve outcomes.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.88,
+      "reason_for_action": "The study found OCP/ML had significantly higher ongoing pregnancy rates (40% vs 15%) and trends toward more oocytes and higher implantation; E2+antag did not improve outcomes."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 10.252
+}

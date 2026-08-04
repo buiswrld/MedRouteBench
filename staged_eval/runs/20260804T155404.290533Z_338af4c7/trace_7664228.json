@@ -1,0 +1,86 @@
+{
+  "pmid": "7664228",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine whether decreasing lengths of stay over time for selected diagnostic categories were associated with increased hospital readmission rates and mean number of physician visits after discharge."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Retrospective descriptive study."
+    },
+    {
+      "label": "SETTING",
+      "context": "The seven large (125 beds or more) acute care hospitals in Winnipeg."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Manitoba residents admitted to any one of the seven hospitals because acute myocardial infarction (AMI), bronchitis or asthma, transurethral prostatectomy (TURP) and uterine or adnexal procedures for nonmalignant disease during the fiscal years 1989-90 to 1992-93. Patients from out of province, those who died in hospital, those with excessively long stays (more than 60 days) and those who were transferred to or from another institution were excluded."
+    },
+    {
+      "label": "OUTCOME MEASURES",
+      "context": "Length of hospital stay, and rate of readmission within 30 days after discharge for all four categories and mean number of physician visits within 30 days after discharge for two categories (AMI and bronchitis or asthma."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.5,\"reason_for_action\":\"The provided text describes the study objective, design, setting, patients and outcomes (30-day readmission and visits) but gives no results. Without outcome data, impact on quality cannot be determined.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "The provided text describes the study objective, design, setting, patients and outcomes (30-day readmission and visits) but gives no results. Without outcome data, impact on quality cannot be determined."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The length of stay decreased significantly over the 4 years for all of the four categories, the smallest change being observed for patients with AMI (11.1%) and the largest for those with bronchitis or asthma (22.0%). The readmission rates for AMI, bronchitis or asthma, and TURP showed no consistent change over the 4 years. The readmission rate for uterine or adnexal procedures increased significantly between the first and second year (chi 2 = 4.28, p = 0.04) but then remained constant over the next 3 years. The mean number of physician visits increased slightly for AMI in the first year (1.92 to 2.01) and then remained virtually the same. It decreased slightly for bronchitis or asthma over the 4 years. There was no significant correlation between length of stay and readmission rates for individual hospitals in 1992-93 in any of the four categories. Also, no correlation was observed between length of stay and mean number of physician visits for individual hospitals in 1992-93 in the categories AMI and bronchitis or asthma."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine whether decreasing lengths of stay over time for selected diagnostic categories were associated with increased hospital readmission rates and mean number of physician visits after discharge."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Retrospective descriptive study."
+    },
+    {
+      "label": "SETTING",
+      "context": "The seven large (125 beds or more) acute care hospitals in Winnipeg."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Manitoba residents admitted to any one of the seven hospitals because acute myocardial infarction (AMI), bronchitis or asthma, transurethral prostatectomy (TURP) and uterine or adnexal procedures for nonmalignant disease during the fiscal years 1989-90 to 1992-93. Patients from out of province, those who died in hospital, those with excessively long stays (more than 60 days) and those who were transferred to or from another institution were excluded."
+    },
+    {
+      "label": "OUTCOME MEASURES",
+      "context": "Length of hospital stay, and rate of readmission within 30 days after discharge for all four categories and mean number of physician visits within 30 days after discharge for two categories (AMI and bronchitis or asthma."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The length of stay decreased significantly over the 4 years for all of the four categories, the smallest change being observed for patients with AMI (11.1%) and the largest for those with bronchitis or asthma (22.0%). The readmission rates for AMI, bronchitis or asthma, and TURP showed no consistent change over the 4 years. The readmission rate for uterine or adnexal procedures increased significantly between the first and second year (chi 2 = 4.28, p = 0.04) but then remained constant over the next 3 years. The mean number of physician visits increased slightly for AMI in the first year (1.92 to 2.01) and then remained virtually the same. It decreased slightly for bronchitis or asthma over the 4 years. There was no significant correlation between length of stay and readmission rates for individual hospitals in 1992-93 in any of the four categories. Also, no correlation was observed between length of stay and mean number of physician visits for individual hospitals in 1992-93 in the categories AMI and bronchitis or asthma."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.8,\"reason_for_action\":\"Study found significant LOS reductions with no consistent increase in 30-day readmissions or physician visits across categories; only a transient rise for uterine/adnexal procedures. Overall no adverse effect on measured quality.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.8,
+      "reason_for_action": "Study found significant LOS reductions with no consistent increase in 30-day readmissions or physician visits across categories; only a transient rise for uterine/adnexal procedures. Overall no adverse effect on measured quality."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.459
+}

@@ -1,0 +1,58 @@
+{
+  "pmid": "23149821",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "A higher prevalence of cardiovascular risk factors (CRFs) in HIV-infected patients, together with chronic infection and treatments, has resulted in an increased risk of silent myocardial ischaemia (SMI). The objective of this study was to evaluate whether myocardial SPECT should be used for screening HIV-infected patients with no clinical symptoms of coronary artery disease."
+    },
+    {
+      "label": "METHODS",
+      "context": "The prevalence of SMI detected by myocardial SPECT was determined in 94 HIV-infected patients with a normal clinical cardiovascular examination in relation to anthropomorphic parameters, CRFs, inflammatory and HIV infection status, and treatment."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Coronary artery disease was detected in nine patients (eight with ischaemia, one with myocardial infarction), corresponding to 9.6 % positivity. All but two of the scintigraphic diagnoses of ischaemia were confirmed by coronarography. Univariate analysis revealed that the overall number of CRFs and the combination of gender and age were associated with a diagnosis of SMI (p<0.05). According to multivariate analysis, the only independent parameter significantly associated with the scintigraphic diagnosis of SMI was the combination of gender and age (p = 0.01). All the positive myocardial SPECT scans were in men older than 52 years with at least two other CRFs. In this subpopulation of 47 patients, the prevalence of SMI detected by myocardial SPECT reached 19.2 %."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "A higher prevalence of cardiovascular risk factors (CRFs) in HIV-infected patients, together with chronic infection and treatments, has resulted in an increased risk of silent myocardial ischaemia (SMI). The objective of this study was to evaluate whether myocardial SPECT should be used for screening HIV-infected patients with no clinical symptoms of coronary artery disease."
+    },
+    {
+      "label": "METHODS",
+      "context": "The prevalence of SMI detected by myocardial SPECT was determined in 94 HIV-infected patients with a normal clinical cardiovascular examination in relation to anthropomorphic parameters, CRFs, inflammatory and HIV infection status, and treatment."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Coronary artery disease was detected in nine patients (eight with ischaemia, one with myocardial infarction), corresponding to 9.6 % positivity. All but two of the scintigraphic diagnoses of ischaemia were confirmed by coronarography. Univariate analysis revealed that the overall number of CRFs and the combination of gender and age were associated with a diagnosis of SMI (p<0.05). According to multivariate analysis, the only independent parameter significantly associated with the scintigraphic diagnosis of SMI was the combination of gender and age (p = 0.01). All the positive myocardial SPECT scans were in men older than 52 years with at least two other CRFs. In this subpopulation of 47 patients, the prevalence of SMI detected by myocardial SPECT reached 19.2 %."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 4.845
+}

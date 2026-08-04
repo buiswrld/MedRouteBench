@@ -1,0 +1,58 @@
+{
+  "pmid": "25614468",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The aim of this study was to prospectively compare the diagnostic performance of magnetic resonance imaging (MRI), multidetector computed tomography (MDCT) and endoscopic ultrasonography (EUS) in the preoperative locoregional staging of gastric cancer."
+    },
+    {
+      "label": "METHODS",
+      "context": "This study had Institutional Review Board approval, and informed consent was obtained from all patients. Fifty-two patients with biopsy-proven gastric cancer underwent preoperative 1.5-T MRI, 64-channel MDCT and EUS. All images were analysed blind, and the results were compared with histopathological findings according to the seventh edition of the TNM classification. After the population had been divided on the basis of the local invasion (T1-3 vs T4a-b) and nodal involvement (N0 vs N+), sensitivity, specificity, positive and negative predictive value, and accuracy were calculated and diagnostic performance measures were assessed using the McNemar test."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "For T staging, EUS showed higher sensitivity (94%) than MDCT and MRI (65 and 76%; p = 0.02 and p = 0.08). MDCT and MRI had significantly higher specificity (91 and 89%) than EUS (60%) (p = 0.0009 and p = 0.003). Adding MRI to MDCT or EUS did not result in significant differences for sensitivity. For N staging, EUS showed higher sensitivity (92%) than MRI and MDCT (69 and 73%; p = 0.01 and p = 0.02). MDCT showed better specificity (81%) than EUS and MRI (58 and 73%; p = 0.03 and p = 0.15)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The aim of this study was to prospectively compare the diagnostic performance of magnetic resonance imaging (MRI), multidetector computed tomography (MDCT) and endoscopic ultrasonography (EUS) in the preoperative locoregional staging of gastric cancer."
+    },
+    {
+      "label": "METHODS",
+      "context": "This study had Institutional Review Board approval, and informed consent was obtained from all patients. Fifty-two patients with biopsy-proven gastric cancer underwent preoperative 1.5-T MRI, 64-channel MDCT and EUS. All images were analysed blind, and the results were compared with histopathological findings according to the seventh edition of the TNM classification. After the population had been divided on the basis of the local invasion (T1-3 vs T4a-b) and nodal involvement (N0 vs N+), sensitivity, specificity, positive and negative predictive value, and accuracy were calculated and diagnostic performance measures were assessed using the McNemar test."
+    },
+    {
+      "label": "RESULTS",
+      "context": "For T staging, EUS showed higher sensitivity (94%) than MDCT and MRI (65 and 76%; p = 0.02 and p = 0.08). MDCT and MRI had significantly higher specificity (91 and 89%) than EUS (60%) (p = 0.0009 and p = 0.003). Adding MRI to MDCT or EUS did not result in significant differences for sensitivity. For N staging, EUS showed higher sensitivity (92%) than MRI and MDCT (69 and 73%; p = 0.01 and p = 0.02). MDCT showed better specificity (81%) than EUS and MRI (58 and 73%; p = 0.03 and p = 0.15)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 5.973
+}

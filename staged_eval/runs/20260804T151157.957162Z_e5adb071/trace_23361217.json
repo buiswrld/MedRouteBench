@@ -1,0 +1,58 @@
+{
+  "pmid": "23361217",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "There are a number of factors responsible for the longevity of unicompartmental knee replacements (UKR). These include the magnitude of postoperative alignment and the type of material used. The effect of component design and material on postoperative alignment, however, has not been explored."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "We retrospectively reviewed 89 patients who underwent UKR with robotic guidance. Patients were divided into two groups, according to whether they had received an all-polyethylene inlay component (Inlay group) or a metal-backed onlay component (Onlay group). We explored the magnitude of mechanical alignment correction obtained in both groups."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Mean postoperative mechanical alignment was significantly closer to neutral in the Onlay group (mean=2.8°; 95% CI=2.4°, 3.2°) compared to the Inlay group (mean=3.9°; 95% CI=3.4°, 4.4°) (R2=0.65; P=0.003), adjusting for gender, BMI, age, side and preoperative mechanical alignment (Fig. 2). Further exploration revealed that the thickness of the tibial polyethyelene insert had a significant effect on postoperative alignment when added to the model (R2=0.68; P=0.01)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "There are a number of factors responsible for the longevity of unicompartmental knee replacements (UKR). These include the magnitude of postoperative alignment and the type of material used. The effect of component design and material on postoperative alignment, however, has not been explored."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "We retrospectively reviewed 89 patients who underwent UKR with robotic guidance. Patients were divided into two groups, according to whether they had received an all-polyethylene inlay component (Inlay group) or a metal-backed onlay component (Onlay group). We explored the magnitude of mechanical alignment correction obtained in both groups."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Mean postoperative mechanical alignment was significantly closer to neutral in the Onlay group (mean=2.8°; 95% CI=2.4°, 3.2°) compared to the Inlay group (mean=3.9°; 95% CI=3.4°, 4.4°) (R2=0.65; P=0.003), adjusting for gender, BMI, age, side and preoperative mechanical alignment (Fig. 2). Further exploration revealed that the thickness of the tibial polyethyelene insert had a significant effect on postoperative alignment when added to the model (R2=0.68; P=0.01)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 4.886
+}

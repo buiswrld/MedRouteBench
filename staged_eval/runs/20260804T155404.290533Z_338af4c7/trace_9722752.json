@@ -1,0 +1,62 @@
+{
+  "pmid": "9722752",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To evaluate the outcome of a new modification of percutaneous needle suspension, using a bone anchor system for fixing the suture at the public bone, and to compare the results with those published previously."
+    },
+    {
+      "label": "PATIENTS AND METHODS",
+      "context": "From March 1996, 37 patients with stress urinary incontinence (>2 years) were treated using a bone anchor system. On each side the suture was attached to the pubocervical fascia and the vaginal wall via a broad 'Z'-stitch. A urodynamic investigation performed preoperatively in all patients confirmed stress incontinence and excluded detrusor instability. The outcome was assessed by either by a clinical follow-up investigation or using a standardized questionnaire, over a mean follow-up of 11 months (range 6-18)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.25,\"reason_for_action\":\"The provided text gives objective and methods for 37 patients and follow-up duration but reports no outcomes or comparative results versus prior techniques; insufficient data to conclude definitively.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.25,
+      "reason_for_action": "The provided text gives objective and methods for 37 patients and follow-up duration but reports no outcomes or comparative results versus prior techniques; insufficient data to conclude definitively."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In the 37 patients, the procedure was successful in 25 (68%), with 16 (43%) of the patients completely dry and nine (24%) significantly improved. Removal of the bone anchor and suture was necessary in two patients, because of unilateral bacterial infection in one and a bilateral soft tissue granuloma in the other. One bone anchor became dislocated in a third patient. In two cases where the treatment failed, new detrusor instability was documented urodynamically. Minor complications were prolonged wound pain in 10 (26%) and transient urinary retention or residual urine in 12 patients (32%)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To evaluate the outcome of a new modification of percutaneous needle suspension, using a bone anchor system for fixing the suture at the public bone, and to compare the results with those published previously."
+    },
+    {
+      "label": "PATIENTS AND METHODS",
+      "context": "From March 1996, 37 patients with stress urinary incontinence (>2 years) were treated using a bone anchor system. On each side the suture was attached to the pubocervical fascia and the vaginal wall via a broad 'Z'-stitch. A urodynamic investigation performed preoperatively in all patients confirmed stress incontinence and excluded detrusor instability. The outcome was assessed by either by a clinical follow-up investigation or using a standardized questionnaire, over a mean follow-up of 11 months (range 6-18)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In the 37 patients, the procedure was successful in 25 (68%), with 16 (43%) of the patients completely dry and nine (24%) significantly improved. Removal of the bone anchor and suture was necessary in two patients, because of unilateral bacterial infection in one and a bilateral soft tissue granuloma in the other. One bone anchor became dislocated in a third patient. In two cases where the treatment failed, new detrusor instability was documented urodynamically. Minor complications were prolonged wound pain in 10 (26%) and transient urinary retention or residual urine in 12 patients (32%)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.25,\"reason_for_action\":\"Single series (37 pts) showed 68% success (43% completely dry) but notable complications and no direct comparative data to prior techniques—insufficient to conclude definite improvement.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.25,
+      "reason_for_action": "Single series (37 pts) showed 68% success (43% completely dry) but notable complications and no direct comparative data to prior techniques—insufficient to conclude definite improvement."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 10.201
+}

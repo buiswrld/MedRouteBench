@@ -26,6 +26,9 @@ RUNS_DIR = PACKAGE_DIR / "runs"
 
 # ── LLM settings ─────────────────────────────────────────────────────────────
 MAX_TOKENS  = int(os.environ.get("MAX_TOKENS", "512"))
+# Best-effort determinism. gpt-5-mini rejects temperature != 1, so we only pin a
+# seed (which it accepts); leave temperature at the model default.
+SEED = int(os.environ.get("SEED", "42"))
 
 # ── concurrency ──────────────────────────────────────────────────────────────
 # Number of cases to run concurrently. 1 reproduces the sequential behaviour.

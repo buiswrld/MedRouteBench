@@ -1,0 +1,62 @@
+{
+  "pmid": "18708308",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Despite evidence against its utility, many surgeons continue to employ prophylactic nasogastric decompression in elective colonic resection. This study aimed to establish whether an easy and practical intervention, mailing out a summary of current evidence to surgeons, can change surgeons practice to bring it more in line with current evidence."
+    },
+    {
+      "label": "METHODS",
+      "context": "The use of prophylactic nasogastric (NG) decompression in elective colonic resections was documented for the 2 consecutive months of October and November, 2004 at the Royal Alexandra Hospital (RAH). A one page summary of recent evidence concerning this practice was then mailed to all general surgeons at that institution. A similar second review was carried out for the months of January and February, 2005. The two periods were compared with regards to prophylactic NG use."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.60,\"reason_for_action\":\"The study describes mailing evidence summaries and pre/post measurement of NG use but provides no outcome data here; effect on surgeons' practice cannot be determined from the provided info.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "The study describes mailing evidence summaries and pre/post measurement of NG use but provides no outcome data here; effect on surgeons' practice cannot be determined from the provided info."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Twenty two patients underwent elective colonic resections during the months of October and November, 2004. Twenty one patients underwent such procedures in January and February, 2005. Seven out of the 22 cases in the first group (the pre-intervention block) received prophylactic NG decompression. Five out of the 21 cases in the second group (the post-intervention block) received prophylactic NG decompression. The difference in prophylactic NG use between the two groups was not statistically significant."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Despite evidence against its utility, many surgeons continue to employ prophylactic nasogastric decompression in elective colonic resection. This study aimed to establish whether an easy and practical intervention, mailing out a summary of current evidence to surgeons, can change surgeons practice to bring it more in line with current evidence."
+    },
+    {
+      "label": "METHODS",
+      "context": "The use of prophylactic nasogastric (NG) decompression in elective colonic resections was documented for the 2 consecutive months of October and November, 2004 at the Royal Alexandra Hospital (RAH). A one page summary of recent evidence concerning this practice was then mailed to all general surgeons at that institution. A similar second review was carried out for the months of January and February, 2005. The two periods were compared with regards to prophylactic NG use."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Twenty two patients underwent elective colonic resections during the months of October and November, 2004. Twenty one patients underwent such procedures in January and February, 2005. Seven out of the 22 cases in the first group (the pre-intervention block) received prophylactic NG decompression. Five out of the 21 cases in the second group (the post-intervention block) received prophylactic NG decompression. The difference in prophylactic NG use between the two groups was not statistically significant."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.85,\"reason_for_action\":\"Pre/post audit after mailing evidence showed 7/22 vs 5/21 NG use and the difference was not statistically significant, so familiarization did not change practice in this study.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.85,
+      "reason_for_action": "Pre/post audit after mailing evidence showed 7/22 vs 5/21 NG use and the difference was not statistically significant, so familiarization did not change practice in this study."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.793
+}

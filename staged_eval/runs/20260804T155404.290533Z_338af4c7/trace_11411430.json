@@ -1,0 +1,62 @@
+{
+  "pmid": "11411430",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "The purpose of this study is to determine if baseline antral follicle assessment may serve as additional information in predicting in vitro fertilization outcome."
+    },
+    {
+      "label": "METHODS",
+      "context": "Prospective, descriptive preliminary study of in vitro fertilization outcome. From July 1998 to July 1999, 224 patients underwent antral follicle assessment (follicle 2-6 mm in diameter) on baseline of the planned, stimulated in vitro fertilization cycle. The outcomes were analyzed with respect to antral follicle assessment (<or = 6 or>6), basal cycle day 3 follicle stimulated hormone (<or = 10 or>10 IU/L) and maternal age (<or = 35 or>35 years)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.20,\"reason_for_action\":\"Only study purpose and methods are provided; no results or comparative data are given, so it is not possible to determine whether antral follicle assessment is a better predictor than age and FSH.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.2,
+      "reason_for_action": "Only study purpose and methods are provided; no results or comparative data are given, so it is not possible to determine whether antral follicle assessment is a better predictor than age and FSH."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The clinical pregnancy rate was significantly higher in the group with baseline antral follicle>6 compared to that in the group with antral follicle<or = 6 (51% vs. 19%, respectively). Controlling for patient age, and basal follicle stimulated hormone, the pregnancy rate was significantly higher in the group with antral follicle>6 compared to that in the group with antral follicle<or = 6. The cancellation rate was significantly increased with advancing maternal age, elevated basal follicle stimulated hormone levels, and baseline antral follicle<or = 6. The cancellation rate was significantly higher in the group with antral follicle<or = 6 compared to that in the group with antral follicle>or = 6 (33% vs. 1%, respectively)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "The purpose of this study is to determine if baseline antral follicle assessment may serve as additional information in predicting in vitro fertilization outcome."
+    },
+    {
+      "label": "METHODS",
+      "context": "Prospective, descriptive preliminary study of in vitro fertilization outcome. From July 1998 to July 1999, 224 patients underwent antral follicle assessment (follicle 2-6 mm in diameter) on baseline of the planned, stimulated in vitro fertilization cycle. The outcomes were analyzed with respect to antral follicle assessment (<or = 6 or>6), basal cycle day 3 follicle stimulated hormone (<or = 10 or>10 IU/L) and maternal age (<or = 35 or>35 years)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The clinical pregnancy rate was significantly higher in the group with baseline antral follicle>6 compared to that in the group with antral follicle<or = 6 (51% vs. 19%, respectively). Controlling for patient age, and basal follicle stimulated hormone, the pregnancy rate was significantly higher in the group with antral follicle>6 compared to that in the group with antral follicle<or = 6. The cancellation rate was significantly increased with advancing maternal age, elevated basal follicle stimulated hormone levels, and baseline antral follicle<or = 6. The cancellation rate was significantly higher in the group with antral follicle<or = 6 compared to that in the group with antral follicle>or = 6 (33% vs. 1%, respectively)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.80,\"reason_for_action\":\"Study found significantly higher pregnancy rates and much lower cancellation rates with antral follicle >6 even after controlling for age and basal FSH, indicating it predicts outcomes better.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.8,
+      "reason_for_action": "Study found significantly higher pregnancy rates and much lower cancellation rates with antral follicle >6 even after controlling for age and basal FSH, indicating it predicts outcomes better."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "overreaction",
+  "_elapsed_seconds": 9.606
+}

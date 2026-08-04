@@ -1,0 +1,62 @@
+{
+  "pmid": "15597845",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE OF INVESTIGATION",
+      "context": "The endogenous estradiol metabolite, 2-methoxyestradiol (2ME), has been shown to be a potent inhibitor of cell growth and a strong anti-angiogenic substance. We investigated for the first time whether in vitro combinations of 2ME with various chemotherapeutic compounds may result in an additive inhibitory effect on the proliferation of human ovary cancer cells."
+    },
+    {
+      "label": "METHOD",
+      "context": "As a model two different human ovary cancer cell lines were used. All cell lines were incubated with equimolar concentrations of 2ME (0.8-25 microM) and the chemotherapeutics epirubicine, doxorubicine, paclitaxel, docetaxel, carboplatin, vinorelbine, 5-fluorouracil and mafosfamide. Proliferation was measured after four days using the ATP-chemosensitivity test."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.45,\"reason_for_action\":\"Only the study purpose and methods are provided—combinations of 2ME with chemotherapeutics were tested in vitro for additive inhibition, but no results are reported, so dose-sparing effect is uncertain.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.45,
+      "reason_for_action": "Only the study purpose and methods are provided—combinations of 2ME with chemotherapeutics were tested in vitro for additive inhibition, but no results are reported, so dose-sparing effect is uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "For both ovary cancer cell lines a significant additive effect of 2ME with epirubicine and carboplatin was observed at the lower concentration range of these chemotherapeutic substances."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE OF INVESTIGATION",
+      "context": "The endogenous estradiol metabolite, 2-methoxyestradiol (2ME), has been shown to be a potent inhibitor of cell growth and a strong anti-angiogenic substance. We investigated for the first time whether in vitro combinations of 2ME with various chemotherapeutic compounds may result in an additive inhibitory effect on the proliferation of human ovary cancer cells."
+    },
+    {
+      "label": "METHOD",
+      "context": "As a model two different human ovary cancer cell lines were used. All cell lines were incubated with equimolar concentrations of 2ME (0.8-25 microM) and the chemotherapeutics epirubicine, doxorubicine, paclitaxel, docetaxel, carboplatin, vinorelbine, 5-fluorouracil and mafosfamide. Proliferation was measured after four days using the ATP-chemosensitivity test."
+    },
+    {
+      "label": "RESULTS",
+      "context": "For both ovary cancer cell lines a significant additive effect of 2ME with epirubicine and carboplatin was observed at the lower concentration range of these chemotherapeutic substances."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.60,\"reason_for_action\":\"In vitro additive effects with 2ME were observed for epirubicin and carboplatin at low concentrations, suggesting potential dose-sparing, but findings are limited to cell lines and not proven in clinical treatment.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "In vitro additive effects with 2ME were observed for epirubicin and carboplatin at low concentrations, suggesting potential dose-sparing, but findings are limited to cell lines and not proven in clinical treatment."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 12.184
+}

@@ -6,7 +6,8 @@ from typing import Callable, Optional
 from .data import FINAL_ANSWERS, split_evidence
 from .prompts import (
     REPAIR_TEMPLATE as _DEFAULT_REPAIR_TEMPLATE,
-    SYSTEM_PROMPT as _DEFAULT_SYSTEM_PROMPT,
+    STAGE1_SYSTEM_PROMPT as _DEFAULT_STAGE1_SYSTEM_PROMPT,
+    STAGE2_SYSTEM_PROMPT as _DEFAULT_STAGE2_SYSTEM_PROMPT,
     build_user_prompt,
 )
 from .schema import safe_json_loads, validate
@@ -84,12 +85,20 @@ def run_case(
     gt_label: Optional[str],
     *,
     call_fn: Optional[Callable] = None,
-    system_prompt: Optional[str] = None,
+    stage1_system_prompt: Optional[str] = None,
+    stage2_system_prompt: Optional[str] = None,
     repair_template: Optional[str] = None,
 ) -> dict:
     """Run exactly two stages and return the requested per-case trace."""
     call = call_fn if call_fn is not None else _default_call_json
-    system = system_prompt if system_prompt is not None else _DEFAULT_SYSTEM_PROMPT
+    stage1_system = (
+        stage1_system_prompt if stage1_system_prompt is not None
+        else _DEFAULT_STAGE1_SYSTEM_PROMPT
+    )
+    stage2_system = (
+        stage2_system_prompt if stage2_system_prompt is not None
+        else _DEFAULT_STAGE2_SYSTEM_PROMPT
+    )
     repair = repair_template if repair_template is not None else _DEFAULT_REPAIR_TEMPLATE
     evidence_split = split_evidence(case)
 
@@ -116,7 +125,7 @@ def run_case(
     stage1_prompt = build_user_prompt(case, 1, evidence_split)
     stage1_result = _call_stage(
         call,
-        system,
+        stage1_system,
         stage1_prompt,
         repair,
         stage=1,
@@ -130,7 +139,7 @@ def run_case(
     stage2_prompt = build_user_prompt(case, 2, evidence_split, stage1_parsed)
     stage2_result = _call_stage(
         call,
-        system,
+        stage2_system,
         stage2_prompt,
         repair,
         stage=2,

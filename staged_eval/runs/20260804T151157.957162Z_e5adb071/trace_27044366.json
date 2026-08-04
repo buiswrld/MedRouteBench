@@ -1,0 +1,58 @@
+{
+  "pmid": "27044366",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The technique of induced sputum has allowed to subdivide asthma patients into inflammatory phenotypes according to their level of granulocyte airway infiltration. There are very few studies which looked at detailed sputum and blood cell counts in a large cohort of asthmatics divided into inflammatory phenotypes. The purpose of this study was to analyze sputum cell counts, blood leukocytes and systemic inflammatory markers in these phenotypes, and investigate how those groups compared with healthy subjects."
+    },
+    {
+      "label": "METHODS",
+      "context": "We conducted a retrospective cross-sectional study on 833 asthmatics recruited from the University Asthma Clinic of Liege and compared them with 194 healthy subjects. Asthmatics were classified into inflammatory phenotypes."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The total non-squamous cell count per gram of sputum was greater in mixed granulocytic and neutrophilic phenotypes as compared to eosinophilic, paucigranulocytic asthma and healthy subjects (p < 0.005). Sputum eosinophils (in absolute values and percentages) were increased in all asthma phenotypes including paucigranulocytic asthma, compared to healthy subjects (p < 0.005). Eosinophilic asthma showed higher absolute sputum neutrophil and lymphocyte counts than healthy subjects (p < 0.005), while neutrophilic asthmatics had a particularly low number of sputum macrophages and epithelial cells. All asthma phenotypes showed an increased blood leukocyte count compared to healthy subjects (p < 0.005), with paucigranulocytic asthmatics having also increased absolute blood eosinophils compared to healthy subjects (p < 0.005). Neutrophilic asthma had raised CRP and fibrinogen while eosinophilic asthma only showed raised fibrinogen compared to healthy subjects (p < 0.005)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The technique of induced sputum has allowed to subdivide asthma patients into inflammatory phenotypes according to their level of granulocyte airway infiltration. There are very few studies which looked at detailed sputum and blood cell counts in a large cohort of asthmatics divided into inflammatory phenotypes. The purpose of this study was to analyze sputum cell counts, blood leukocytes and systemic inflammatory markers in these phenotypes, and investigate how those groups compared with healthy subjects."
+    },
+    {
+      "label": "METHODS",
+      "context": "We conducted a retrospective cross-sectional study on 833 asthmatics recruited from the University Asthma Clinic of Liege and compared them with 194 healthy subjects. Asthmatics were classified into inflammatory phenotypes."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The total non-squamous cell count per gram of sputum was greater in mixed granulocytic and neutrophilic phenotypes as compared to eosinophilic, paucigranulocytic asthma and healthy subjects (p < 0.005). Sputum eosinophils (in absolute values and percentages) were increased in all asthma phenotypes including paucigranulocytic asthma, compared to healthy subjects (p < 0.005). Eosinophilic asthma showed higher absolute sputum neutrophil and lymphocyte counts than healthy subjects (p < 0.005), while neutrophilic asthmatics had a particularly low number of sputum macrophages and epithelial cells. All asthma phenotypes showed an increased blood leukocyte count compared to healthy subjects (p < 0.005), with paucigranulocytic asthmatics having also increased absolute blood eosinophils compared to healthy subjects (p < 0.005). Neutrophilic asthma had raised CRP and fibrinogen while eosinophilic asthma only showed raised fibrinogen compared to healthy subjects (p < 0.005)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "overreaction",
+  "_elapsed_seconds": 6.15
+}

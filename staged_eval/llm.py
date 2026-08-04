@@ -7,6 +7,7 @@ from shared.llm import (
 from .config import (
     AZURE_DEPLOYMENT,
     MAX_TOKENS,
+    SEED,
 )
 
 
@@ -25,6 +26,7 @@ def call_json(system: str, user: str, *, model: str | None = None) -> str:
         ],
         max_completion_tokens=MAX_TOKENS,
         response_format={"type": "json_object"},
+        seed=SEED,
     )
     return resp.choices[0].message.content
 

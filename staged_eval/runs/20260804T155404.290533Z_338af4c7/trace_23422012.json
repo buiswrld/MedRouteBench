@@ -1,0 +1,62 @@
+{
+  "pmid": "23422012",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Vancomycin is the primary treatment for infections caused by methicilin-resistant Staphylococcus aureus (MRSA). The association of vancomycin treatment failures with increased vancomycin minimum inhibitory concentration (MIC) is a well-recognized problem. A number of single-centre studies have identified progressive increases in glycopeptide MICs for S. aureus strains over recent years - a phenomenon known as vancomycin MIC creep. It is unknown if this is a worldwide phenomenon or if it is localized to specific centers."
+    },
+    {
+      "label": "METHODS",
+      "context": "The aim of this study was to evaluate the trend of vancomycin MIC for isolates of MRSA over a 3-year period in a tertiary university hospital in Portugal. MRSA isolates from samples of patients admitted from January 2007 to December 2009 were assessed. Etest method was used to determine the respective vancomycin MIC. Only one isolate per patient was included in the final analysis."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.40,\"reason_for_action\":\"Background cites single-centre reports of MIC creep and this study is single-centre in Portugal; no multicenter or global data are provided, so worldwide status remains uncertain.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.4,
+      "reason_for_action": "Background cites single-centre reports of MIC creep and this study is single-centre in Portugal; no multicenter or global data are provided, so worldwide status remains uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A total of 93 MRSA isolates were studied. The vancomycin MICs were 0.75, 1, 1.5 and 2 mg/L for 1 (1.1%), 19 (20.4%), 38 (40.9%), 35 (37.6%) isolates, respectively. During the 3 year period, we observed a significant fluctuation in the rate of MRSA with a vancomycin MIC > 1 mg/L (2007: 86.2%; 2008: 93.3%; 2009: 58.8%, p = 0.002). No MRSA isolate presented a MIC > 2 mg/L."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Vancomycin is the primary treatment for infections caused by methicilin-resistant Staphylococcus aureus (MRSA). The association of vancomycin treatment failures with increased vancomycin minimum inhibitory concentration (MIC) is a well-recognized problem. A number of single-centre studies have identified progressive increases in glycopeptide MICs for S. aureus strains over recent years - a phenomenon known as vancomycin MIC creep. It is unknown if this is a worldwide phenomenon or if it is localized to specific centers."
+    },
+    {
+      "label": "METHODS",
+      "context": "The aim of this study was to evaluate the trend of vancomycin MIC for isolates of MRSA over a 3-year period in a tertiary university hospital in Portugal. MRSA isolates from samples of patients admitted from January 2007 to December 2009 were assessed. Etest method was used to determine the respective vancomycin MIC. Only one isolate per patient was included in the final analysis."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A total of 93 MRSA isolates were studied. The vancomycin MICs were 0.75, 1, 1.5 and 2 mg/L for 1 (1.1%), 19 (20.4%), 38 (40.9%), 35 (37.6%) isolates, respectively. During the 3 year period, we observed a significant fluctuation in the rate of MRSA with a vancomycin MIC > 1 mg/L (2007: 86.2%; 2008: 93.3%; 2009: 58.8%, p = 0.002). No MRSA isolate presented a MIC > 2 mg/L."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\n  \"action\": \"KEEP_ANSWER\",\n  \"answer\": \"maybe\",\n  \"confidence\": 0.4,\n  \"reason_for_action\": \"Background and this single-center Portuguese study report variable, center-specific MIC changes but provide no multicenter/global data; therefore worldwide status is uncertain.\"\n}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.4,
+      "reason_for_action": "Background and this single-center Portuguese study report variable, center-specific MIC changes but provide no multicenter/global data; therefore worldwide status is uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.79
+}

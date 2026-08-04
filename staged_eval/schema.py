@@ -15,6 +15,8 @@ VALID_ANSWERS = {"yes", "no", "maybe"}
 class AgentOutput:
     action: str
     answer: Optional[str]
+    confidence: float
+    reason_for_action: str
 
 
 def safe_json_loads(value: str) -> Tuple[Optional[dict], Optional[str]]:
@@ -34,7 +36,7 @@ def validate(
     """Validate one output, including all action/answer consistency rules."""
     if not isinstance(raw, dict):
         return None, "root is not object"
-    for key in ("action", "answer"):
+    for key in ("action", "answer", "confidence", "reason_for_action"):
         if key not in raw:
             return None, f"missing key '{key}'"
 
@@ -47,6 +49,17 @@ def validate(
         answer = answer.strip().lower() or None
     if answer is not None and answer not in VALID_ANSWERS:
         return None, f"invalid answer '{answer}'"
+
+    try:
+        confidence = float(raw["confidence"])
+    except (TypeError, ValueError):
+        return None, "confidence not a number"
+    confidence = max(0.0, min(1.0, confidence))
+
+    reason = raw["reason_for_action"]
+    if not isinstance(reason, str) or not reason.strip():
+        return None, "empty reason_for_action"
+    reason = reason.strip()
 
     if stage == 1:
         if action != "ANSWER":
@@ -70,4 +83,12 @@ def validate(
     else:
         return None, f"invalid stage '{stage}'"
 
-    return AgentOutput(action=action, answer=answer), None
+    return (
+        AgentOutput(
+            action=action,
+            answer=answer,
+            confidence=confidence,
+            reason_for_action=reason,
+        ),
+        None,
+    )

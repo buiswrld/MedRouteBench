@@ -1,0 +1,58 @@
+{
+  "pmid": "26907557",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This clinical study investigated whether the vascular-guided multilayer preauricular approach (VMPA) to the temporomandibular joint (TMJ) could improve access and decrease complications."
+    },
+    {
+      "label": "PATIENTS AND METHODS",
+      "context": "This retrospective evaluation consisted of a consecutive series of patients who underwent TMJ surgeries through the VMPA from January through December 2013. Patients with a history of TMJ surgery were excluded. Clinical data, including operating times, subjective complaints of incision scars, functional conditions of the auriculotemporal nerve and facial nerve, and other complications, were recorded and analyzed. All patients in this study were followed for at least 6 months."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "All patients (606 joints) had successful TMJ surgeries through the VMPA. All incisions healed favorably with an uneventful recovery. No patient developed permanent weakness of the facial nerve or other severe complications."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This clinical study investigated whether the vascular-guided multilayer preauricular approach (VMPA) to the temporomandibular joint (TMJ) could improve access and decrease complications."
+    },
+    {
+      "label": "PATIENTS AND METHODS",
+      "context": "This retrospective evaluation consisted of a consecutive series of patients who underwent TMJ surgeries through the VMPA from January through December 2013. Patients with a history of TMJ surgery were excluded. Clinical data, including operating times, subjective complaints of incision scars, functional conditions of the auriculotemporal nerve and facial nerve, and other complications, were recorded and analyzed. All patients in this study were followed for at least 6 months."
+    },
+    {
+      "label": "RESULTS",
+      "context": "All patients (606 joints) had successful TMJ surgeries through the VMPA. All incisions healed favorably with an uneventful recovery. No patient developed permanent weakness of the facial nerve or other severe complications."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 5.038
+}

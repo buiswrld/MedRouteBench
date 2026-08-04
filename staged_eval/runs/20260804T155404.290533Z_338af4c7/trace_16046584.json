@@ -1,0 +1,102 @@
+{
+  "pmid": "16046584",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "CONTEXT",
+      "context": "Irregular bleeding affects many users of combined menopausal hormone therapy (HT) and commonly leads to invasive and expensive investigations to exclude underlying malignancy. In most cases no abnormality is found."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "The main objective of this study was to explore the role of uterine natural killer (uNK) cells and their regulatory cytokine IL-15 in irregular bleeding in HT users."
+    },
+    {
+      "label": "DESIGN",
+      "context": "This was a prospective observational study conducted between 2002 and 2004."
+    },
+    {
+      "label": "SETTING",
+      "context": "The study was conducted in a tertiary referral menopause clinic at King Edward Memorial Hospital, Western Australia."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Patients included 117 postmenopausal women taking combined HT."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "Outpatient endometrial biopsies were taken during and outside bleeding episodes."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "The relationship between endometrial uNK cells (CD56+) and bleeding patterns was measured. We also addressed the impact of HT exposure on uNK cell populations, the relationship between endometrial IL-15 expression and uNK cell populations, and killer Ig like receptor genotype in subjects with irregular bleeding."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.45,\"reason_for_action\":\"The study specifically investigated uNK (CD56+) cells, IL-15 and related factors in HT users with irregular bleeding, but only methods/objectives are given here—no outcome data to confirm or refute a role.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.45,
+      "reason_for_action": "The study specifically investigated uNK (CD56+) cells, IL-15 and related factors in HT users with irregular bleeding, but only methods/objectives are given here—no outcome data to confirm or refute a role."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Endometrial CD56+ uNK cells were significantly increased in biopsies obtained during bleeding episodes (P<0.001), compared with HT users with no bleeding. The highest level of IL-15 expression was also seen in biopsies taken during bleeding. No clear relationship between killer Ig like receptor genotype and bleeding on HT was observed."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "CONTEXT",
+      "context": "Irregular bleeding affects many users of combined menopausal hormone therapy (HT) and commonly leads to invasive and expensive investigations to exclude underlying malignancy. In most cases no abnormality is found."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "The main objective of this study was to explore the role of uterine natural killer (uNK) cells and their regulatory cytokine IL-15 in irregular bleeding in HT users."
+    },
+    {
+      "label": "DESIGN",
+      "context": "This was a prospective observational study conducted between 2002 and 2004."
+    },
+    {
+      "label": "SETTING",
+      "context": "The study was conducted in a tertiary referral menopause clinic at King Edward Memorial Hospital, Western Australia."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Patients included 117 postmenopausal women taking combined HT."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "Outpatient endometrial biopsies were taken during and outside bleeding episodes."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "The relationship between endometrial uNK cells (CD56+) and bleeding patterns was measured. We also addressed the impact of HT exposure on uNK cell populations, the relationship between endometrial IL-15 expression and uNK cell populations, and killer Ig like receptor genotype in subjects with irregular bleeding."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Endometrial CD56+ uNK cells were significantly increased in biopsies obtained during bleeding episodes (P<0.001), compared with HT users with no bleeding. The highest level of IL-15 expression was also seen in biopsies taken during bleeding. No clear relationship between killer Ig like receptor genotype and bleeding on HT was observed."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.45,\"reason_for_action\":\"Biopsy results show significantly increased uNK (CD56+) cells and higher IL-15 during bleeding, supporting an association, but the prospective observational design does not prove causality, so 'maybe' remains appropriate.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.45,
+      "reason_for_action": "Biopsy results show significantly increased uNK (CD56+) cells and higher IL-15 during bleeding, supporting an association, but the prospective observational design does not prove causality, so 'maybe' remains appropriate."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 6.64
+}

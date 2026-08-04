@@ -1,0 +1,62 @@
+{
+  "pmid": "20571467",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Kidneys from elderly donors tend to be implanted in recipients who are also elderly. We present the results obtained after 10 years of evolution on transplanting elderly kidneys into young recipients."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ninety-one consecutive transplants are studied, carried out in our center with kidneys from cadaver donors older than 60 years implanted in recipients younger than 60 years. The control group is made up of 91 transplants, matched with those from the study group, whose donor and recipient were younger than 60 years."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.55,\"reason_for_action\":\"A comparative study is described (91 elderly-donor→young recipients vs 91 matched young-donor controls) but no outcome data are provided; appropriateness depends on graft survival/complications.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.55,
+      "reason_for_action": "A comparative study is described (91 elderly-donor→young recipients vs 91 matched young-donor controls) but no outcome data are provided; appropriateness depends on graft survival/complications."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "There were no differences between groups with regard to recipient age, sex, cause of death and renal function of the donor, hepatitis C and cytomegalovirus serologies, cold ischemia time, tubular necrosis, immediate diuresis, need for dialysis, human leukocyte antigen incompatibilities, hypersensitized patients, acute rejection, waiting time on dialysis, and days of admission. Survival in both groups at 1, 5, and 10 years was 97.6%, 87.2%, and 76.6% vs. 98.8%, 87.5%, and 69.5% for the patient (P=0.642), 92.9%, 81.3%, and 64.2% vs. 93.9%, 76.4%, and 69.5% for the graft (P=0.980), and 94.4%, 92.6%, and 77.4% vs. 94.3%, 86.7%, and 84.4% for the graft with death censured (P=0.747), respectively. Creatininaemias at 1, 5, and 10 years were 172, 175, and 210 vs. 139, 134, and 155 (P<0.05)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Kidneys from elderly donors tend to be implanted in recipients who are also elderly. We present the results obtained after 10 years of evolution on transplanting elderly kidneys into young recipients."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ninety-one consecutive transplants are studied, carried out in our center with kidneys from cadaver donors older than 60 years implanted in recipients younger than 60 years. The control group is made up of 91 transplants, matched with those from the study group, whose donor and recipient were younger than 60 years."
+    },
+    {
+      "label": "RESULTS",
+      "context": "There were no differences between groups with regard to recipient age, sex, cause of death and renal function of the donor, hepatitis C and cytomegalovirus serologies, cold ischemia time, tubular necrosis, immediate diuresis, need for dialysis, human leukocyte antigen incompatibilities, hypersensitized patients, acute rejection, waiting time on dialysis, and days of admission. Survival in both groups at 1, 5, and 10 years was 97.6%, 87.2%, and 76.6% vs. 98.8%, 87.5%, and 69.5% for the patient (P=0.642), 92.9%, 81.3%, and 64.2% vs. 93.9%, 76.4%, and 69.5% for the graft (P=0.980), and 94.4%, 92.6%, and 77.4% vs. 94.3%, 86.7%, and 84.4% for the graft with death censured (P=0.747), respectively. Creatininaemias at 1, 5, and 10 years were 172, 175, and 210 vs. 139, 134, and 155 (P<0.05)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.70,\"reason_for_action\":\"Study shows similar patient and graft survival at 1, 5, and 10 years but higher creatinine in elderly-donor→young recipients (P<0.05). Thus transplantation may be acceptable but with reduced long-term function.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.7,
+      "reason_for_action": "Study shows similar patient and graft survival at 1, 5, and 10 years but higher creatinine in elderly-donor→young recipients (P<0.05). Thus transplantation may be acceptable but with reduced long-term function."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 10.946
+}

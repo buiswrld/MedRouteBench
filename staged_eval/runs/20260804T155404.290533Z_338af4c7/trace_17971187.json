@@ -1,0 +1,54 @@
+{
+  "pmid": "17971187",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "METHODS",
+      "context": "The study was carried on 2096 school children (1043 male, 1053 female) in Ankara. Their mean age was 9.03 years. Demographic properties of the study group and their families were determined and the serum lipid levels of the subjects were obtained. The relation between these demographic properties and lipid levels were investigated."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"Only study methods are provided (sample size, demographics, lipids measured) but no results on whether family history predicted abnormal cholesterol; cannot determine reliability from supplied evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "Only study methods are provided (sample size, demographics, lipids measured) but no results on whether family history predicted abnormal cholesterol; cannot determine reliability from supplied evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In 135 of the subjects' serum cholesterol level was>or=200 mg/dL and in 83 subjects serum LDL-cholesterol level was>or=130 mg/dL. Despite 64.4% of the subjects reported a family history of hyperlipidemia, no relations between family history and serum lipid levels were found."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "METHODS",
+      "context": "The study was carried on 2096 school children (1043 male, 1053 female) in Ankara. Their mean age was 9.03 years. Demographic properties of the study group and their families were determined and the serum lipid levels of the subjects were obtained. The relation between these demographic properties and lipid levels were investigated."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In 135 of the subjects' serum cholesterol level was>or=200 mg/dL and in 83 subjects serum LDL-cholesterol level was>or=130 mg/dL. Despite 64.4% of the subjects reported a family history of hyperlipidemia, no relations between family history and serum lipid levels were found."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.88,\"reason_for_action\":\"In this large study (n=2096) 64.4% reported family history but no relationship between family history and serum lipid levels was found, so family history was not reliable for screening.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.88,
+      "reason_for_action": "In this large study (n=2096) 64.4% reported family history but no relationship between family history and serum lipid levels was found, so family history was not reliable for screening."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.789
+}

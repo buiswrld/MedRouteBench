@@ -1,0 +1,62 @@
+{
+  "pmid": "17076091",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "We sought to determine whether patients with obstructive sleep apnea (OSA) had an objective change in aerobic fitness during cycle ergometry compared to a normal population. The most accurate test of aerobic fitness is measurement of maximum oxygen consumption (VO2max) with cycle ergometry."
+    },
+    {
+      "label": "METHODS",
+      "context": "We performed a retrospective cohort analysis (247 patients with OSA) of VO2max from annual cycle ergometry tests compared to a large control group (normative data from 1.4 million US Air Force tests) in a tertiary care setting."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"Provided evidence describes study aim and methods but gives no results or effect estimates, so effect of OSA on aerobic fitness cannot be determined from the excerpt.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "Provided evidence describes study aim and methods but gives no results or effect estimates, so effect of OSA on aerobic fitness cannot be determined from the excerpt."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Overall, individuals with OSA had increased VO2max when compared to the normalized US Air Force data (p<.001). Patients with an apnea-hypopnea index of greater than 20 demonstrated a decreased VO2max as compared to normalized values (p<.001). No differences in VO2max were observed after either medical or surgical therapy for OSA."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "We sought to determine whether patients with obstructive sleep apnea (OSA) had an objective change in aerobic fitness during cycle ergometry compared to a normal population. The most accurate test of aerobic fitness is measurement of maximum oxygen consumption (VO2max) with cycle ergometry."
+    },
+    {
+      "label": "METHODS",
+      "context": "We performed a retrospective cohort analysis (247 patients with OSA) of VO2max from annual cycle ergometry tests compared to a large control group (normative data from 1.4 million US Air Force tests) in a tertiary care setting."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Overall, individuals with OSA had increased VO2max when compared to the normalized US Air Force data (p<.001). Patients with an apnea-hypopnea index of greater than 20 demonstrated a decreased VO2max as compared to normalized values (p<.001). No differences in VO2max were observed after either medical or surgical therapy for OSA."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"Study shows OSA is associated with altered VO2max: overall higher vs norms but decreased in patients with AHI>20, indicating OSA affects aerobic fitness depending on severity.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "Study shows OSA is associated with altered VO2max: overall higher vs norms but decreased in patients with AHI>20, indicating OSA affects aerobic fitness depending on severity."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "overreaction",
+  "_elapsed_seconds": 8.048
+}

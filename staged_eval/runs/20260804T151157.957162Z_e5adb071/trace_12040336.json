@@ -1,0 +1,58 @@
+{
+  "pmid": "12040336",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The role of early revascularization among patients with acute myocardial infarction complicated by cardiogenic shock remains controversial. Angioplasty registries, while suggesting a benefit, are subject to selection bias, and clinical trials have been underpowered to detect early benefits. If an invasive strategy is beneficial in this population, patients admitted to hospitals with onsite coronary revascularization might be expected to have a better prognosis. We sought to determine whether access to cardiovascular resources at the admitting hospital influenced the prognosis of patients with acute myocardial infarction complicated by cardiogenic shock."
+    },
+    {
+      "label": "METHODS",
+      "context": "By use of the Cooperative Cardiovascular Project database (a retrospective medical record review of Medicare patients discharged with acute myocardial infarction), we identified patients aged>or =65 years whose myocardial infarction was complicated by cardiogenic shock."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Of the 601 patients with cardiogenic shock, 287 (47.8%) were admitted to hospitals without revascularization services and 314 (52.2%) were admitted to hospitals with coronary angioplasty and coronary artery bypass surgery facilities. Clinical characteristics were similar across the subgroups. Patients admitted to hospitals with revascularization services were more likely to undergo coronary revascularization during the index hospitalization and during the first month after acute myocardial infarction. After adjustment for demographic, clinical, hospital, and treatment strategies, the presence of onsite revascularization services was not associated with a significantly lower 30-day (odds ratio 0.83, 95% CI 0.47, 1.45) or 1-year mortality (odds ratio 0.91, 95% CI 0.49, 1.72)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The role of early revascularization among patients with acute myocardial infarction complicated by cardiogenic shock remains controversial. Angioplasty registries, while suggesting a benefit, are subject to selection bias, and clinical trials have been underpowered to detect early benefits. If an invasive strategy is beneficial in this population, patients admitted to hospitals with onsite coronary revascularization might be expected to have a better prognosis. We sought to determine whether access to cardiovascular resources at the admitting hospital influenced the prognosis of patients with acute myocardial infarction complicated by cardiogenic shock."
+    },
+    {
+      "label": "METHODS",
+      "context": "By use of the Cooperative Cardiovascular Project database (a retrospective medical record review of Medicare patients discharged with acute myocardial infarction), we identified patients aged>or =65 years whose myocardial infarction was complicated by cardiogenic shock."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Of the 601 patients with cardiogenic shock, 287 (47.8%) were admitted to hospitals without revascularization services and 314 (52.2%) were admitted to hospitals with coronary angioplasty and coronary artery bypass surgery facilities. Clinical characteristics were similar across the subgroups. Patients admitted to hospitals with revascularization services were more likely to undergo coronary revascularization during the index hospitalization and during the first month after acute myocardial infarction. After adjustment for demographic, clinical, hospital, and treatment strategies, the presence of onsite revascularization services was not associated with a significantly lower 30-day (odds ratio 0.83, 95% CI 0.47, 1.45) or 1-year mortality (odds ratio 0.91, 95% CI 0.49, 1.72)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\", \"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 4.885
+}

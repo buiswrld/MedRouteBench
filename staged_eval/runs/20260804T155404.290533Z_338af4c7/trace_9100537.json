@@ -1,0 +1,62 @@
+{
+  "pmid": "9100537",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Cytologic criteria reported to be helpful in the distinction of proliferative breast disease without atypia (PBD) from nonproliferative breast disease (NPBD) have not been rigorously tested."
+    },
+    {
+      "label": "METHODS",
+      "context": "Fifty-one air-dried, Diff-Quik-stained fine-needle aspirates (FNA) of palpable breast lesions with biopsy-proven diagnoses of NPBD (34 cases) or PBD (17 cases) were reviewed. The smears were evaluated for the cellularity, size, and architectural arrangement of the epithelial groups; the presence of single epithelial cells and myoepithelial cells; and nuclear characteristics."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.50,\"reason_for_action\":\"Insufficient information—only background and methods are provided; no results or diagnostic performance data are reported, so it is not possible to determine if FNA cytology can distinguish NPBD from PBD without atypia.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "Insufficient information—only background and methods are provided; no results or diagnostic performance data are reported, so it is not possible to determine if FNA cytology can distinguish NPBD from PBD without atypia."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The only cytologic feature found to be significantly different between PBD and NPBD was a swirling pattern of epithelial cells. A swirling pattern was noted in 13 of 17 PBD cases (76%) and 12 of 34 NPBD cases (35%) (P = 0.008)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Cytologic criteria reported to be helpful in the distinction of proliferative breast disease without atypia (PBD) from nonproliferative breast disease (NPBD) have not been rigorously tested."
+    },
+    {
+      "label": "METHODS",
+      "context": "Fifty-one air-dried, Diff-Quik-stained fine-needle aspirates (FNA) of palpable breast lesions with biopsy-proven diagnoses of NPBD (34 cases) or PBD (17 cases) were reviewed. The smears were evaluated for the cellularity, size, and architectural arrangement of the epithelial groups; the presence of single epithelial cells and myoepithelial cells; and nuclear characteristics."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The only cytologic feature found to be significantly different between PBD and NPBD was a swirling pattern of epithelial cells. A swirling pattern was noted in 13 of 17 PBD cases (76%) and 12 of 34 NPBD cases (35%) (P = 0.008)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.85,\"reason_for_action\":\"A swirling epithelial pattern differed significantly (76% PBD vs 35% NPBD, P=0.008), indicating some discriminatory ability of FNA but substantial overlap prevents reliable distinction in all cases.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.85,
+      "reason_for_action": "A swirling epithelial pattern differed significantly (76% PBD vs 35% NPBD, P=0.008), indicating some discriminatory ability of FNA but substantial overlap prevents reliable distinction in all cases."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 7.414
+}

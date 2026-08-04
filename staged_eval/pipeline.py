@@ -12,7 +12,7 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT, WORKERS
+from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT, WORKERS, SEED
 from shared.pipeline_utils import (
     callable_id as _callable_id,
     create_run_dir as _create_run_dir,
@@ -56,7 +56,7 @@ def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
             partial(_call_llm_json, model=selected_model),
             selected_model,
             "azure",
-            {"max_completion_tokens": MAX_TOKENS},
+            {"max_completion_tokens": MAX_TOKENS, "seed": SEED},
         )
 
     cid = _callable_id(call_fn)

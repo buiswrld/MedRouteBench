@@ -1,0 +1,82 @@
+{
+  "pmid": "17682349",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "To identify gender differences in delay time and the reasons why African Americans delay in seeking medical care for symptoms of acute myocardial infarction (AMI)."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Cross-sectional."
+    },
+    {
+      "label": "SETTING",
+      "context": "Five hospitals in the San Francisco and East Bay areas."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Sixty-one African American men and women diagnosed with an AMI."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Prehospital delay time."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Median delay time was longer for women compared to men (4.4 hours vs 3.5 hours), although the difference was not significant. Single women delayed longer than single men (P = .03), and women who were alone when symptoms began delayed longer than women with someone (P = .03). Women who received advice to seek help or call 911 upon symptom onset had shorter delays compared to women who were not advised to call 911 (P = .01). Men at home delayed longer than men who experienced their symptoms outside the home (P = .01). Men with emergency room insurance delayed longer than men without emergency room insurance (P = .03), and men who took an ambulance to the hospital had shorter delay times than men who took other means of transportation (P = .04)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "To identify gender differences in delay time and the reasons why African Americans delay in seeking medical care for symptoms of acute myocardial infarction (AMI)."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Cross-sectional."
+    },
+    {
+      "label": "SETTING",
+      "context": "Five hospitals in the San Francisco and East Bay areas."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Sixty-one African American men and women diagnosed with an AMI."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Prehospital delay time."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Median delay time was longer for women compared to men (4.4 hours vs 3.5 hours), although the difference was not significant. Single women delayed longer than single men (P = .03), and women who were alone when symptoms began delayed longer than women with someone (P = .03). Women who received advice to seek help or call 911 upon symptom onset had shorter delays compared to women who were not advised to call 911 (P = .01). Men at home delayed longer than men who experienced their symptoms outside the home (P = .01). Men with emergency room insurance delayed longer than men without emergency room insurance (P = .03), and men who took an ambulance to the hospital had shorter delay times than men who took other means of transportation (P = .04)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 5.892
+}

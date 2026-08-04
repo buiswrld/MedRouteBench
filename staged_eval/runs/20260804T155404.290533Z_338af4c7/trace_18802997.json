@@ -1,0 +1,62 @@
+{
+  "pmid": "18802997",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Assessing the clinical course of inflammatory bowel disease (IBD) patients consists of periodical clinical evaluations and laboratory tests. We aimed to assess the role of calprotectin tests in predicting clinical relapse in IBD patients."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ninety-seven patients with ulcerative colitis (UC) and 65 with Crohn's disease (CD) in clinical remission were prospectively included in the study. A 10-g stool sample was collected for calprotectin assay. The cutoff level was set at 130 mg/kg of feces. Patients were followed up for 1 yr after the test or until relapse. The cumulative proportion of relapses was estimated by the Kaplan-Meier analysis. Statistics for equality of survival distribution were tested using the log-rank test."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.60,\"reason_for_action\":\"The study design (prospective, calprotectin cutoff, 1-yr follow-up) is appropriate to assess prediction, but no outcome/results are provided here to confirm predictive performance.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "The study design (prospective, calprotectin cutoff, 1-yr follow-up) is appropriate to assess prediction, but no outcome/results are provided here to confirm predictive performance."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The calprotectin test was positive in 44 UC patients and 26 of them relapsed within a year, while 11 of 53 UC patients with a negative calprotectin test relapsed within the same time frame. Thirty CD patients had a positive calprotectin test and 13 of them relapsed within a year, as did 7 of the 35 with a negative test result. A significant correlation emerged between a positive calprotectin test and the probability of relapse in UC patients (P= 0.000). In CD patients, only cases of colonic CD showed a significant correlation between a positive calprotectin test and the probability of relapse, i.e., 6 colonic CD patients were positive for the calprotectin test and 4 relapsed (P= 0.02)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Assessing the clinical course of inflammatory bowel disease (IBD) patients consists of periodical clinical evaluations and laboratory tests. We aimed to assess the role of calprotectin tests in predicting clinical relapse in IBD patients."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ninety-seven patients with ulcerative colitis (UC) and 65 with Crohn's disease (CD) in clinical remission were prospectively included in the study. A 10-g stool sample was collected for calprotectin assay. The cutoff level was set at 130 mg/kg of feces. Patients were followed up for 1 yr after the test or until relapse. The cumulative proportion of relapses was estimated by the Kaplan-Meier analysis. Statistics for equality of survival distribution were tested using the log-rank test."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The calprotectin test was positive in 44 UC patients and 26 of them relapsed within a year, while 11 of 53 UC patients with a negative calprotectin test relapsed within the same time frame. Thirty CD patients had a positive calprotectin test and 13 of them relapsed within a year, as did 7 of the 35 with a negative test result. A significant correlation emerged between a positive calprotectin test and the probability of relapse in UC patients (P= 0.000). In CD patients, only cases of colonic CD showed a significant correlation between a positive calprotectin test and the probability of relapse, i.e., 6 colonic CD patients were positive for the calprotectin test and 4 relapsed (P= 0.02)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.72,\"reason_for_action\":\"Prospective study: positive fecal calprotectin strongly predicted relapse in UC (P=0.000) and in colonic CD (P=0.02) but not in all CD patients, so predictive utility applies to subsets rather than universally.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.72,
+      "reason_for_action": "Prospective study: positive fecal calprotectin strongly predicted relapse in UC (P=0.000) and in colonic CD (P=0.02) but not in all CD patients, so predictive utility applies to subsets rather than universally."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 9.227
+}

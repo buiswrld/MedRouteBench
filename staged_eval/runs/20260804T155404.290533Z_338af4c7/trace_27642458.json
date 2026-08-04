@@ -1,0 +1,62 @@
+{
+  "pmid": "27642458",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Polio eradication is now feasible after removal of Nigeria from the list of endemic countries and global reduction of cases of wild polio virus in 2015 by more than 80%. However, all countries must remain focused to achieve eradication. In August 2015, the Catholic bishops in Kenya called for boycott of a polio vaccination campaign citing safety concerns with the polio vaccine. We conducted a survey to establish if the coverage was affected by the boycott."
+    },
+    {
+      "label": "METHODS",
+      "context": "A cross sectional survey was conducted in all the 32 counties that participated in the campaign. A total of 90,157 children and 37,732 parents/guardians were sampled to determine the vaccination coverage and reasons for missed vaccination."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.50,\"reason_for_action\":\"The prompt gives background and methods (survey of 90,157 children) but no results or data on coverage or missed vaccinations; effect of the bishops' boycott cannot be determined from the provided text.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "The prompt gives background and methods (survey of 90,157 children) but no results or data on coverage or missed vaccinations; effect of the bishops' boycott cannot be determined from the provided text."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The national vaccination coverage was 93% compared to 94% in the November 2014 campaign. The proportion of parents/guardians that belonged to Catholic Church was 31% compared to 7% of the children who were missed. Reasons for missed vaccination included house not being visited (44%), children not being at home at time of visit (38%), refusal by parents (12%), children being as leep (1%), and various other reasons (5%). Compared to the November 2014 campaign, the proportion of children who were not vaccinated due to parent's refusal significantly increased from 6% to 12% in August 2015."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Polio eradication is now feasible after removal of Nigeria from the list of endemic countries and global reduction of cases of wild polio virus in 2015 by more than 80%. However, all countries must remain focused to achieve eradication. In August 2015, the Catholic bishops in Kenya called for boycott of a polio vaccination campaign citing safety concerns with the polio vaccine. We conducted a survey to establish if the coverage was affected by the boycott."
+    },
+    {
+      "label": "METHODS",
+      "context": "A cross sectional survey was conducted in all the 32 counties that participated in the campaign. A total of 90,157 children and 37,732 parents/guardians were sampled to determine the vaccination coverage and reasons for missed vaccination."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The national vaccination coverage was 93% compared to 94% in the November 2014 campaign. The proportion of parents/guardians that belonged to Catholic Church was 31% compared to 7% of the children who were missed. Reasons for missed vaccination included house not being visited (44%), children not being at home at time of visit (38%), refusal by parents (12%), children being as leep (1%), and various other reasons (5%). Compared to the November 2014 campaign, the proportion of children who were not vaccinated due to parent's refusal significantly increased from 6% to 12% in August 2015."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.78,\"reason_for_action\":\"National coverage fell from 94% to 93% and parental refusals doubled from 6% to 12% in August 2015, indicating the bishops' boycott had an effect on vaccination coverage.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.78,
+      "reason_for_action": "National coverage fell from 94% to 93% and parental refusals doubled from 6% to 12% in August 2015, indicating the bishops' boycott had an effect on vaccination coverage."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.77
+}

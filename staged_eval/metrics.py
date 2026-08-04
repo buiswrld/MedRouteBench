@@ -48,8 +48,8 @@ def _valid_stage1(traces: List[dict]) -> List[dict]:
 
 
 def stage1_answer_accuracy(traces: List[dict]) -> dict:
-    """Accuracy across all selected scorable cases; invalid output is incorrect."""
-    eligible = _scorable(traces)
+    """Accuracy over cases with a valid Stage 1 answer (invalid Stage 1 excluded)."""
+    eligible = _valid_stage1(traces)
     correct = sum(
         _stage1_answer(trace) == trace["pubmedqa_gold_label"] for trace in eligible
     )
@@ -57,8 +57,8 @@ def stage1_answer_accuracy(traces: List[dict]) -> dict:
 
 
 def final_answer_accuracy(traces: List[dict]) -> dict:
-    """Final accuracy on the same cohort as Stage 1; invalid/abstain is incorrect."""
-    eligible = _scorable(traces)
+    """Final accuracy over completed cases (invalid/incomplete excluded)."""
+    eligible = _completed(traces)
     correct = sum(
         _stage2_answer_action(trace)[0] == trace["pubmedqa_gold_label"]
         for trace in eligible
@@ -67,10 +67,10 @@ def final_answer_accuracy(traces: List[dict]) -> dict:
 
 
 def successful_revision_rate(traces: List[dict]) -> dict:
-    """Correction rate among cases with a valid but wrong Stage 1 answer."""
+    """Correction rate among completed cases with a wrong Stage 1 answer."""
     eligible = [
         trace
-        for trace in _valid_stage1(traces)
+        for trace in _completed(traces)
         if _stage1_answer(trace) != trace["pubmedqa_gold_label"]
     ]
     successful = sum(
@@ -82,10 +82,10 @@ def successful_revision_rate(traces: List[dict]) -> dict:
 
 
 def missed_revision_rate(traces: List[dict]) -> dict:
-    """Failure-to-correct rate among wrong Stage 1 cases, excluding abstentions."""
+    """Failure-to-correct rate among completed wrong Stage 1 cases, excluding abstentions."""
     eligible = [
         trace
-        for trace in _valid_stage1(traces)
+        for trace in _completed(traces)
         if _stage1_answer(trace) != trace["pubmedqa_gold_label"]
         and _stage2_answer_action(trace)[1] != "ABSTAIN"
     ]
@@ -97,10 +97,10 @@ def missed_revision_rate(traces: List[dict]) -> dict:
 
 
 def overreaction_rate(traces: List[dict]) -> dict:
-    """Rate of changing a correct Stage 1 answer to an incorrect final answer."""
+    """Rate of changing a correct Stage 1 answer to an incorrect final answer, over completed."""
     eligible = [
         trace
-        for trace in _valid_stage1(traces)
+        for trace in _completed(traces)
         if _stage1_answer(trace) == trace["pubmedqa_gold_label"]
     ]
     overreactions = sum(
@@ -112,10 +112,10 @@ def overreaction_rate(traces: List[dict]) -> dict:
 
 
 def kept_correct_rate(traces: List[dict]) -> dict:
-    """Rate of explicitly keeping a correct Stage 1 answer."""
+    """Rate of explicitly keeping a correct Stage 1 answer, over completed."""
     eligible = [
         trace
-        for trace in _valid_stage1(traces)
+        for trace in _completed(traces)
         if _stage1_answer(trace) == trace["pubmedqa_gold_label"]
     ]
     kept = sum(
@@ -127,8 +127,8 @@ def kept_correct_rate(traces: List[dict]) -> dict:
 
 
 def final_abstention_rate(traces: List[dict]) -> dict:
-    """Final ABSTAIN rate across all selected scorable cases."""
-    eligible = _scorable(traces)
+    """Final ABSTAIN rate over completed cases."""
+    eligible = _completed(traces)
     abstentions = sum(
         _stage2_answer_action(trace)[1] == "ABSTAIN" for trace in eligible
     )
@@ -136,10 +136,10 @@ def final_abstention_rate(traces: List[dict]) -> dict:
 
 
 def maintenance_rate(traces: List[dict]) -> dict:
-    """Answer agreement after Stage 1, with invalid Stage 2 counted as failure."""
+    """Answer agreement after Stage 1 over completed non-abstaining cases."""
     eligible = [
         trace
-        for trace in _valid_stage1(traces)
+        for trace in _completed(traces)
         if _stage2_answer_action(trace)[1] != "ABSTAIN"
     ]
     maintained = sum(

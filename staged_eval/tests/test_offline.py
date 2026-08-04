@@ -24,7 +24,11 @@ from staged_eval.metrics import (
     successful_revision_rate,
 )
 from staged_eval.pipeline import run_pipeline
-from staged_eval.prompts import SYSTEM_PROMPT, build_user_prompt
+from staged_eval.prompts import (
+    STAGE1_SYSTEM_PROMPT,
+    STAGE2_SYSTEM_PROMPT,
+    build_user_prompt,
+)
 from staged_eval.runner import run_case
 from staged_eval.schema import ACTIONS, AgentOutput, safe_json_loads, validate
 
@@ -45,8 +49,17 @@ def _case(
     }
 
 
-def _output(action, answer):
-    return json.dumps({"action": action, "answer": answer})
+def _raw(action, answer, confidence=0.8, reason="because the evidence supports it"):
+    return {
+        "action": action,
+        "answer": answer,
+        "confidence": confidence,
+        "reason_for_action": reason,
+    }
+
+
+def _output(action, answer, confidence=0.8, reason="because the evidence supports it"):
+    return json.dumps(_raw(action, answer, confidence, reason))
 
 
 def _trace(pmid, gold, stage1, action2, answer2, label):
@@ -80,32 +93,60 @@ def test_action_ontology_is_fixed_two_stage_contract():
 
 
 def test_validate_normalizes_stage1_output():
-    output, error = validate({"action": "answer", "answer": "YES"}, stage=1)
+    output, error = validate(_raw("answer", "YES"), stage=1)
     assert error is None
-    assert output == AgentOutput(action="ANSWER", answer="yes")
+    assert output == AgentOutput(
+        action="ANSWER",
+        answer="yes",
+        confidence=0.8,
+        reason_for_action="because the evidence supports it",
+    )
+
+
+@pytest.mark.parametrize("key", ["confidence", "reason_for_action"])
+def test_validate_requires_confidence_and_reason(key):
+    raw = _raw("ANSWER", "yes")
+    del raw[key]
+    _, error = validate(raw, stage=1)
+    assert f"missing key '{key}'" in error
+
+
+def test_validate_rejects_non_numeric_confidence():
+    _, error = validate(_raw("ANSWER", "yes", confidence="high"), stage=1)
+    assert "confidence not a number" in error
+
+
+def test_validate_rejects_empty_reason():
+    _, error = validate(_raw("ANSWER", "yes", reason="   "), stage=1)
+    assert "empty reason_for_action" in error
+
+
+def test_validate_clamps_confidence():
+    output, _ = validate(_raw("ANSWER", "yes", confidence=1.7), stage=1)
+    assert output.confidence == 1.0
 
 
 @pytest.mark.parametrize("action", ["KEEP_ANSWER", "REVISE_ANSWER", "ABSTAIN"])
 def test_stage1_requires_answer_action(action):
-    _, error = validate({"action": action, "answer": None}, stage=1)
+    _, error = validate(_raw(action, None), stage=1)
     assert "Stage 1 action must be ANSWER" in error
 
 
 def test_stage1_requires_concrete_answer():
-    _, error = validate({"action": "ANSWER", "answer": None}, stage=1)
+    _, error = validate(_raw("ANSWER", None), stage=1)
     assert "requires yes, no, or maybe" in error
 
 
 def test_stage2_keep_must_match_stage1():
     output, error = validate(
-        {"action": "KEEP_ANSWER", "answer": "no"},
+        _raw("KEEP_ANSWER", "no"),
         stage=2,
         prior_answer="no",
     )
     assert error is None and output.answer == "no"
 
     _, error = validate(
-        {"action": "KEEP_ANSWER", "answer": "yes"},
+        _raw("KEEP_ANSWER", "yes"),
         stage=2,
         prior_answer="no",
     )
@@ -114,14 +155,14 @@ def test_stage2_keep_must_match_stage1():
 
 def test_stage2_revision_must_change_answer():
     output, error = validate(
-        {"action": "REVISE_ANSWER", "answer": "yes"},
+        _raw("REVISE_ANSWER", "yes"),
         stage=2,
         prior_answer="no",
     )
     assert error is None and output.answer == "yes"
 
     _, error = validate(
-        {"action": "REVISE_ANSWER", "answer": "no"},
+        _raw("REVISE_ANSWER", "no"),
         stage=2,
         prior_answer="no",
     )
@@ -130,14 +171,14 @@ def test_stage2_revision_must_change_answer():
 
 def test_stage2_abstain_requires_null():
     output, error = validate(
-        {"action": "ABSTAIN", "answer": None},
+        _raw("ABSTAIN", None),
         stage=2,
         prior_answer="maybe",
     )
     assert error is None and output.answer is None
 
     _, error = validate(
-        {"action": "ABSTAIN", "answer": "maybe"},
+        _raw("ABSTAIN", "maybe"),
         stage=2,
         prior_answer="maybe",
     )
@@ -297,7 +338,8 @@ def test_prompts_never_expose_forbidden_pubmedqa_fields():
     )
     split = split_evidence(case)
     prompts = [
-        SYSTEM_PROMPT,
+        STAGE1_SYSTEM_PROMPT,
+        STAGE2_SYSTEM_PROMPT,
         build_user_prompt(case, 1, split),
         build_user_prompt(case, 2, split, {"action": "ANSWER", "answer": "yes"}),
     ]
@@ -426,7 +468,10 @@ def test_empty_metric_denominators_are_explicitly_null():
     }
 
 
-def test_invalid_stage2_cannot_inflate_final_accuracy():
+def test_invalid_stage2_is_excluded_from_completed_denominators():
+    # task-0707 denominator policy: invalid/incomplete cases are dropped from
+    # completed-based denominators rather than counted as wrong. A valid Stage 1
+    # still counts toward the Stage 1 denominator.
     invalid = _trace("2", "yes", "no", "KEEP_ANSWER", "no", "invalid")
     invalid["stage2_model_output"] = {
         "raw": "invalid",
@@ -438,21 +483,24 @@ def test_invalid_stage2_cannot_inflate_final_accuracy():
     invalid["status"] = "invalid_stage2"
 
     report = build_report([TRACES[4], invalid], model="test")
+    # Stage 1 denominator still includes the invalid case (its Stage 1 was valid).
     assert report["stage1_answer_accuracy"] == {
         "rate": 0.5,
         "numerator": 1,
         "denominator": 2,
     }
+    # Final accuracy is over completed cases only, so the invalid case is dropped.
     assert report["final_answer_accuracy"] == {
-        "rate": 0.5,
-        "numerator": 1,
-        "denominator": 2,
-    }
-    assert report["successful_revision_rate"]["denominator"] == 1
-    assert report["missed_revision_rate"] == {
         "rate": 1.0,
         "numerator": 1,
         "denominator": 1,
+    }
+    # No completed wrong-Stage-1 cases remain -> empty revision denominators.
+    assert report["successful_revision_rate"]["denominator"] == 0
+    assert report["missed_revision_rate"] == {
+        "rate": None,
+        "numerator": 0,
+        "denominator": 0,
     }
 
 

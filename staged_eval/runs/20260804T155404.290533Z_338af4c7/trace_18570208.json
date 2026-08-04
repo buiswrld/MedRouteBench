@@ -1,0 +1,62 @@
+{
+  "pmid": "18570208",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine the association between fetal biometry in the first or early second trimester and severe macrosomia at delivery."
+    },
+    {
+      "label": "METHODS",
+      "context": "This case-control study included 30 term severely macrosomic neonates; 90 appropriate-for-gestational age (AGA) neonates served as controls. All pregnancies underwent nuchal translucency (NT) screening at 11-14 weeks' gestation. Pregnancies were dated by accurate last menstrual period consistent with crown-rump length (CRL) measurements at the time of screening, early pregnancy CRL or date of fertilization. The association between birth weight and the difference between the measured and the expected CRL at the time of NT screening was analyzed."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"The study examined CRL at 11–14 weeks to assess association with severe macrosomia, but no results are provided in the supplied evidence, so presence of manifestation at that stage is uncertain.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "The study examined CRL at 11–14 weeks to assess association with severe macrosomia, but no results are provided in the supplied evidence, so presence of manifestation at that stage is uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The difference between measured and expected CRL, expressed both in mm and in days of gestation, was statistically greater in the severely macrosomic neonates compared with controls (mean, 6.66 +/- 4.78 mm vs. 1.17 +/- 4.6 mm, P<0.0001 and 3 +/- 2.2 days vs. 0.5 +/- 2.3 days, P<0.0001, respectively). Furthermore, there were significant correlations between the extent of macrosomia and the discrepancy between expected and measured fetal size at the time of NT screening (r = 0.47, P<0.01 and r = 0.48, P<0.01, respectively)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine the association between fetal biometry in the first or early second trimester and severe macrosomia at delivery."
+    },
+    {
+      "label": "METHODS",
+      "context": "This case-control study included 30 term severely macrosomic neonates; 90 appropriate-for-gestational age (AGA) neonates served as controls. All pregnancies underwent nuchal translucency (NT) screening at 11-14 weeks' gestation. Pregnancies were dated by accurate last menstrual period consistent with crown-rump length (CRL) measurements at the time of screening, early pregnancy CRL or date of fertilization. The association between birth weight and the difference between the measured and the expected CRL at the time of NT screening was analyzed."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The difference between measured and expected CRL, expressed both in mm and in days of gestation, was statistically greater in the severely macrosomic neonates compared with controls (mean, 6.66 +/- 4.78 mm vs. 1.17 +/- 4.6 mm, P<0.0001 and 3 +/- 2.2 days vs. 0.5 +/- 2.3 days, P<0.0001, respectively). Furthermore, there were significant correlations between the extent of macrosomia and the discrepancy between expected and measured fetal size at the time of NT screening (r = 0.47, P<0.01 and r = 0.48, P<0.01, respectively)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.65,\"reason_for_action\":\"Study found significantly greater CRL at 11–14 weeks in neonates later severely macrosomic with moderate correlations, so early manifestation is possible but not definitively predictive.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.65,
+      "reason_for_action": "Study found significantly greater CRL at 11–14 weeks in neonates later severely macrosomic with moderate correlations, so early manifestation is possible but not definitively predictive."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 11.204
+}

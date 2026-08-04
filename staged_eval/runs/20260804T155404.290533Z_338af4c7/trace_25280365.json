@@ -1,0 +1,70 @@
+{
+  "pmid": "25280365",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Clinical pathologists (CPs) report RBC morphologic (RBC-M) changes to assist clinicians in prioritizing differential diagnoses. However, reporting is subjective, semiquantitative, and potentially biased. Reporting decisions vary among CPs, and reports may not be interpreted by clinicians as intended."
+    },
+    {
+      "label": "OBJECTIVES",
+      "context": "The aims of this study were to survey clinicians and CPs about RBC-M terms and their clinical value, and identify areas of agreement and discordance."
+    },
+    {
+      "label": "METHODS",
+      "context": "Online surveys were distributed to small animal clinicians via the Veterinary Information Network and to CPs via the ASVCP listserv. A quiz assessed understanding of RBC-M terms among respondent groups. Descriptive statistics were used to analyze responses to survey questions, and quiz scores were compared among groups."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\",\"confidence\":0.8,\"reason_for_action\":\"Background notes RBC morphology reporting is subjective, variably applied by clinical pathologists, and may not be interpreted by clinicians as intended; the study aimed to identify areas of agreement and discordance, supporting discordance.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes",
+      "confidence": 0.8,
+      "reason_for_action": "Background notes RBC morphology reporting is subjective, variably applied by clinical pathologists, and may not be interpreted by clinicians as intended; the study aimed to identify areas of agreement and discordance, supporting discordance."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Analyzable responses were obtained from 1662 clinicians and 82 CPs. Both clinicians and CPs considered some terms, e.g., agglutination, useful, whereas only CPs considered other terms, e.g., ghost cells, useful. All groups interpreted certain terms, e.g., Heinz bodies, correctly, whereas some clinicians misinterpreted others, e.g., eccentrocytes. Responses revealed that CPs often do not report RBC-M they consider insignificant, when present in low numbers. Twenty-eight percent of clinicians think CPs review all blood smears while only 19% of CPs report reviewing all smears."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Clinical pathologists (CPs) report RBC morphologic (RBC-M) changes to assist clinicians in prioritizing differential diagnoses. However, reporting is subjective, semiquantitative, and potentially biased. Reporting decisions vary among CPs, and reports may not be interpreted by clinicians as intended."
+    },
+    {
+      "label": "OBJECTIVES",
+      "context": "The aims of this study were to survey clinicians and CPs about RBC-M terms and their clinical value, and identify areas of agreement and discordance."
+    },
+    {
+      "label": "METHODS",
+      "context": "Online surveys were distributed to small animal clinicians via the Veterinary Information Network and to CPs via the ASVCP listserv. A quiz assessed understanding of RBC-M terms among respondent groups. Descriptive statistics were used to analyze responses to survey questions, and quiz scores were compared among groups."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Analyzable responses were obtained from 1662 clinicians and 82 CPs. Both clinicians and CPs considered some terms, e.g., agglutination, useful, whereas only CPs considered other terms, e.g., ghost cells, useful. All groups interpreted certain terms, e.g., Heinz bodies, correctly, whereas some clinicians misinterpreted others, e.g., eccentrocytes. Responses revealed that CPs often do not report RBC-M they consider insignificant, when present in low numbers. Twenty-eight percent of clinicians think CPs review all blood smears while only 19% of CPs report reviewing all smears."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"Survey found agreement on some RBC-M terms but misinterpretations, differing perceptions of term usefulness, and inconsistent reporting practices between clinicians and clinical pathologists, indicating discordance.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "Survey found agreement on some RBC-M terms but misinterpretations, differing perceptions of term usefulness, and inconsistent reporting practices between clinicians and clinical pathologists, indicating discordance."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 7.578
+}

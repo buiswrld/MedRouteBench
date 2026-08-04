@@ -1,0 +1,62 @@
+{
+  "pmid": "19854401",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The purpose of this survey was to ascertain the most common surgical practices for attaining negative (tumor-free) surgical margins in patients desiring breast-conservation treatment for breast cancer to see if a consensus exists for optimal treatment of patients."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "We sent a survey to 1,000 surgeons interested in the treatment of breast cancer. Three hundred eighty-one surgeons responded to this survey and 351 were used for the analysis (response rate of 38%)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.3,\"reason_for_action\":\"Only the survey purpose and response rate are provided; no results about surgeons' practices or level of agreement are given, so consensus cannot be determined from this evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.3,
+      "reason_for_action": "Only the survey purpose and response rate are provided; no results about surgeons' practices or level of agreement are given, so consensus cannot be determined from this evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Answers showed a large variety in clinical practices among breast surgeons across the country. There was little intraoperative margin analysis; only 48% of surgeons examine the margins grossly with a pathologist and even fewer used frozen sections or imprint cytology. Decisions to reexcise specific margins varied greatly. For example, 57% of surgeons would never reexcise for a positive deep margin, but 53% would always reexcise for a positive anterior margin. Most importantly, there was a large range in answers about acceptable margins with ductal carcinoma in situ and invasive carcinoma. Fifteen percent of surgeons would accept any negative margin, 28% would accept a 1-mm negative margin, 50% would accept a 2-mm negative margin, 12% would accept a 5-mm negative margin, and 3% would accept a 10-mm negative margin."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The purpose of this survey was to ascertain the most common surgical practices for attaining negative (tumor-free) surgical margins in patients desiring breast-conservation treatment for breast cancer to see if a consensus exists for optimal treatment of patients."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "We sent a survey to 1,000 surgeons interested in the treatment of breast cancer. Three hundred eighty-one surgeons responded to this survey and 351 were used for the analysis (response rate of 38%)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Answers showed a large variety in clinical practices among breast surgeons across the country. There was little intraoperative margin analysis; only 48% of surgeons examine the margins grossly with a pathologist and even fewer used frozen sections or imprint cytology. Decisions to reexcise specific margins varied greatly. For example, 57% of surgeons would never reexcise for a positive deep margin, but 53% would always reexcise for a positive anterior margin. Most importantly, there was a large range in answers about acceptable margins with ductal carcinoma in situ and invasive carcinoma. Fifteen percent of surgeons would accept any negative margin, 28% would accept a 1-mm negative margin, 50% would accept a 2-mm negative margin, 12% would accept a 5-mm negative margin, and 3% would accept a 10-mm negative margin."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.30,\"reason_for_action\":\"Survey of 351 surgeons demonstrated wide variation in practices and acceptable margin widths, indicating no clear consensus; retaining the original 'maybe' judgment.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.3,
+      "reason_for_action": "Survey of 351 surgeons demonstrated wide variation in practices and acceptable margin widths, indicating no clear consensus; retaining the original 'maybe' judgment."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 10.928
+}

@@ -4,18 +4,34 @@ import json
 from typing import Optional
 
 
-SYSTEM_PROMPT = """You are a careful biomedical reasoning agent in a fixed two-stage PubMedQA experiment.
+STAGE1_SYSTEM_PROMPT = """You are a careful biomedical reasoning agent in a fixed two-stage PubMedQA experiment.
 
 Use only the question and labelled evidence supplied in the user message. Never
 claim access to a gold answer, long answer, hidden decision, or external source.
 
 Return one JSON object and nothing else. The object must contain exactly:
-  "action": a stage-allowed action
-  "answer": "yes", "no", "maybe", or null
+  "action": "ANSWER"
+  "answer": "yes", "no", or "maybe"
+  "confidence": float in [0.0, 1.0]
+  "reason_for_action": short string (<= 240 chars)
 
 Stage 1 rules:
 - action MUST be "ANSWER"
 - answer MUST be "yes", "no", or "maybe"
+"""
+
+
+STAGE2_SYSTEM_PROMPT = """You are a careful biomedical reasoning agent in the revision stage of a fixed two-stage PubMedQA experiment.
+
+Use only the question, your shown Stage 1 output, and the labelled evidence
+supplied in the user message. Never claim access to a gold answer, long answer,
+hidden decision, or external source.
+
+Return one JSON object and nothing else. The object must contain exactly:
+  "action": "KEEP_ANSWER", "REVISE_ANSWER", or "ABSTAIN"
+  "answer": "yes", "no", "maybe", or null
+  "confidence": float in [0.0, 1.0]
+  "reason_for_action": short string (<= 240 chars)
 
 Stage 2 rules:
 - "KEEP_ANSWER": answer MUST exactly match the Stage 1 answer
@@ -45,7 +61,8 @@ def build_user_prompt(
                 f"QUESTION:\n{question}",
                 "PRELIMINARY EVIDENCE:\n"
                 + _format_evidence(evidence_split["stage1_evidence"]),
-                'Return exactly {"action":"ANSWER","answer":"yes|no|maybe"} '
+                'Return exactly {"action":"ANSWER","answer":"yes|no|maybe",'
+                '"confidence":0.0-1.0,"reason_for_action":"..."} '
                 "with one concrete answer value.",
             ]
         )
@@ -62,7 +79,8 @@ def build_user_prompt(
                 + _format_evidence(evidence_split["full_context"]),
                 "Choose exactly one action: KEEP_ANSWER with the same answer; "
                 "REVISE_ANSWER with a different yes/no/maybe answer; or ABSTAIN "
-                "with answer null.",
+                "with answer null. Include confidence (0.0-1.0) and "
+                "reason_for_action in the JSON object.",
             ]
         )
 
