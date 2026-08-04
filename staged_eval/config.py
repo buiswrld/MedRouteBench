@@ -27,3 +27,7 @@ RUNS_DIR = PACKAGE_DIR / "runs"
 # ── LLM settings ─────────────────────────────────────────────────────────────
 MAX_TOKENS  = int(os.environ.get("MAX_TOKENS", "512"))
 
+# ── concurrency ──────────────────────────────────────────────────────────────
+# Number of cases to run concurrently. 1 reproduces the sequential behaviour.
+WORKERS = int(os.environ.get("WORKERS", "4"))
+

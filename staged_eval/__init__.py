@@ -10,11 +10,16 @@ def __getattr__(name):
         from .pipeline import inspect_trace, run_pipeline
 
         return {"run_pipeline": run_pipeline, "inspect_trace": inspect_trace}[name]
+    if name == "analyze":
+        from .cross_run_consistency import analyze
+
+        return analyze
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     "run_pipeline",
     "inspect_trace",
+    "analyze",
     "ACTIONS",
     "STAGE1_ALLOWED",
     "STAGE2_ALLOWED",

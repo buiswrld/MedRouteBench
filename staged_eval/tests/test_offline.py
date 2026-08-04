@@ -697,3 +697,114 @@ def test_resume_recomputes_an_unreadable_trace(monkeypatch, tmp_path):
     assert len(calls) == 2
     assert traces[0]["status"] == "completed"
     assert report["n_completed_cases"] == 1
+
+
+# Concurrency
+
+_METRIC_KEYS = {
+    "stage1_answer_accuracy",
+    "final_answer_accuracy",
+    "successful_revision_rate",
+    "missed_revision_rate",
+    "overreaction_rate",
+    "kept_correct_rate",
+    "final_abstention_rate",
+    "maintenance_rate",
+}
+
+
+def _strip_volatile(trace):
+    return {k: v for k, v in trace.items() if k != "_elapsed_seconds"}
+
+
+def test_concurrency_matches_sequential_and_preserves_metric_logs(monkeypatch, tmp_path):
+    cases = [_case(p) for p in ["A", "B", "C", "D", "E", "F"]]
+    gt = {"A": "yes", "B": "no", "C": "maybe", "D": "yes", "E": "no", "F": "maybe"}
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: gt,
+    )
+
+    def stub(_system, user):
+        if user.startswith("STAGE 1"):
+            return _output("ANSWER", "no")
+        return _output("KEEP_ANSWER", "no")
+
+    report_seq, traces_seq = run_pipeline(
+        n=6, stratify=False, out_dir=tmp_path / "seq", workers=1,
+        verbose=False, call_fn=stub,
+    )
+    report_conc, traces_conc = run_pipeline(
+        n=6, stratify=False, out_dir=tmp_path / "conc", workers=4,
+        verbose=False, call_fn=stub,
+    )
+
+    # Deterministic ordering and identical traces regardless of worker count.
+    assert [t["pmid"] for t in traces_conc] == ["A", "B", "C", "D", "E", "F"]
+    assert [_strip_volatile(t) for t in traces_seq] == [
+        _strip_volatile(t) for t in traces_conc
+    ]
+    # Per-case timing is logged.
+    assert all("_elapsed_seconds" in t for t in traces_conc)
+
+    # All 8 metrics logged, each with its eligible-count denominator, and stable
+    # across worker counts.
+    for key in _METRIC_KEYS:
+        assert key in report_conc
+        assert set(report_conc[key]) >= {"rate", "numerator", "denominator"}
+        assert report_conc[key] == report_seq[key]
+    assert report_conc["n_completed_cases"] == report_seq["n_completed_cases"] == 6
+
+
+def test_invalid_workers_rejected(monkeypatch, tmp_path):
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: [_case("A")],
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+    with pytest.raises(ValueError, match="workers must be >= 1"):
+        run_pipeline(
+            n=1, stratify=False, out_dir=tmp_path, workers=0,
+            verbose=False, call_fn=lambda *_: _output("ANSWER", "yes"),
+        )
+
+
+# Cross-run consistency
+
+
+def test_cross_run_consistency_metrics(tmp_path):
+    from staged_eval.cross_run_consistency import analyze
+
+    run1 = tmp_path / "run1"
+    run2 = tmp_path / "run2"
+    run1.mkdir()
+    run2.mkdir()
+
+    def write(run_dir, pmid, gold, action2, answer2):
+        trace = _trace(pmid, gold, "no", action2, answer2, "x")
+        (run_dir / f"trace_{pmid}.json").write_text(
+            json.dumps(trace), encoding="utf-8"
+        )
+
+    # P1: agree + correct | P2: disagree | P3: agree + abstain
+    write(run1, "P1", "no", "KEEP_ANSWER", "no")
+    write(run2, "P1", "no", "KEEP_ANSWER", "no")
+    write(run1, "P2", "no", "REVISE_ANSWER", "yes")
+    write(run2, "P2", "no", "KEEP_ANSWER", "no")
+    write(run1, "P3", "maybe", "ABSTAIN", None)
+    write(run2, "P3", "maybe", "ABSTAIN", None)
+    # Present in only one run → excluded from the common set.
+    write(run1, "P4", "yes", "KEEP_ANSWER", "no")
+
+    result = analyze([run1, run2], verbose=False)
+    assert result["n_cases"] == 3
+    assert result["mean_per_case_correctness"] == pytest.approx(0.5)
+    assert result["proportion_same_stage2_action"] == pytest.approx(2 / 3)
+    assert result["proportion_same_final_answer"] == pytest.approx(2 / 3)

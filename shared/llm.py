@@ -1,6 +1,7 @@
 """Shared LLM client factory and retry utilities for MedRouteBench."""
 
 import re
+import threading
 
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 from openai import OpenAI
@@ -19,6 +20,7 @@ from .config import (
 )
 
 _client = None
+_client_lock = threading.Lock()
 _fallback_wait = wait_exponential(multiplier=1, min=1, max=60)
 _retryable_errors = (
     _OAIRateLimitError,
@@ -31,16 +33,19 @@ _retryable_errors = (
 def get_client():
     global _client
     if _client is None:
-        if not AZURE_ENDPOINT or not AZURE_API_KEY:
-            raise RuntimeError(
-                "AZURE_ENDPOINT and AZURE_API_KEY must be set. "
-                "Add them to MedRouteBench/.env or export in your environment."
-            )
-        base = AZURE_ENDPOINT.rstrip("/")
-        if not base.endswith("/openai/v1"):
-            base = base + "/openai/v1"
-        base = base + "/"  # OpenAI client requires trailing slash
-        _client = OpenAI(base_url=base, api_key=AZURE_API_KEY)
+        # Double-checked locking so concurrent workers can't double-initialise.
+        with _client_lock:
+            if _client is None:
+                if not AZURE_ENDPOINT or not AZURE_API_KEY:
+                    raise RuntimeError(
+                        "AZURE_ENDPOINT and AZURE_API_KEY must be set. "
+                        "Add them to MedRouteBench/.env or export in your environment."
+                    )
+                base = AZURE_ENDPOINT.rstrip("/")
+                if not base.endswith("/openai/v1"):
+                    base = base + "/openai/v1"
+                base = base + "/"  # OpenAI client requires trailing slash
+                _client = OpenAI(base_url=base, api_key=AZURE_API_KEY)
     return _client
 
 

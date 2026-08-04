@@ -4,12 +4,15 @@ import argparse
 import datetime
 import json
 import sys
+import threading
+import time
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT
+from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT, WORKERS
 from shared.pipeline_utils import (
     callable_id as _callable_id,
     create_run_dir as _create_run_dir,
@@ -166,6 +169,7 @@ def run_pipeline(
     model: Optional[str] = None,
     out_dir=None,
     limit: Optional[int] = None,
+    workers: Optional[int] = None,
     verbose: bool = True,
     call_fn: Optional[Callable] = None,
     resume_dir=None,
@@ -178,6 +182,9 @@ def run_pipeline(
         raise ValueError("n must be non-negative")
     if out_dir is not None and resume_dir is not None:
         raise ValueError("out_dir and resume_dir are mutually exclusive")
+    effective_workers = workers if workers is not None else WORKERS
+    if effective_workers < 1:
+        raise ValueError("workers must be >= 1")
 
     effective_call, selected_model, backend, generation = _select_backend(
         call_fn,
@@ -263,10 +270,13 @@ def run_pipeline(
                 existing_by_pmid[pmid] = trace
 
     if verbose:
+        if hasattr(sys.stdout, "reconfigure"):
+            # keep progress visible when stdout is redirected to a file
+            sys.stdout.reconfigure(line_buffering=True)
         print(
             f"run_dir: {run_dir} | selected: {len(cases)} | eligible: {len(eligible)}"
         )
-        print(f"backend: {backend} | model: {selected_model}")
+        print(f"backend: {backend} | model: {selected_model} | workers: {effective_workers}")
         print(f"sample labels: {sample_counts}")
         if resume_dir is not None:
             print(
@@ -275,37 +285,10 @@ def run_pipeline(
             )
 
     selected_pmids = [case["pmid"] for case in cases]
-    traces: List[dict] = [
-        existing_by_pmid[pmid]
-        for pmid in selected_pmids
-        if pmid in existing_by_pmid
-    ]
-    partial_report = _build_progress_report(
-        traces,
-        selected_pmids=selected_pmids,
-        model=selected_model,
-        backend=backend,
-        run_id=run_id,
-        provenance=provenance,
-        sample_counts=sample_counts,
-        dataset_counts=dataset_counts,
-    )
-    _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
-    for index, case in enumerate(cases, 1):
-        if case["pmid"] in existing_by_pmid:
-            continue
-        if verbose:
-            print(f"[{index}/{len(cases)}] pmid={case['pmid']} | fixed stages=2")
-        trace = run_case(
-            case,
-            ground_truth[case["pmid"]],
-            call_fn=effective_call,
-        )
-        traces.append(trace)
-        _write_json_atomic(run_dir / f"trace_{case['pmid']}.json", trace)
+    def _write_partial() -> None:
         partial_report = _build_progress_report(
-            traces,
+            [traces_by_pmid[pmid] for pmid in selected_pmids if pmid in traces_by_pmid],
             selected_pmids=selected_pmids,
             model=selected_model,
             backend=backend,
@@ -315,6 +298,55 @@ def run_pipeline(
             dataset_counts=dataset_counts,
         )
         _write_json_atomic(run_dir / "partial_report.json", partial_report)
+
+    traces_by_pmid: dict = dict(existing_by_pmid)
+    _write_partial()
+
+    pending = [case for case in cases if case["pmid"] not in existing_by_pmid]
+
+    # Concurrent workers share one lazily-built client; get_client() uses
+    # double-checked locking (shared/llm.py) so the first-init race is safe
+    # without eagerly constructing a client the offline/stub path never needs.
+    print_lock = threading.Lock()
+
+    def _run_one(index: int, case: dict) -> dict:
+        if verbose:
+            with print_lock:
+                print(
+                    f"[submit {index}/{len(pending)}] pmid={case['pmid']} | fixed stages=2",
+                    flush=True,
+                )
+        started = time.monotonic()
+        trace = run_case(case, ground_truth[case["pmid"]], call_fn=effective_call)
+        trace["_elapsed_seconds"] = round(time.monotonic() - started, 3)
+        # Independent path per pmid: safe to write from the worker thread.
+        _write_json_atomic(run_dir / f"trace_{case['pmid']}.json", trace)
+        return trace
+
+    with ThreadPoolExecutor(max_workers=effective_workers) as executor:
+        future_to_case = {
+            executor.submit(_run_one, index, case): case
+            for index, case in enumerate(pending, 1)
+        }
+        # Collect results in the main thread so partial_report writes stay serialised.
+        for future in as_completed(future_to_case):
+            case = future_to_case[future]
+            try:
+                trace = future.result()
+            except Exception as exc:  # keep one hard failure from killing the batch
+                if verbose:
+                    with print_lock:
+                        print(
+                            f"[WARN] pmid={case['pmid']} failed: {exc}",
+                            file=sys.stderr,
+                            flush=True,
+                        )
+                continue  # untraced pmid surfaces via run_complete / missing_pmids
+            traces_by_pmid[trace["pmid"]] = trace
+            _write_partial()
+
+    # Deterministic order regardless of completion order or worker count.
+    traces = [traces_by_pmid[pmid] for pmid in selected_pmids if pmid in traces_by_pmid]
 
     report = build_report(
         traces,
@@ -394,6 +426,12 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--limit", type=int, default=None, help="cap cases before filtering")
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="number of cases to run concurrently (default from config.WORKERS)",
+    )
+    parser.add_argument(
         "--inspect",
         type=int,
         default=None,
@@ -411,6 +449,7 @@ if __name__ == "__main__":
         model=args.model,
         out_dir=args.out,
         limit=args.limit,
+        workers=args.workers,
         resume_dir=args.resume,
         cases_path=args.cases,
         ground_truth_path=args.ground_truth,
