@@ -2,7 +2,6 @@
 # secrets
 .env
 # local evaluation artifacts
-staged_eval/runs/
 medcta_eval/runs/
 analysis/
 __pycache__/
