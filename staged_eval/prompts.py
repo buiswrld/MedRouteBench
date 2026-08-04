@@ -3,6 +3,8 @@
 import json
 from typing import Optional
 
+from .config import STAGE2_ADDED_EVIDENCE
+
 
 STAGE1_SYSTEM_PROMPT = """You are a careful biomedical reasoning agent in a fixed two-stage PubMedQA experiment.
 
@@ -63,26 +65,34 @@ def build_user_prompt(
                 + _format_evidence(evidence_split["stage1_evidence"]),
                 'Return exactly {"action":"ANSWER","answer":"yes|no|maybe",'
                 '"confidence":0.0-1.0,"reason_for_action":"..."} '
-                "with one concrete answer value.",
+                "as a JSON object with one concrete answer value.",
             ]
         )
 
     if stage == 2:
         if prior_output is None:
             raise ValueError("Stage 2 prompt requires the valid Stage 1 output")
-        return "\n\n".join(
-            [
-                "STAGE 2 - FINAL REVISION DECISION",
-                f"QUESTION:\n{question}",
-                "YOUR STAGE 1 OUTPUT:\n" + json.dumps(prior_output, ensure_ascii=False),
-                "FULL PUBMEDQA CONTEXT:\n"
-                + _format_evidence(evidence_split["full_context"]),
-                "Choose exactly one action: KEEP_ANSWER with the same answer; "
-                "REVISE_ANSWER with a different yes/no/maybe answer; or ABSTAIN "
-                "with answer null. Include confidence (0.0-1.0) and "
-                "reason_for_action in the JSON object.",
-            ]
+        sections = [
+            "STAGE 2 - FINAL REVISION DECISION",
+            f"QUESTION:\n{question}",
+            "YOUR STAGE 1 OUTPUT:\n" + json.dumps(prior_output, ensure_ascii=False),
+        ]
+        if STAGE2_ADDED_EVIDENCE:
+            sections.append(
+                "ADDED EVIDENCE (revealed after Stage 1):\n"
+                + _format_evidence(evidence_split["stage2_added_evidence"])
+            )
+        sections.append(
+            "FULL PUBMEDQA CONTEXT:\n"
+            + _format_evidence(evidence_split["full_context"])
         )
+        sections.append(
+            "Choose exactly one action: KEEP_ANSWER with the same answer; "
+            "REVISE_ANSWER with a different yes/no/maybe answer; or ABSTAIN "
+            "with answer null. Include confidence (0.0-1.0) and "
+            "reason_for_action in the JSON object."
+        )
+        return "\n\n".join(sections)
 
     raise ValueError(f"Unsupported stage: {stage}")
 
