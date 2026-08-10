@@ -122,6 +122,33 @@ def make_retry_decorator():
     )
 
 
+def _final_answer_text(response) -> str:
+    """Extract the model's committed response text from a Responses API result.
+
+    ``response.output_text`` blindly concatenates every ``output_text``
+    content block across every output item with no separator. Some
+    deployments (e.g. gpt-5.4) emit two full ``message`` items per turn: one
+    tagged ``phase="commentary"`` (a draft/preamble) and one
+    ``phase="final_answer"`` (the model's actual committed output) -- and in
+    JSON mode both get rendered as complete JSON objects, so blind
+    concatenation glues two objects together (``{...}{...}``), breaking
+    downstream JSON parsing. Prefer the final_answer-phase message text when
+    phase is present; fall back to ``output_text``'s full-concatenation
+    behavior for backends/models that don't emit phases.
+    """
+    final_answer_texts = [
+        content.text
+        for item in response.output
+        if getattr(item, "type", None) == "message"
+        and getattr(item, "phase", None) == "final_answer"
+        for content in item.content
+        if getattr(content, "type", None) == "output_text"
+    ]
+    if final_answer_texts:
+        return "".join(final_answer_texts)
+    return response.output_text
+
+
 @make_retry_decorator()
 def call_responses_json(
     instructions: str,
@@ -149,12 +176,13 @@ def call_responses_json(
     try:
         response = client.responses.create(**request_kwargs)
     except Exception as exc:
-        if "json_validate_failed" in str(exc):
+        message = str(exc)
+        if "json_validate_failed" in message or "must contain the word 'json'" in message:
             request_kwargs.pop("text")
             response = client.responses.create(**request_kwargs)
         else:
             raise
-    return response.output_text
+    return _final_answer_text(response)
 
 
 def vision_input(text: str, image_url: str) -> list[dict]:
