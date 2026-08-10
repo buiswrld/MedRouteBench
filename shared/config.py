@@ -19,3 +19,8 @@ AZURE_DEPLOYMENT  = os.environ.get("AZURE_DEPLOYMENT")
 # ── Shared retry settings ────────────────────────────────────────────────────
 MAX_RETRIES            = int(os.environ.get("MAX_RETRIES", "10"))
 MAX_RETRY_WAIT_SECONDS = float(os.environ.get("MAX_RETRY_WAIT_SECONDS", "60"))
+
+# ── Shared concurrency default ───────────────────────────────────────────────
+# Number of cases to run concurrently, shared by every pipeline's --workers
+# flag. 1 reproduces sequential behaviour.
+WORKERS = int(os.environ.get("WORKERS", "4"))

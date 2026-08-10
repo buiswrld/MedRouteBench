@@ -1,21 +1,19 @@
 """Load, split, sample, run, and report the two-stage PubMedQA experiment."""
 
 import argparse
-import datetime
 import json
 import sys
 import threading
 import time
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
 from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT, WORKERS, SEED
+from shared import harness
 from shared.pipeline_utils import (
     callable_id as _callable_id,
-    create_run_dir as _create_run_dir,
     sha256_file as _sha256_file,
     write_json_atomic as _write_json_atomic,
 )
@@ -118,50 +116,6 @@ def _resume_signature(provenance: dict) -> dict:
     }
 
 
-def _validate_resume_provenance(saved: Optional[dict], current: dict) -> None:
-    if not isinstance(saved, dict):
-        raise ValueError("resume manifest is missing a valid provenance object")
-    saved_signature = _resume_signature(saved)
-    current_signature = _resume_signature(current)
-    if saved_signature != current_signature:
-        raise ValueError(
-            "resume provenance does not match the current run configuration: "
-            f"saved={saved_signature}, current={current_signature}"
-        )
-
-
-def _build_progress_report(
-    traces: List[dict],
-    *,
-    selected_pmids: List[str],
-    model: str,
-    backend: str,
-    run_id: str,
-    provenance: dict,
-    sample_counts: Optional[dict],
-    dataset_counts: Optional[dict],
-) -> dict:
-    report = build_report(
-        traces,
-        model=model,
-        backend=backend,
-        run_id=run_id,
-        provenance=provenance,
-        sample_counts=sample_counts,
-        dataset_counts=dataset_counts,
-    )
-    traced = {t["pmid"] for t in traces}
-    missing = [pmid for pmid in selected_pmids if pmid not in traced]
-    report.update(
-        {
-            "n_planned_cases": len(selected_pmids),
-            "run_complete": not missing,
-            "missing_pmids": missing,
-        }
-    )
-    return report
-
-
 def run_pipeline(
     n: int = 50,
     *,
@@ -227,47 +181,25 @@ def run_pipeline(
         "skipped_unsplittable": len(gold_cases) - len(eligible),
     }
 
-    if resume_dir is not None:
-        run_dir = Path(resume_dir).resolve()
-        if not run_dir.is_dir():
-            raise FileNotFoundError(f"resume directory does not exist: {run_dir}")
-        manifest_path = run_dir / "manifest.json"
-        if not manifest_path.is_file():
-            raise FileNotFoundError(
-                "resume directory has no manifest.json and cannot be verified: "
-                f"{run_dir}"
-            )
-        with open(manifest_path, encoding="utf-8") as handle:
-            manifest = json.load(handle)
-        _validate_resume_provenance(manifest.get("provenance"), provenance)
-        run_id = str(manifest.get("run_id") or run_dir.name)
-    else:
-        runs_dir = Path(out_dir) if out_dir else RUNS_DIR
-        run_dir, run_id = _create_run_dir(runs_dir)
-        manifest = {
-            "run_id": run_id,
-            "created_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            "provenance": provenance,
-        }
-        _write_json_atomic(run_dir / "manifest.json", manifest)
+    run_dir, run_id, _ = harness.resolve_run_dir(
+        out_dir=out_dir,
+        resume_dir=resume_dir,
+        runs_dir=RUNS_DIR,
+        provenance=provenance,
+        resume_signature_fn=_resume_signature,
+    )
 
-    selected_pmids = {case["pmid"] for case in cases}
+    selected_pmids = [case["pmid"] for case in cases]
     existing_by_pmid = {}
     if resume_dir is not None:
-        for trace_path in run_dir.glob("trace_*.json"):
-            try:
-                with open(trace_path, encoding="utf-8") as handle:
-                    trace = json.load(handle)
-            except (OSError, json.JSONDecodeError) as exc:
-                if verbose:
-                    print(f"[WARN] ignoring unreadable trace {trace_path.name}: {exc}")
-                continue
-            pmid = str(trace.get("pmid"))
-            if (
-                pmid in selected_pmids
-                and trace.get("pubmedqa_gold_label") == ground_truth.get(pmid)
-            ):
-                existing_by_pmid[pmid] = trace
+        existing_by_pmid = harness.load_saved_traces(
+            run_dir,
+            "pmid",
+            selected_pmids,
+            extra_predicate=lambda trace: trace.get("pubmedqa_gold_label")
+            == ground_truth.get(str(trace.get("pmid"))),
+            verbose=verbose,
+        )
 
     if verbose:
         if hasattr(sys.stdout, "reconfigure"):
@@ -284,18 +216,22 @@ def run_pipeline(
                 f"remaining: {len(cases) - len(existing_by_pmid)}"
             )
 
-    selected_pmids = [case["pmid"] for case in cases]
+    report_fn = partial(
+        build_report,
+        model=selected_model,
+        backend=backend,
+        run_id=run_id,
+        provenance=provenance,
+        sample_counts=sample_counts,
+        dataset_counts=dataset_counts,
+    )
 
     def _write_partial() -> None:
-        partial_report = _build_progress_report(
+        partial_report = harness.build_progress_report(
             [traces_by_pmid[pmid] for pmid in selected_pmids if pmid in traces_by_pmid],
-            selected_pmids=selected_pmids,
-            model=selected_model,
-            backend=backend,
-            run_id=run_id,
-            provenance=provenance,
-            sample_counts=sample_counts,
-            dataset_counts=dataset_counts,
+            selected_ids=selected_pmids,
+            id_key="pmid",
+            build_report_fn=report_fn,
         )
         _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
@@ -323,44 +259,24 @@ def run_pipeline(
         _write_json_atomic(run_dir / f"trace_{case['pmid']}.json", trace)
         return trace
 
-    with ThreadPoolExecutor(max_workers=effective_workers) as executor:
-        future_to_case = {
-            executor.submit(_run_one, index, case): case
-            for index, case in enumerate(pending, 1)
-        }
-        # Collect results in the main thread so partial_report writes stay serialised.
-        for future in as_completed(future_to_case):
-            case = future_to_case[future]
-            try:
-                trace = future.result()
-            except Exception as exc:  # keep one hard failure from killing the batch
-                if verbose:
-                    with print_lock:
-                        print(
-                            f"[WARN] pmid={case['pmid']} failed: {exc}",
-                            file=sys.stderr,
-                            flush=True,
-                        )
-                continue  # untraced pmid surfaces via run_complete / missing_pmids
-            traces_by_pmid[trace["pmid"]] = trace
-            _write_partial()
+    def _on_result(trace: dict) -> None:
+        traces_by_pmid[trace["pmid"]] = trace
+        _write_partial()
+
+    harness.run_cases_concurrently(
+        pending,
+        run_one=_run_one,
+        id_key="pmid",
+        workers=effective_workers,
+        on_result=_on_result,
+        verbose=verbose,
+    )
 
     # Deterministic order regardless of completion order or worker count.
     traces = [traces_by_pmid[pmid] for pmid in selected_pmids if pmid in traces_by_pmid]
 
-    report = build_report(
-        traces,
-        model=selected_model,
-        backend=backend,
-        run_id=run_id,
-        provenance=provenance,
-        sample_counts=sample_counts,
-        dataset_counts=dataset_counts,
-    )
-    _write_json_atomic(run_dir / "report.json", report)
-    partial_path = run_dir / "partial_report.json"
-    if partial_path.exists():
-        partial_path.unlink()
+    report = report_fn(traces)
+    harness.finalize_report(run_dir, report)
     if verbose:
         print(json.dumps(report, indent=2))
     return report, traces

@@ -5,6 +5,7 @@ from pathlib import Path
 from shared.config import (  # re-exported for package consumers
     AZURE_DEPLOYMENT,
     PROJECT_DIR,
+    WORKERS,
 )
 
 # ── directory anchors ────────────────────────────────────────────────────────
@@ -36,8 +37,4 @@ LLM_API = os.environ.get("LLM_API", "responses")
 # STAGE2_ADDED_EVIDENCE: when true, the Stage 2 prompt shows an explicit
 # "ADDED EVIDENCE" block for the section revealed after Stage 1.
 STAGE2_ADDED_EVIDENCE = os.environ.get("STAGE2_ADDED_EVIDENCE", "1") == "1"
-
-# ── concurrency ──────────────────────────────────────────────────────────────
-# Number of cases to run concurrently. 1 reproduces the sequential behaviour.
-WORKERS = int(os.environ.get("WORKERS", "4"))
 

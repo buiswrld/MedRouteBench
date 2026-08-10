@@ -1,9 +1,9 @@
 """Run, resume, and report the MedCTA reference-trajectory evaluation."""
 
 import argparse
-import datetime
 import json
 import sys
+import threading
 from functools import partial
 from pathlib import Path
 from typing import Callable, Optional, Tuple
@@ -14,13 +14,13 @@ from .config import (
     PACKAGE_DIR,
     RUNS_DIR,
 )
+from shared import harness
 from shared.config import (
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
 )
 from shared.pipeline_utils import (
     callable_id as _callable_id,
-    create_run_dir as _create_run_dir,
     sha256_file as _sha256_file,
     write_json_atomic as _write_json_atomic,
 )
@@ -31,6 +31,11 @@ from .schema import ACTIONS
 
 
 RUN_SCHEMA_VERSION = 1
+
+# No shared WORKERS default here: MedCTA runs stay sequential unless a caller
+# opts in via --workers, since vision/judge calls have different rate-limit
+# and cost characteristics than staged_eval's text-only backend.
+DEFAULT_WORKERS = 1
 
 
 def _call_llm_json(
@@ -117,13 +122,6 @@ def _resume_signature(provenance: dict) -> dict:
     }
 
 
-def _validate_resume_provenance(saved: Optional[dict], current: dict) -> None:
-    if not isinstance(saved, dict):
-        raise ValueError("resume manifest is missing a valid provenance object")
-    if _resume_signature(saved) != _resume_signature(current):
-        raise ValueError("resume provenance does not match the current MedCTA run")
-
-
 def _select_cases(payload: dict, n: int, case_ids: Optional[list[str]]) -> list[dict]:
     cases = payload["cases"]
     if case_ids is not None:
@@ -133,58 +131,6 @@ def _select_cases(payload: dict, n: int, case_ids: Optional[list[str]]) -> list[
             raise ValueError(f"adapted subset does not contain case IDs {missing}")
         cases = [by_id[case_id] for case_id in case_ids]
     return cases[:n]
-
-
-def _load_saved_traces(
-    run_dir: Path,
-    selected_case_ids: list[str],
-    *,
-    verbose: bool,
-) -> dict[str, dict]:
-    selected = set(selected_case_ids)
-    existing_by_id: dict[str, dict] = {}
-    for trace_path in run_dir.glob("trace_*.json"):
-        try:
-            with open(trace_path, encoding="utf-8") as handle:
-                trace = json.load(handle)
-        except (OSError, json.JSONDecodeError) as exc:
-            if verbose:
-                print(f"[WARN] ignoring unreadable trace {trace_path.name}: {exc}")
-            continue
-        case_id = str(trace.get("case_id"))
-        if case_id in selected:
-            existing_by_id[case_id] = trace
-    return existing_by_id
-
-
-def _build_progress_report(
-    traces: list[dict],
-    *,
-    selected_case_ids: list[str],
-    model: str,
-    backend: str,
-    run_id: str,
-    provenance: dict,
-) -> dict:
-    report = build_report(
-        traces,
-        model=model,
-        backend=backend,
-        run_id=run_id,
-        provenance=provenance,
-    )
-    traced_ids = {str(trace.get("case_id")) for trace in traces}
-    missing_case_ids = [
-        case_id for case_id in selected_case_ids if case_id not in traced_ids
-    ]
-    report.update(
-        {
-            "n_planned_cases": len(selected_case_ids),
-            "run_complete": not missing_case_ids,
-            "missing_case_ids": missing_case_ids,
-        }
-    )
-    return report
 
 
 def report_existing_run(run_dir, *, verbose: bool = True) -> Tuple[dict, list[dict]]:
@@ -203,19 +149,25 @@ def report_existing_run(run_dir, *, verbose: bool = True) -> Tuple[dict, list[di
         raise ValueError("run manifest is missing selected_case_ids")
     selected_case_ids = [str(case_id) for case_id in selected_case_ids_raw]
 
-    saved = _load_saved_traces(
+    saved = harness.load_saved_traces(
         resolved_run_dir,
+        "case_id",
         selected_case_ids,
         verbose=verbose,
     )
     traces = [saved[case_id] for case_id in selected_case_ids if case_id in saved]
-    report = _build_progress_report(
-        traces,
-        selected_case_ids=selected_case_ids,
+    report_fn = partial(
+        build_report,
         model=str(provenance.get("model") or "unknown"),
         backend=str(provenance.get("backend") or "unknown"),
         run_id=str(manifest.get("run_id") or resolved_run_dir.name),
         provenance=provenance,
+    )
+    report = harness.build_progress_report(
+        traces,
+        selected_ids=selected_case_ids,
+        id_key="case_id",
+        build_report_fn=report_fn,
     )
     report["report_source"] = "recomputed_from_saved_traces"
     report["metrics_code_sha256"] = _sha256_file(PACKAGE_DIR / "metrics.py")
@@ -234,6 +186,7 @@ def run_pipeline(
     *,
     model: Optional[str] = None,
     out_dir=None,
+    workers: Optional[int] = None,
     verbose: bool = True,
     call_fn: Optional[Callable] = None,
     resume_dir=None,
@@ -245,13 +198,15 @@ def run_pipeline(
         raise ValueError("n must be non-negative")
     if out_dir is not None and resume_dir is not None:
         raise ValueError("out_dir and resume_dir are mutually exclusive")
+    effective_workers = workers if workers is not None else DEFAULT_WORKERS
+    if effective_workers < 1:
+        raise ValueError("workers must be >= 1")
 
     effective_call, selected_model, backend, generation = _select_backend(call_fn, model)
     resolved_data = resolve_data_path(cases_path)
     payload = load_dataset(resolved_data)
     cases = _select_cases(payload, n, case_ids)
     selected_case_ids = [case["case_id"] for case in cases]
-    model_preflight = None
     provenance = _build_provenance(
         resolved_data,
         payload["dataset"],
@@ -261,96 +216,98 @@ def run_pipeline(
         generation=generation,
     )
 
-    if resume_dir is not None:
-        run_dir = Path(resume_dir).resolve()
-        if not run_dir.is_dir():
-            raise FileNotFoundError(f"resume directory does not exist: {run_dir}")
-        manifest_path = run_dir / "manifest.json"
-        if not manifest_path.is_file():
-            raise FileNotFoundError(f"resume directory has no manifest.json: {run_dir}")
-        with open(manifest_path, encoding="utf-8") as handle:
-            manifest = json.load(handle)
-        _validate_resume_provenance(manifest.get("provenance"), provenance)
-        run_id = str(manifest.get("run_id") or run_dir.name)
-    else:
-        runs_dir = Path(out_dir) if out_dir else RUNS_DIR
-        run_dir, run_id = _create_run_dir(runs_dir)
-        manifest = {
-            "run_id": run_id,
-            "created_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            "model_preflight": model_preflight,
-            "provenance": provenance,
-        }
-        _write_json_atomic(run_dir / "manifest.json", manifest)
+    run_dir, run_id, _ = harness.resolve_run_dir(
+        out_dir=out_dir,
+        resume_dir=resume_dir,
+        runs_dir=RUNS_DIR,
+        provenance=provenance,
+        resume_signature_fn=_resume_signature,
+    )
 
     existing_by_id: dict[str, dict] = {}
     if resume_dir is not None:
-        existing_by_id = _load_saved_traces(
+        existing_by_id = harness.load_saved_traces(
             run_dir,
+            "case_id",
             selected_case_ids,
             verbose=verbose,
         )
 
     if verbose:
         print(f"run_dir: {run_dir} | selected: {len(cases)}")
-        print(f"backend: {backend} | model: {selected_model}")
+        print(f"backend: {backend} | model: {selected_model} | workers: {effective_workers}")
         if resume_dir is not None:
             print(
                 f"resume: {len(existing_by_id)} saved traces | "
                 f"remaining: {len(cases) - len(existing_by_id)}"
             )
 
-    traces: list[dict] = [
-        existing_by_id[case_id]
-        for case_id in selected_case_ids
-        if case_id in existing_by_id
-    ]
-    partial_report = _build_progress_report(
-        traces,
-        selected_case_ids=selected_case_ids,
+    report_fn = partial(
+        build_report,
         model=selected_model,
         backend=backend,
         run_id=run_id,
         provenance=provenance,
     )
-    _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
-    _case_id_order = {cid: i for i, cid in enumerate(selected_case_ids)}
-    for index, case in enumerate(cases, 1):
-        existing = existing_by_id.get(case["case_id"])
-        if existing is not None:
-            continue
-        if verbose:
-            print(
-                f"[{index}/{len(cases)}] case_id={case['case_id']} | "
-                f"reference_steps={len(case['reference_steps'])}"
-            )
-        trace = run_case(case, call_fn=effective_call)
-        traces.append(trace)
-        _write_json_atomic(run_dir / f"trace_{case['case_id']}.json", trace)
-        partial_report = _build_progress_report(
-            traces,
-            selected_case_ids=selected_case_ids,
-            model=selected_model,
-            backend=backend,
-            run_id=run_id,
-            provenance=provenance,
+    traces_by_id: dict[str, dict] = dict(existing_by_id)
+
+    def _write_partial() -> None:
+        partial_report = harness.build_progress_report(
+            [traces_by_id[cid] for cid in selected_case_ids if cid in traces_by_id],
+            selected_ids=selected_case_ids,
+            id_key="case_id",
+            build_report_fn=report_fn,
         )
         _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
-    traces.sort(key=lambda t: _case_id_order.get(t["case_id"], len(selected_case_ids)))
-    report = _build_progress_report(
-        traces,
-        selected_case_ids=selected_case_ids,
-        model=selected_model,
-        backend=backend,
-        run_id=run_id,
-        provenance=provenance,
+    _write_partial()
+
+    pending = [case for case in cases if case["case_id"] not in existing_by_id]
+
+    # Concurrent workers share one lazily-built client; get_client() uses
+    # double-checked locking (shared/llm.py) so the first-init race is safe
+    # without eagerly constructing a client the offline/stub path never needs.
+    print_lock = threading.Lock()
+
+    def _run_one(index: int, case: dict) -> dict:
+        if verbose:
+            with print_lock:
+                print(
+                    f"[submit {index}/{len(pending)}] case_id={case['case_id']} | "
+                    f"reference_steps={len(case['reference_steps'])}",
+                    flush=True,
+                )
+        trace = run_case(case, call_fn=effective_call)
+        # Independent path per case_id: safe to write from the worker thread.
+        _write_json_atomic(run_dir / f"trace_{case['case_id']}.json", trace)
+        return trace
+
+    def _on_result(trace: dict) -> None:
+        traces_by_id[trace["case_id"]] = trace
+        _write_partial()
+
+    harness.run_cases_concurrently(
+        pending,
+        run_one=_run_one,
+        id_key="case_id",
+        workers=effective_workers,
+        on_result=_on_result,
+        verbose=verbose,
     )
-    _write_json_atomic(run_dir / "report.json", report)
-    partial_path = run_dir / "partial_report.json"
-    if partial_path.exists():
-        partial_path.unlink()
+
+    # Deterministic order regardless of completion order or worker count.
+    traces = [traces_by_id[cid] for cid in selected_case_ids if cid in traces_by_id]
+
+    # Unlike staged_eval, MedCTA's final report.json (not just the partial one)
+    # has always carried n_planned_cases/run_complete/missing_case_ids.
+    report = harness.build_progress_report(
+        traces,
+        selected_ids=selected_case_ids,
+        id_key="case_id",
+        build_report_fn=report_fn,
+    )
+    harness.finalize_report(run_dir, report)
     if verbose:
         print(json.dumps(report, indent=2, ensure_ascii=False))
     return report, traces
@@ -410,6 +367,12 @@ def _parse_args() -> argparse.Namespace:
         help="optional comma-separated adapted case IDs in evaluation order",
     )
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="number of cases to run concurrently (default: sequential, i.e. 1)",
+    )
+    parser.add_argument(
         "--inspect",
         type=int,
         default=None,
@@ -428,6 +391,7 @@ if __name__ == "__main__":
             n=args.n,
             model=args.model,
             out_dir=args.out,
+            workers=args.workers,
             resume_dir=args.resume,
             cases_path=args.cases,
             case_ids=_parse_case_ids(args.case_ids),

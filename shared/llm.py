@@ -172,6 +172,7 @@ def vision_input(text: str, image_url: str) -> list[dict]:
 
 _IMAGE_URL_CACHE_MAX_SIZE = 128
 _image_url_cache: OrderedDict[str, tuple[float, str]] = OrderedDict()
+_image_url_cache_lock = threading.Lock()
 
 # Content-types that the OpenAI vision API cannot render natively.
 _CONVERT_TO_PNG_TYPES = frozenset({
@@ -184,7 +185,8 @@ _CONVERT_TO_PNG_TYPES = frozenset({
 
 def clear_image_url_cache() -> None:
     """Clear resolved image redirects (primarily useful for tests)."""
-    _image_url_cache.clear()
+    with _image_url_cache_lock:
+        _image_url_cache.clear()
 
 
 def _png_data_url(url: str) -> str:
@@ -217,14 +219,20 @@ def resolve_image_url(image_url: str, *, ttl_seconds: float) -> str:
     if urlparse(image_url).hostname != "huggingface.co":
         return image_url
     now = time.monotonic()
-    cached = _image_url_cache.get(image_url)
-    if cached is not None:
-        expires_at, resolved = cached
-        if expires_at > now:
-            _image_url_cache.move_to_end(image_url)
-            return resolved
-        del _image_url_cache[image_url]
+    with _image_url_cache_lock:
+        cached = _image_url_cache.get(image_url)
+        if cached is not None:
+            expires_at, resolved = cached
+            if expires_at > now:
+                _image_url_cache.move_to_end(image_url)
+                return resolved
+            del _image_url_cache[image_url]
 
+    # Network I/O (HEAD request, and for TIFF/BMP a full download+convert)
+    # runs without the lock held, so concurrent workers resolving different
+    # images don't serialize on each other. A same-URL race just means two
+    # threads redundantly resolve it once each; the second write below wins,
+    # which is harmless for a cache.
     request = urllib.request.Request(
         image_url,
         method="HEAD",
@@ -245,8 +253,9 @@ def resolve_image_url(image_url: str, *, ttl_seconds: float) -> str:
     else:
         resolved = cdn_url
 
-    _image_url_cache[image_url] = (now + ttl_seconds, resolved)
-    _image_url_cache.move_to_end(image_url)
-    while len(_image_url_cache) > _IMAGE_URL_CACHE_MAX_SIZE:
-        _image_url_cache.popitem(last=False)
+    with _image_url_cache_lock:
+        _image_url_cache[image_url] = (now + ttl_seconds, resolved)
+        _image_url_cache.move_to_end(image_url)
+        while len(_image_url_cache) > _IMAGE_URL_CACHE_MAX_SIZE:
+            _image_url_cache.popitem(last=False)
     return resolved
