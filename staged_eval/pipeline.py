@@ -69,6 +69,7 @@ def _build_provenance(
     backend: str,
     generation: Optional[dict],
     use_fixtures: bool,
+    reversed_order: bool,
 ) -> dict:
     code_names = [
         "data.py",
@@ -87,6 +88,7 @@ def _build_provenance(
         "model": model,
         "generation": generation,
         "use_fixtures": use_fixtures,
+        "reversed": reversed_order,
         "cases": {
             "path": str(cases_path),
             "sha256": _sha256_file(cases_path),
@@ -109,6 +111,7 @@ def _resume_signature(provenance: dict) -> dict:
         "model": provenance.get("model"),
         "generation": provenance.get("generation"),
         "use_fixtures": provenance.get("use_fixtures"),
+        "reversed": provenance.get("reversed"),
         "cases_sha256": (provenance.get("cases") or {}).get("sha256"),
         "ground_truth_sha256": (provenance.get("ground_truth") or {}).get("sha256"),
         "code_sha256": provenance.get("code_sha256"),
@@ -130,6 +133,7 @@ def run_pipeline(
     cases_path=None,
     ground_truth_path=None,
     use_fixtures: bool = False,
+    reversed_order: bool = False,
 ) -> Tuple[dict, List[dict]]:
     """Run the experiment with an explicit backend identity and auditable inputs."""
     if n < 0:
@@ -156,6 +160,7 @@ def run_pipeline(
         backend=backend,
         generation=generation,
         use_fixtures=use_fixtures,
+        reversed_order=reversed_order,
     )
 
     all_cases = load_cases(path=resolved_cases, limit=limit)
@@ -224,6 +229,7 @@ def run_pipeline(
         provenance=provenance,
         sample_counts=sample_counts,
         dataset_counts=dataset_counts,
+        reversed_order=reversed_order,
     )
 
     def _write_partial() -> None:
@@ -253,7 +259,12 @@ def run_pipeline(
                     flush=True,
                 )
         started = time.monotonic()
-        trace = run_case(case, ground_truth[case["pmid"]], call_fn=effective_call)
+        trace = run_case(
+            case,
+            ground_truth[case["pmid"]],
+            call_fn=effective_call,
+            reversed_order=reversed_order,
+        )
         trace["_elapsed_seconds"] = round(time.monotonic() - started, 3)
         # Independent path per pmid: safe to write from the worker thread.
         _write_json_atomic(run_dir / f"trace_{case['pmid']}.json", trace)
@@ -336,6 +347,14 @@ def _parse_args() -> argparse.Namespace:
         help="explicitly use the bundled tiny fixture dataset",
     )
     parser.add_argument(
+        "--reversed",
+        action="store_true",
+        help=(
+            "show RESULTS-onward evidence at Stage 1 and everything-before-RESULTS "
+            "at Stage 2 (flips the normal ordering)"
+        ),
+    )
+    parser.add_argument(
         "--resume",
         default=None,
         help="resume an interrupted run directory without repeating saved PMIDs",
@@ -370,6 +389,7 @@ if __name__ == "__main__":
         cases_path=args.cases,
         ground_truth_path=args.ground_truth,
         use_fixtures=args.use_fixtures,
+        reversed_order=args.reversed,
     )
     if args.inspect is not None:
         if 0 <= args.inspect < len(traces):

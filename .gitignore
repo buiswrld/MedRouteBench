@@ -3,6 +3,8 @@
 .env
 # local evaluation artifacts
 medcta_eval/runs/
+medcta_golden_eval/runs/
+staged_eval/runs/
 analysis/
 __pycache__/
 

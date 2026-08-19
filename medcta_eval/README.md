@@ -179,6 +179,16 @@ separately and excluded to avoid penalising model quality for provider issues.
 |---|---|---|
 | `final_answer_accuracy` | Yes — rate | Fraction of evaluable cases where `final_answer_match` is True (LLM judge ≥ 0.8) |
 | `final_answer_mean_score` | No — raw mean | Mean LLM judge score (0–1, un-thresholded) across all evaluable cases that received a final answer |
+| `first_step_answer_score` | No — raw mean | Mean LLM judge score of each case's step-0 answer (before any evidence). Pairs with `final_answer_mean_score` as the start/end of the score trajectory |
+| `mean_score_improvement` | No — raw mean | Mean of `(final_answer_score - first_step_answer_score) / tools_called`, one delta per case, weighted equally regardless of how many tools that case used. Cases missing either score, or with zero tool calls (division by zero), are excluded from the mean rather than counted as zero |
+
+`first_step_answer_score` and `mean_score_improvement` are deliberately *not*
+bucketed by `step_index`: reference-trajectory length varies per case (3–6
+steps in the current 11-case starter subset), so accuracy/score at a fixed
+high `step_index` would reflect a shrinking, non-random subset of (likely
+longer/harder) cases rather than a real trend. `stage_answer_accuracy_by_step`
+below still buckets by `step_index` as a "bonus breakdown" for inspection,
+but the same caveat applies to it — don't read a trend into its tail.
 
 ### Revision behaviour
 
@@ -219,6 +229,21 @@ answer there is a lucky guess rather than a sign the model had gathered
 enough evidence to stop. Without this, a model that dutifully calls every
 reference-expected tool — the ideal routing behavior — would still be
 flagged as "unnecessary" purely for guessing right before evidence existed.
+
+Two more, over the same `status == "premature_finalization"` cohort, but not
+thresholded to pass/fail:
+
+| Metric | Shape | Description |
+|---|---|---|
+| `premature_finalization_mean_score` | No — raw mean | Mean RAW `final_answer_score` restricted to `premature_finalization` cases — the raw-score sibling of `premature_finalization_wrong`/`early_correct_finalization` above, which only report that cohort's pass/fail split |
+| `premature_finalization_progress` | No — mean rate | Mean fraction of the reference tool sequence completed before the model bailed (`len(model_tool_sequence) / len(reference_tool_sequence)` at the point of termination), over the same cohort. `0.0` = bailed immediately at step 0; near `1.0` = bailed just short of the reference's last tool. A rate, not a raw `step_index`, so cases with different reference-trajectory lengths stay comparable |
+
+`premature_finalization_mean_score` is the metric directly comparable to
+`medcta_golden_eval`'s `mean_score_before_premature_finalization`: both
+restrict to the cohort of cases that attempted/executed a premature exit
+(not all evaluable cases, unlike `final_answer_mean_score`), and per case the
+two numbers should match — same judge, same answer text, identical prior
+context up to the point of the first deviation.
 
 ### Operational metrics
 

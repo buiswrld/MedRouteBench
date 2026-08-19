@@ -158,14 +158,22 @@ def build_report(
     backend: Optional[str] = None,
     run_id: Optional[str] = None,
     provenance: Optional[dict] = None,
+    reversed_order: bool = False,
 ) -> dict:
-    """Assemble metrics plus denominators and run provenance."""
+    """Assemble metrics plus denominators and run provenance.
+
+    No metric formula below is direction-sensitive -- each only looks at
+    parsed stage1/stage2 answers vs. gold, never which evidence half was
+    shown at which stage. `reversed_order` is carried through purely so the
+    report self-documents which evidence ordering produced it.
+    """
     completed = _completed(traces)
     return {
         "run_id": run_id,
         "model": model,
         "backend": backend,
         "provenance": provenance,
+        "reversed": reversed_order,
         "n_selected_cases": len(traces),
         "n_completed_cases": len(completed),
         "n_invalid_cases": sum(trace.get("label") == "invalid" for trace in traces),

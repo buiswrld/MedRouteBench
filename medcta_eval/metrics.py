@@ -6,12 +6,17 @@ answer_changed, etc. — all booleans, compared against
 FINAL_ACCURACY_CONFIDENCE_THRESHOLD once at the source) and returns
 `_ratio(numerator, denominator)` -> {"rate", "numerator", "denominator"}.
 
-The lone exception is final_answer_mean_score, which reports the mean of the
-*raw, untresholded* 0-1 judge score instead of a pass/fail rate — it returns
-a differently-shaped dict ({"mean_score", "n_scored", "n_evaluable"}) as a
-visual flag that it isn't a _ratio() rate. Compare it against
-final_answer_accuracy (the thresholded rate over the same underlying scores)
-to see the score distribution behind the pass/fail cutoff.
+The exceptions are final_answer_mean_score, first_step_answer_score,
+mean_score_improvement, and premature_finalization_mean_score, which report
+means of *raw, unthresholded* 0-1 judge scores (or, for mean_score_improvement,
+a per-tool-call delta of two such scores) instead of pass/fail rates — they
+return a differently-shaped dict ({"mean_score", "n_scored", "n_evaluable"})
+as a visual flag that they aren't _ratio() rates. Compare final_answer_mean_score
+against final_answer_accuracy (the thresholded rate over the same underlying
+scores) to see the score distribution behind the pass/fail cutoff.
+premature_finalization_progress is a third shape ({"mean_rate", "n_cases"}):
+a mean of a per-case *rate* (fraction of the reference tool sequence
+completed before bailing), not a judge score.
 """
 
 from collections import Counter
@@ -143,6 +148,110 @@ def final_answer_mean_score(traces: list[dict]) -> dict:
     if not scored:
         return {"mean_score": None, "n_scored": len(scored), "n_evaluable": len(traces)}
     mean = sum(t["final_answer_score"] for t in scored) / len(scored)
+    return {"mean_score": round(mean, 4), "n_scored": len(scored), "n_evaluable": len(traces)}
+
+
+def mean_score_improvement(traces: list[dict]) -> dict:
+    """Mean per-tool-call score delta: (final_answer_score - first_answer_score) / tools_called.
+
+    Weighs every case equally (simple mean of per-case deltas, not pooled
+    across all tool calls). A case is included only when it has both a
+    first-step score and a final score, and made at least one tool call
+    (tools_called > 0) -- division-by-zero cases (e.g. an immediate
+    FINAL_ANSWER at step 0) are excluded, not counted as zero.
+    """
+    traces = _evaluable_traces(traces)
+    deltas = []
+    for trace in traces:
+        steps = trace.get("steps") or []
+        if not steps:
+            continue
+        first_score = steps[0].get("current_answer_score")
+        final_score = trace.get("final_answer_score")
+        tools_called = len(trace.get("model_tool_sequence") or [])
+        if first_score is None or final_score is None or tools_called == 0:
+            continue
+        deltas.append((final_score - first_score) / tools_called)
+    if not deltas:
+        return {"mean_score": None, "n_scored": 0, "n_evaluable": len(traces)}
+    mean = sum(deltas) / len(deltas)
+    return {"mean_score": round(mean, 4), "n_scored": len(deltas), "n_evaluable": len(traces)}
+
+
+def first_step_answer_score(traces: list[dict]) -> dict:
+    """Mean RAW (un-thresholded) judge score of each case's very first
+    current-best answer (step 0, before any evidence). Pairs with
+    final_answer_mean_score as the start/end of the score trajectory that
+    mean_score_improvement summarizes as a single per-tool-call slope --
+    deliberately NOT bucketed by step_index, since reference-trajectory
+    length varies per case and a fixed high step_index would average over a
+    shrinking, non-random subset of (likely longer/harder) cases.
+    """
+    traces = _evaluable_traces(traces)
+    scored = []
+    for trace in traces:
+        steps = trace.get("steps") or []
+        if not steps:
+            continue
+        score = steps[0].get("current_answer_score")
+        if isinstance(score, (int, float)):
+            scored.append(score)
+    if not scored:
+        return {"mean_score": None, "n_scored": 0, "n_evaluable": len(traces)}
+    mean = sum(scored) / len(scored)
+    return {"mean_score": round(mean, 4), "n_scored": len(scored), "n_evaluable": len(traces)}
+
+
+def premature_finalization_progress(traces: list[dict]) -> dict:
+    """Mean fraction of the reference tool sequence completed before the
+    model's early exit, over cases with status == 'premature_finalization'.
+    0.0 = bailed immediately (step 0); close to 1.0 = bailed just short of
+    the reference's final tool. Uses a rate, not a raw step_index, so cases
+    with different reference-trajectory lengths remain comparable.
+
+    len(model_tool_sequence) at the point a case terminates via premature
+    finalization already equals the step_index it bailed at (every step
+    before a premature finalization must have been a matched-or-mismatched
+    CALL_TOOL, or the case would have terminated earlier) -- no new trace
+    field is needed here, this is purely a derived metric.
+    """
+    traces = [
+        t for t in _evaluable_traces(traces)
+        if t.get("status") == "premature_finalization"
+    ]
+    rates = []
+    for trace in traces:
+        total = len(trace.get("reference_tool_sequence") or [])
+        if total == 0:
+            continue
+        called = len(trace.get("model_tool_sequence") or [])
+        rates.append(called / total)
+    if not rates:
+        return {"mean_rate": None, "n_cases": 0}
+    return {"mean_rate": round(sum(rates) / len(rates), 4), "n_cases": len(rates)}
+
+
+def premature_finalization_mean_score(traces: list[dict]) -> dict:
+    """Mean RAW final_answer_score, restricted to cases that actually
+    terminated via premature finalization. The raw-score counterpart to
+    premature_finalization_wrong/early_correct_finalization (which report
+    the same cohort's pass/fail rate, not its raw score). Genuinely
+    comparable to medcta_golden_eval's mean_score_before_premature_finalization
+    -- both restrict to the cohort of cases that attempted/executed a
+    premature exit, unlike final_answer_mean_score which spans all evaluable
+    cases including successfully completed ones.
+    """
+    traces = [
+        t for t in _evaluable_traces(traces)
+        if t.get("status") == "premature_finalization"
+    ]
+    scored = [
+        t["final_answer_score"] for t in traces
+        if isinstance(t.get("final_answer_score"), (int, float))
+    ]
+    if not scored:
+        return {"mean_score": None, "n_scored": 0, "n_evaluable": len(traces)}
+    mean = sum(scored) / len(scored)
     return {"mean_score": round(mean, 4), "n_scored": len(scored), "n_evaluable": len(traces)}
 
 
@@ -315,6 +424,10 @@ def build_report(
         "trajectory_exact_match_rate": trajectory_exact_match_rate(traces),
         "final_answer_accuracy": final_answer_accuracy(traces),
         "final_answer_mean_score": final_answer_mean_score(traces),
+        "first_step_answer_score": first_step_answer_score(traces),
+        "mean_score_improvement": mean_score_improvement(traces),
+        "premature_finalization_progress": premature_finalization_progress(traces),
+        "premature_finalization_mean_score": premature_finalization_mean_score(traces),
         "invalid_action_rate": invalid_action_rate(traces),
         "stage_metrics_note": (
             "unnecessary_tool_calls (correctness-based: the model already had a "

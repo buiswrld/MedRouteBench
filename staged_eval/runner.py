@@ -88,6 +88,7 @@ def run_case(
     stage1_system_prompt: Optional[str] = None,
     stage2_system_prompt: Optional[str] = None,
     repair_template: Optional[str] = None,
+    reversed_order: bool = False,
 ) -> dict:
     """Run exactly two stages and return the requested per-case trace."""
     call = call_fn if call_fn is not None else _default_call_json
@@ -100,11 +101,12 @@ def run_case(
         else _DEFAULT_STAGE2_SYSTEM_PROMPT
     )
     repair = repair_template if repair_template is not None else _DEFAULT_REPAIR_TEMPLATE
-    evidence_split = split_evidence(case)
+    evidence_split = split_evidence(case, reversed_order=reversed_order)
 
     trace = {
         "pmid": str(case["pmid"]),
         "pubmedqa_gold_label": gt_label,
+        "reversed": reversed_order,
         "split_strategy": evidence_split["strategy"] if evidence_split else None,
         "stage1_evidence_shown": evidence_split["stage1_evidence"] if evidence_split else [],
         "stage1_model_output": None,

@@ -203,12 +203,19 @@ _image_url_cache: OrderedDict[str, tuple[float, str]] = OrderedDict()
 _image_url_cache_lock = threading.Lock()
 
 # Content-types that the OpenAI vision API cannot render natively.
-_CONVERT_TO_PNG_TYPES = frozenset({
+_CONVERT_TO_JPEG_TYPES = frozenset({
     "image/tiff",
     "image/bmp",
     "image/x-bmp",
     "image/x-ms-bmp",
 })
+
+# Re-encoding quality for converted images. Lossless PNG bloats large
+# photographic/microscopy source images (e.g. one MedCTA histopathology TIFF
+# encodes to a ~2.9MB base64 PNG, ~6x every other converted case) enough to
+# trip connection resets against the vision endpoint; JPEG at this quality
+# keeps full resolution while cutting that same image to ~550KB.
+_CONVERTED_IMAGE_JPEG_QUALITY = 90
 
 
 def clear_image_url_cache() -> None:
@@ -217,8 +224,8 @@ def clear_image_url_cache() -> None:
         _image_url_cache.clear()
 
 
-def _png_data_url(url: str) -> str:
-    """Download a non-web-compatible image and return it as a PNG data URL."""
+def _jpeg_data_url(url: str) -> str:
+    """Download a non-web-compatible image and return it as a JPEG data URL."""
     request = urllib.request.Request(
         url,
         headers={"User-Agent": "MedRouteBench-evaluator/1.0"},
@@ -227,9 +234,9 @@ def _png_data_url(url: str) -> str:
         raw = response.read()
     image = Image.open(io.BytesIO(raw)).convert("RGB")
     buf = io.BytesIO()
-    image.save(buf, format="PNG")
+    image.save(buf, format="JPEG", quality=_CONVERTED_IMAGE_JPEG_QUALITY)
     encoded = base64.b64encode(buf.getvalue()).decode("ascii")
-    return f"data:image/png;base64,{encoded}"
+    return f"data:image/jpeg;base64,{encoded}"
 
 
 def resolve_image_url(image_url: str, *, ttl_seconds: float) -> str:
@@ -242,7 +249,7 @@ def resolve_image_url(image_url: str, *, ttl_seconds: float) -> str:
     and manifests.
 
     For TIFF/BMP images (which the OpenAI vision API does not support), the
-    image is downloaded, converted to PNG, and returned as a data URL.
+    image is downloaded, converted to JPEG, and returned as a data URL.
     """
     if urlparse(image_url).hostname != "huggingface.co":
         return image_url
@@ -276,8 +283,8 @@ def resolve_image_url(image_url: str, *, ttl_seconds: float) -> str:
         if not content_type.startswith("image/"):
             raise RuntimeError("Image URL did not resolve to image content")
 
-    if content_type in _CONVERT_TO_PNG_TYPES:
-        resolved = _png_data_url(cdn_url)
+    if content_type in _CONVERT_TO_JPEG_TYPES:
+        resolved = _jpeg_data_url(cdn_url)
     else:
         resolved = cdn_url
 

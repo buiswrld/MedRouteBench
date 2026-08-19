@@ -224,6 +224,21 @@ def test_split_uses_first_label_containing_result():
     ]
 
 
+def test_split_evidence_reversed_swaps_stages_but_not_full_context():
+    case = _case(
+        contexts=["background", "methods", "primary result", "conclusion"],
+        labels=["BACKGROUND", "METHODS", "Primary Results", "CONCLUSIONS"],
+    )
+    forward = split_evidence(case)
+    reversed_split = split_evidence(case, reversed_order=True)
+
+    assert reversed_split["stage1_evidence"] == forward["stage2_added_evidence"]
+    assert reversed_split["stage2_added_evidence"] == forward["stage1_evidence"]
+    assert reversed_split["full_context"] == forward["full_context"]
+    assert forward["reversed"] is False
+    assert reversed_split["reversed"] is True
+
+
 def test_split_returns_none_without_results_section():
     case = _case(
         contexts=["one", "two", "three", "four", "five"],
@@ -326,6 +341,30 @@ def test_stage2_prompt_contains_prior_output_and_full_context():
     assert "PRELIM" in prompt and "NEW RESULT" in prompt
     assert '"answer": "no"' in prompt
     assert all(action in prompt for action in ("KEEP_ANSWER", "REVISE_ANSWER", "ABSTAIN"))
+
+
+def test_run_case_reversed_order_flips_which_evidence_is_shown_at_each_stage():
+    case = _case(
+        contexts=["preliminary text", "results text"],
+        labels=["BACKGROUND", "RESULTS"],
+    )
+    prompts = []
+
+    def call_fn(_system, user):
+        prompts.append(user)
+        if len(prompts) == 1:
+            return _output("ANSWER", "yes")
+        return _output("KEEP_ANSWER", "yes")
+
+    trace = run_case(case, "yes", call_fn=call_fn, reversed_order=True)
+    assert trace["reversed"] is True
+    stage1_prompt, stage2_prompt = prompts
+
+    assert "results text" in stage1_prompt
+    assert "preliminary text" not in stage1_prompt
+
+    added_section = stage2_prompt.split("ADDED EVIDENCE", 1)[1]
+    assert "preliminary text" in added_section
 
 
 def test_prompts_never_expose_forbidden_pubmedqa_fields():
@@ -699,6 +738,45 @@ def test_resume_rejects_model_provenance_mismatch(monkeypatch, tmp_path):
             resume_dir=run_dir,
             verbose=False,
             call_fn=stub,
+        )
+
+
+def test_resume_rejects_reversed_order_mismatch(monkeypatch, tmp_path):
+    cases = [_case("A")]
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+
+    def stub(_system, user):
+        if user.startswith("STAGE 1"):
+            return _output("ANSWER", "yes")
+        return _output("KEEP_ANSWER", "yes")
+
+    run_pipeline(
+        n=1,
+        stratify=False,
+        model="model-a",
+        out_dir=tmp_path,
+        verbose=False,
+        call_fn=stub,
+        reversed_order=False,
+    )
+    run_dir = next(tmp_path.iterdir())
+
+    with pytest.raises(ValueError, match="provenance does not match"):
+        run_pipeline(
+            n=1,
+            stratify=False,
+            model="model-a",
+            resume_dir=run_dir,
+            verbose=False,
+            call_fn=stub,
+            reversed_order=True,
         )
 
 

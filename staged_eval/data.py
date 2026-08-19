@@ -122,13 +122,20 @@ def normalized_labels(case: dict) -> List[str]:
     return labels
 
 
-def split_evidence(case: dict) -> Optional[dict]:
+def split_evidence(case: dict, *, reversed_order: bool = False) -> Optional[dict]:
     """
     Split a PubMedQA case into fixed preliminary and added evidence.
 
     Uses the first normalized label containing ``RESULT`` as the boundary.
     Returns ``None`` when no usable RESULT section is found or either side has no text.
     Cases where the RESULT section is first (no preliminary evidence) are also excluded.
+
+    When ``reversed_order`` is set, the RESULTS-onward evidence is shown at
+    Stage 1 and everything before RESULTS is shown at Stage 2 -- testing
+    whether the *order* evidence is revealed in (not just its content) drives
+    revision behavior. ``full_context`` stays in original document order
+    either way, since it's the complete-case-text recap shown at Stage 2, not
+    something that needs to flip.
     """
     contexts = [str(context or "").strip() for context in (case.get("CONTEXTS") or [])]
     labels = normalized_labels(case)
@@ -155,17 +162,25 @@ def split_evidence(case: dict) -> Optional[dict]:
         return None
     if not any(item["context"] for item in added):
         return None
+    stage1_evidence, stage2_added_evidence = (
+        (added, preliminary) if reversed_order else (preliminary, added)
+    )
     return {
         "strategy": "first_results_section",
         "split_index": result_index,
-        "stage1_evidence": preliminary,
-        "stage2_added_evidence": added,
+        "stage1_evidence": stage1_evidence,
+        "stage2_added_evidence": stage2_added_evidence,
         "full_context": preliminary + added,
+        "reversed": reversed_order,
     }
 
 
 def eligible_cases(cases: List[dict], gt: dict) -> List[dict]:
-    """Keep only gold-labelled cases that can form two non-empty evidence stages."""
+    """Keep only gold-labelled cases that can form two non-empty evidence stages.
+
+    Not sensitive to ``reversed_order``: the non-empty-both-sides eligibility
+    check is symmetric under the swap, so eligibility never needs the flag.
+    """
     return [
         case
         for case in cases

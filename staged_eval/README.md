@@ -45,6 +45,9 @@ python -m staged_eval.pipeline --n 20
 # Disable stratified sampling
 python -m staged_eval.pipeline --n 20 --no-stratify
 
+# Flip which evidence half is shown at Stage 1 vs. Stage 2
+python -m staged_eval.pipeline --n 20 --reversed
+
 # Specify a model override
 python -m staged_eval.pipeline --n 50 --model gpt-5-mini
 
@@ -97,6 +100,35 @@ For each case, the evidence split boundary is determined as follows:
 
 Everything **before** the split index goes to `stage1_evidence`; the split
 index and everything after it goes to `stage2_added_evidence`.
+
+### Evidence direction (`--reversed`)
+
+By default Stage 1 sees the pre-RESULTS evidence and Stage 2 reveals
+RESULTS-onward. `--reversed` (internally `reversed_order=True`) tests
+whether the *order* evidence is revealed in — not just its content — drives
+revision behavior, by flipping which half is shown first:
+
+| | Normal | `--reversed` |
+|---|---|---|
+| Stage 1 sees | pre-RESULTS evidence | RESULTS-onward evidence |
+| Stage 2 "ADDED EVIDENCE" shows | RESULTS-onward evidence | pre-RESULTS evidence |
+
+What stays fixed either way:
+- **`full_context`** — always the complete case text in original document
+  order, since it's the "everything, for reference" recap shown at Stage 2,
+  not something direction-dependent.
+- **The RESULTS-boundary detection itself** (`split_index`, `strategy`) —
+  only which side becomes `stage1_evidence` vs. `stage2_added_evidence`
+  changes, not where the case is split.
+- **Every metric formula** — `stage1_answer_accuracy`, `final_answer_accuracy`,
+  the revision-rate metrics, `final_abstention_rate`, and `maintenance_rate`
+  only look at parsed stage1/stage2 answers vs. gold, never which evidence
+  half was shown at which stage.
+
+Every trace and report self-documents its `reversed` value. `--resume`
+refuses to mix a `--reversed` run with a normal one — resuming a saved run
+with a different `reversed_order` raises the same provenance-mismatch error
+as resuming with a different model.
 
 ### Per-case execution (`runner.py`)
 
