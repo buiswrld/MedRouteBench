@@ -4,6 +4,8 @@ import json
 from dataclasses import dataclass
 from typing import Optional, Sequence, Tuple
 
+from shared.pipeline_utils import strip_json_code_fence
+
 
 ACTIONS = ("CALL_TOOL", "FINAL_ANSWER")
 REQUIRED_KEYS = {"action", "tool_name", "answer", "reasoning"}
@@ -18,11 +20,14 @@ class AgentOutput:
 
 
 def safe_json_loads(value: str) -> Tuple[Optional[dict], Optional[str]]:
-    """Parse one JSON object without raising."""
+    """Parse one JSON object without raising, tolerating a ```json fence."""
     try:
         parsed = json.loads(value)
-    except Exception as exc:
-        return None, f"json_parse: {exc}"
+    except Exception:
+        try:
+            parsed = json.loads(strip_json_code_fence(value))
+        except Exception as exc:
+            return None, f"json_parse: {exc}"
     if not isinstance(parsed, dict):
         return None, "root is not object"
     return parsed, None

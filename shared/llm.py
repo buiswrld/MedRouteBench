@@ -180,8 +180,14 @@ def call_responses_json(
     try:
         response = client.responses.create(**request_kwargs)
     except Exception as exc:
+        # Match on quote-agnostic substrings: providers relayed through a
+        # gateway (e.g. OpenRouter) can wrap the upstream error as an
+        # escaped string, so a literal "'json'" (unescaped) may never
+        # appear even though the same underlying rejection occurred.
         message = str(exc)
-        if "json_validate_failed" in message or "must contain the word 'json'" in message:
+        if "json_validate_failed" in message or (
+            "must contain the word" in message and "json_object" in message
+        ):
             request_kwargs.pop("text")
             response = client.responses.create(**request_kwargs)
         else:

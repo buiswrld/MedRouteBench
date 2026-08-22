@@ -4,6 +4,8 @@ import json
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
+from shared.pipeline_utils import strip_json_code_fence
+
 
 ACTIONS = ["ANSWER", "KEEP_ANSWER", "REVISE_ANSWER", "ABSTAIN"]
 STAGE1_ALLOWED = {"ANSWER"}
@@ -20,9 +22,13 @@ class AgentOutput:
 
 
 def safe_json_loads(value: str) -> Tuple[Optional[dict], Optional[str]]:
-    """Parse a JSON string without raising."""
+    """Parse a JSON string without raising, tolerating a ```json fence."""
     try:
         return json.loads(value), None
+    except Exception:
+        pass
+    try:
+        return json.loads(strip_json_code_fence(value)), None
     except Exception as exc:
         return None, f"json_parse: {exc}"
 

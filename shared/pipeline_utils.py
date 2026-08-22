@@ -4,8 +4,23 @@ import datetime
 import hashlib
 import json
 import os
+import re
 import uuid
 from pathlib import Path
+
+_CODE_FENCE_RE = re.compile(r"^```[a-zA-Z0-9_-]*\s*\n(.*?)\s*```\s*$", re.DOTALL)
+
+
+def strip_json_code_fence(value: str) -> str:
+    """Strip a wrapping ```json ... ``` (or bare ``` ... ```) markdown fence.
+
+    Some models (observed with Anthropic models via OpenRouter) wrap JSON
+    output in a code fence even when JSON-only output was requested and
+    the request otherwise succeeded, so a direct json.loads fails at char
+    0. Returns ``value`` unchanged if it isn't fenced.
+    """
+    match = _CODE_FENCE_RE.match(value.strip())
+    return match.group(1) if match else value
 
 
 def sha256_file(path: Path) -> str:

@@ -1,5 +1,4 @@
 openai>=1.0.0
-azure-identity>=1.15.0
 python-dotenv>=1.0.1
 tenacity>=8.2.0
 Pillow>=10.0.0
