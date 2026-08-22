@@ -1260,7 +1260,7 @@ def test_interrupted_run_keeps_reproducible_partial_report(tmp_path):
 def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch):
     captured = {}
 
-    def _spy(system, request_input, *, model, max_output_tokens):
+    def _spy(system, request_input, *, model, max_output_tokens, api_key=None):
         captured.update(
             system=system,
             request_input=request_input,
@@ -1294,7 +1294,7 @@ def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch)
 def test_call_json_sends_plain_text_input_when_no_image(monkeypatch):
     captured = {}
 
-    def _spy(system, request_input, *, model, max_output_tokens):
+    def _spy(system, request_input, *, model, max_output_tokens, api_key=None):
         captured.update(system=system, request_input=request_input, model=model)
         return "{}"
 
@@ -1335,7 +1335,7 @@ def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeyp
     """
     captured = {}
 
-    def _spy(system, user, *, model, max_output_tokens):
+    def _spy(system, user, *, model, max_output_tokens, api_key=None):
         captured.update(system=system, user=user)
         return '{"score": 1.0}'
 

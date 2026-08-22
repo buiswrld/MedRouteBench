@@ -21,7 +21,7 @@ the prompts. `LONG_ANSWER`, `final_decision`, `test_ground_truth`, and gold
 labels are never included. Official labels from
 `data/pubmedqa/test_ground_truth.json` are used only for scoring and traces.
 
-Run an evaluation with the built-in Azure adapter:
+Run an evaluation with the built-in OpenRouter adapter:
 
 ```bash
 python -m staged_eval.pipeline --n 50 --model gpt-4o-mini --inspect 0

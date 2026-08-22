@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 from shared.config import (  # re-exported for package consumers
-    AZURE_DEPLOYMENT,
+    OPENROUTER_MODEL,
     PROJECT_DIR,
     WORKERS,
 )

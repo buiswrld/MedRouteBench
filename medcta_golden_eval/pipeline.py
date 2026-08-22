@@ -16,11 +16,12 @@ from pathlib import Path
 from typing import Callable, Optional, Tuple
 
 from .config import (
-    AZURE_DEPLOYMENT,
     MAX_TOKENS,
+    OPENROUTER_MODEL,
     PACKAGE_DIR,
     RUNS_DIR,
 )
+from shared.config import OPENROUTER_API_KEY
 from shared import harness
 from shared.config import (
     MAX_RETRIES,
@@ -51,24 +52,36 @@ def _call_llm_json(
     image_url: str | None,
     *,
     model: str,
+    api_key: str | None = None,
 ) -> str:
     from .llm import call_json
 
-    return call_json(system, user, image_url, model=model)
+    return call_json(system, user, image_url, model=model, api_key=api_key)
 
 
-def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
+def _select_backend(
+    call_fn: Optional[Callable],
+    model: Optional[str],
+    api_key: Optional[str] = None,
+):
     if call_fn is None:
-        selected_model = model or AZURE_DEPLOYMENT
+        selected_model = model or OPENROUTER_MODEL
         if not selected_model:
             raise RuntimeError(
-                "AZURE_DEPLOYMENT must be set. "
+                "OPENROUTER_MODEL must be set. "
                 "Add it to MedRouteBench/.env or export in the calling environment."
             )
+        selected_api_key = api_key or OPENROUTER_API_KEY
+        if not selected_api_key:
+            raise RuntimeError(
+                "OPENROUTER_API_KEY must be set. "
+                "Add it to MedRouteBench/.env, export in the calling environment, "
+                "or pass --api-key."
+            )
         return (
-            partial(_call_llm_json, model=selected_model),
+            partial(_call_llm_json, model=selected_model, api_key=selected_api_key),
             selected_model,
-            "azure-vision",
+            "openrouter-vision",
             {
                 "max_completion_tokens": MAX_TOKENS,
                 "max_retries": MAX_RETRIES,
@@ -96,7 +109,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "azure-vision":
+    if backend == "openrouter-vision":
         code_names.append("llm.py")
     return {
         "schema_version": RUN_SCHEMA_VERSION,
@@ -192,6 +205,7 @@ def run_pipeline(
     n: int = 11,
     *,
     model: Optional[str] = None,
+    api_key: Optional[str] = None,
     out_dir=None,
     workers: Optional[int] = None,
     verbose: bool = True,
@@ -209,7 +223,9 @@ def run_pipeline(
     if effective_workers < 1:
         raise ValueError("workers must be >= 1")
 
-    effective_call, selected_model, backend, generation = _select_backend(call_fn, model)
+    effective_call, selected_model, backend, generation = _select_backend(
+        call_fn, model, api_key
+    )
     resolved_data = resolve_data_path(cases_path)
     payload = load_dataset(resolved_data)
     cases = _select_cases(payload, n, case_ids)
@@ -362,6 +378,11 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--n", type=int, default=11, help="number of adapted cases")
     parser.add_argument("--model", default=None, help="model identifier")
+    parser.add_argument(
+        "--api-key",
+        default=None,
+        help="OpenRouter API key override (defaults to OPENROUTER_API_KEY)",
+    )
     parser.add_argument("--out", default=None, help="artifact output directory")
     parser.add_argument("--cases", default=None, help="adapted MedCTA subset JSON")
     run_mode = parser.add_mutually_exclusive_group()
@@ -402,6 +423,7 @@ if __name__ == "__main__":
         report, traces = run_pipeline(
             n=args.n,
             model=args.model,
+            api_key=args.api_key,
             out_dir=args.out,
             workers=args.workers,
             resume_dir=args.resume,

@@ -37,7 +37,7 @@ python -m medcta_eval.pipeline
 # Run a larger set
 python -m medcta_eval.pipeline --n 100
 
-# Specify the Azure deployment to use
+# Specify the OpenRouter model to use
 python -m medcta_eval.pipeline --n 50 --model gpt-5-mini
 
 # Resume an interrupted run
@@ -125,7 +125,7 @@ the answer itself changed.
 first — a case's gold answer may have more than one valid phrasing, and
 matching any single one of them is sufficient for a 1.0.
 
-`judge_answer` uses the same Azure deployment, the same 0–1 semantic
+`judge_answer` uses the same OpenRouter model, the same 0–1 semantic
 correctness scale and scoring rubric, and the same threshold
 (`FINAL_ACCURACY_CONFIDENCE_THRESHOLD`, 0.8) at every step. A score ≥ the
 threshold sets `current_answer_correct = True` (and, at the terminal step,

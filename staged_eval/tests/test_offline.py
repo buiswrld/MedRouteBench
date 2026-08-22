@@ -646,7 +646,7 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
     )
     seen_models = []
 
-    def fake_call(_system, user, *, model):
+    def fake_call(_system, user, *, model, api_key=None):
         seen_models.append(model)
         if user.startswith("STAGE 1"):
             return _output("ANSWER", "yes")
@@ -663,7 +663,7 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
 
     assert seen_models == ["chosen-model", "chosen-model"]
     assert report["model"] == "chosen-model"
-    assert report["backend"] == "azure"
+    assert report["backend"] == "openrouter"
 
 
 def test_run_directories_are_unique(monkeypatch, tmp_path):

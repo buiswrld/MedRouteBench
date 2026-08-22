@@ -20,13 +20,13 @@ from openai import (
 )
 
 from .config import (
-    AZURE_API_KEY,
-    AZURE_ENDPOINT,
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
+    OPENROUTER_API_KEY,
+    OPENROUTER_BASE_URL,
 )
 
-_client = None
+_clients: dict[str, "OpenAI"] = {}
 _client_lock = threading.Lock()
 _fallback_wait = wait_exponential(multiplier=1, min=1, max=60)
 _retryable_errors = (
@@ -37,23 +37,25 @@ _retryable_errors = (
 )
 
 
-def get_client():
-    global _client
-    if _client is None:
+def get_client(api_key: str | None = None):
+    """Return a cached client for the given API key (default: OPENROUTER_API_KEY).
+
+    Cached per key so callers that need a distinct key for a subset of calls
+    (e.g. a separate judge key) don't pay for a fresh client on every call,
+    while the common single-key case still reuses one client process-wide.
+    """
+    key = api_key or OPENROUTER_API_KEY
+    if not key:
+        raise RuntimeError(
+            "OPENROUTER_API_KEY must be set. "
+            "Add it to MedRouteBench/.env or export in your environment."
+        )
+    if key not in _clients:
         # Double-checked locking so concurrent workers can't double-initialise.
         with _client_lock:
-            if _client is None:
-                if not AZURE_ENDPOINT or not AZURE_API_KEY:
-                    raise RuntimeError(
-                        "AZURE_ENDPOINT and AZURE_API_KEY must be set. "
-                        "Add them to MedRouteBench/.env or export in your environment."
-                    )
-                base = AZURE_ENDPOINT.rstrip("/")
-                if not base.endswith("/openai/v1"):
-                    base = base + "/openai/v1"
-                base = base + "/"  # OpenAI client requires trailing slash
-                _client = OpenAI(base_url=base, api_key=AZURE_API_KEY)
-    return _client
+            if key not in _clients:
+                _clients[key] = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=key)
+    return _clients[key]
 
 
 def _parse_retry_after_message(message: str) -> float | None:
@@ -156,6 +158,7 @@ def call_responses_json(
     *,
     model: str | None,
     max_output_tokens: int,
+    api_key: str | None = None,
 ) -> str:
     """Call the Responses API in JSON mode and return the raw output text.
 
@@ -163,9 +166,10 @@ def call_responses_json(
     Responses-API content items (e.g. from ``vision_input``); building that
     shape is the caller's job. Some providers reject JSON-mode requests when
     generation is empty, so a single retry without JSON mode is attempted
-    before giving up.
+    before giving up. ``api_key`` overrides OPENROUTER_API_KEY for this call
+    (e.g. a separate judge key); defaults to the shared key when omitted.
     """
-    client = get_client()
+    client = get_client(api_key)
     request_kwargs = dict(
         model=model,
         instructions=instructions,

@@ -8,10 +8,11 @@ from shared.llm import (
     vision_input,
 )
 from .config import (
-    AZURE_DEPLOYMENT,
     IMAGE_URL_CACHE_TTL_SECONDS,
-    JUDGE_DEPLOYMENT,
+    JUDGE_API_KEY,
+    JUDGE_MODEL,
     MAX_TOKENS,
+    OPENROUTER_MODEL,
 )
 
 
@@ -21,9 +22,10 @@ def call_json(
     image_url: str | None,
     *,
     model: str | None = None,
+    api_key: str | None = None,
 ) -> str:
     """Call the configured vision model and return its raw JSON response text."""
-    effective_model = model or AZURE_DEPLOYMENT
+    effective_model = model or OPENROUTER_MODEL
     if image_url:
         resolved_image_url = resolve_image_url(
             image_url, ttl_seconds=IMAGE_URL_CACHE_TTL_SECONDS
@@ -36,17 +38,19 @@ def call_json(
         request_input,
         model=effective_model,
         max_output_tokens=MAX_TOKENS,
+        api_key=api_key,
     )
 
 
 def _run_judge(system_prompt: str, user: str) -> float | None:
-    effective_model = JUDGE_DEPLOYMENT or AZURE_DEPLOYMENT
+    effective_model = JUDGE_MODEL or OPENROUTER_MODEL
     try:
         raw = call_responses_json(
             system_prompt,
             user,
             model=effective_model,
             max_output_tokens=64,
+            api_key=JUDGE_API_KEY,
         )
         parsed = json.loads(raw)
         score = parsed.get("score")

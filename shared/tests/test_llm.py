@@ -13,7 +13,7 @@ def test_call_responses_json_sends_json_mode_request(monkeypatch):
             return SimpleNamespace(output_text='{"ok":true}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda: client)
+    monkeypatch.setattr(shared_llm, "get_client", lambda api_key=None: client)
 
     result = call_responses_json(
         "system prompt",
@@ -41,7 +41,7 @@ def test_call_responses_json_falls_back_without_json_mode_on_failure(monkeypatch
             return SimpleNamespace(output_text='{"tool_name":"OCR"}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda: client)
+    monkeypatch.setattr(shared_llm, "get_client", lambda api_key=None: client)
 
     result = call_responses_json(
         "system prompt", "user text", model="my-model", max_output_tokens=64

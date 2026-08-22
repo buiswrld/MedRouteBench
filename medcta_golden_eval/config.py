@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 from shared.config import (  # re-exported for package consumers
-    AZURE_DEPLOYMENT,
+    OPENROUTER_MODEL,
     PROJECT_DIR,
 )
 
@@ -22,7 +22,8 @@ MAX_TOKENS = int(os.environ.get("MEDCTA_MAX_TOKENS", "512"))
 IMAGE_URL_CACHE_TTL_SECONDS = float(
     os.environ.get("MEDCTA_IMAGE_URL_CACHE_TTL_SECONDS", "2700")
 )
-JUDGE_DEPLOYMENT = os.environ.get("MEDCTA_JUDGE_DEPLOYMENT") or None
+JUDGE_MODEL = os.environ.get("MEDCTA_JUDGE_MODEL") or None
+JUDGE_API_KEY = os.environ.get("MEDCTA_JUDGE_API_KEY") or None
 
 FINAL_ACCURACY_CONFIDENCE_THRESHOLD = 0.8
 ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD = 0.8

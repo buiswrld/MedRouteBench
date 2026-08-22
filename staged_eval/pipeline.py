@@ -10,8 +10,9 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT, WORKERS, SEED
+from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, OPENROUTER_MODEL, WORKERS, SEED
 from shared import harness
+from shared.config import OPENROUTER_API_KEY
 from shared.pipeline_utils import (
     callable_id as _callable_id,
     sha256_file as _sha256_file,
@@ -35,25 +36,37 @@ from .schema import ACTIONS
 RUN_SCHEMA_VERSION = 1
 
 
-def _call_llm_json(system: str, user: str, *, model: str) -> str:
+def _call_llm_json(
+    system: str, user: str, *, model: str, api_key: str | None = None
+) -> str:
     """Load the built-in provider adapter only when selected."""
     from .llm import call_json
 
-    return call_json(system, user, model=model)
+    return call_json(system, user, model=model, api_key=api_key)
 
 
-def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
+def _select_backend(
+    call_fn: Optional[Callable],
+    model: Optional[str],
+    api_key: Optional[str] = None,
+):
     if call_fn is None:
-        selected_model = model or AZURE_DEPLOYMENT
+        selected_model = model or OPENROUTER_MODEL
         if not selected_model:
             raise RuntimeError(
-                "AZURE_DEPLOYMENT must be set. "
+                "OPENROUTER_MODEL must be set. "
                 "Add it to MedRouteBench/.env or export in your shell."
             )
+        selected_api_key = api_key or OPENROUTER_API_KEY
+        if not selected_api_key:
+            raise RuntimeError(
+                "OPENROUTER_API_KEY must be set. "
+                "Add it to MedRouteBench/.env, export in your shell, or pass --api-key."
+            )
         return (
-            partial(_call_llm_json, model=selected_model),
+            partial(_call_llm_json, model=selected_model, api_key=selected_api_key),
             selected_model,
-            "azure",
+            "openrouter",
             {"max_completion_tokens": MAX_TOKENS, "seed": SEED},
         )
 
@@ -79,7 +92,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "azure":
+    if backend == "openrouter":
         code_names.append("llm.py")
     code_files = {name: PACKAGE_DIR / name for name in code_names}
     return {
@@ -124,6 +137,7 @@ def run_pipeline(
     *,
     stratify: bool = True,
     model: Optional[str] = None,
+    api_key: Optional[str] = None,
     out_dir=None,
     limit: Optional[int] = None,
     workers: Optional[int] = None,
@@ -147,6 +161,7 @@ def run_pipeline(
     effective_call, selected_model, backend, generation = _select_backend(
         call_fn,
         model,
+        api_key,
     )
     resolved_cases = resolve_cases_path(cases_path, use_fixtures=use_fixtures)
     resolved_ground_truth = resolve_ground_truth_path(
@@ -330,6 +345,11 @@ def _parse_args() -> argparse.Namespace:
         default=None,
         help="model identifier passed to the built-in backend and stored in provenance",
     )
+    parser.add_argument(
+        "--api-key",
+        default=None,
+        help="OpenRouter API key override (defaults to OPENROUTER_API_KEY)",
+    )
     parser.add_argument("--out", default=None, help="artifact output directory")
     parser.add_argument(
         "--cases",
@@ -382,6 +402,7 @@ if __name__ == "__main__":
         n=args.n,
         stratify=not args.no_stratify,
         model=args.model,
+        api_key=args.api_key,
         out_dir=args.out,
         limit=args.limit,
         workers=args.workers,

@@ -72,7 +72,7 @@ python -m medcta_golden_eval.pipeline
 # Run a larger set
 python -m medcta_golden_eval.pipeline --n 100
 
-# Specify the Azure deployment to use
+# Specify the OpenRouter model to use
 python -m medcta_golden_eval.pipeline --n 50 --model gpt-5-mini
 
 # Resume an interrupted run
