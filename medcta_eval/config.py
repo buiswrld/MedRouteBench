@@ -5,7 +5,10 @@ from pathlib import Path
 
 from shared.config import (  # re-exported for package consumers
     AZURE_DEPLOYMENT,
+    LLM_PROVIDER,
     PROJECT_DIR,
+    default_model,
+    normalize_provider,
 )
 
 PACKAGE_DIR = Path(__file__).resolve().parent
@@ -23,7 +26,7 @@ IMAGE_URL_CACHE_TTL_SECONDS = float(
     os.environ.get("MEDCTA_IMAGE_URL_CACHE_TTL_SECONDS", "2700")
 )
 JUDGE_DEPLOYMENT = os.environ.get("MEDCTA_JUDGE_DEPLOYMENT") or None
+JUDGE_PROVIDER = normalize_provider(os.environ.get("MEDCTA_JUDGE_PROVIDER", "azure"))
 
 FINAL_ACCURACY_CONFIDENCE_THRESHOLD = 0.8
 ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD = 0.8
-

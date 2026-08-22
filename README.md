@@ -27,6 +27,18 @@ Run an evaluation with the built-in Azure adapter:
 python -m staged_eval.pipeline --n 50 --model gpt-4o-mini --inspect 0
 ```
 
+Or select OpenRouter explicitly. Model names use OpenRouter's provider/model
+form, and the API key stays in `.env`:
+
+```bash
+python -m staged_eval.pipeline --provider openrouter --model qwen/qwen3.5-9b --n 50
+python -m medcta_golden_eval.pipeline --provider openrouter --model qwen/qwen3.5-9b --n 50
+```
+
+For MedCTA runs, set `MEDCTA_JUDGE_PROVIDER` and
+`MEDCTA_JUDGE_DEPLOYMENT` separately so every candidate model is scored by
+the same fixed judge.
+
 The selected model is passed to the backend that performs the request and is
 recorded with the backend identity in both `manifest.json` and `report.json`.
 Shell, scheduler, and CI environment variables take precedence over local

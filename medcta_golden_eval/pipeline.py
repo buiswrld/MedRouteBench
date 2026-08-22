@@ -16,10 +16,14 @@ from pathlib import Path
 from typing import Callable, Optional, Tuple
 
 from .config import (
-    AZURE_DEPLOYMENT,
+    JUDGE_DEPLOYMENT,
+    JUDGE_PROVIDER,
+    LLM_PROVIDER,
     MAX_TOKENS,
     PACKAGE_DIR,
     RUNS_DIR,
+    default_model,
+    normalize_provider,
 )
 from shared import harness
 from shared.config import (
@@ -51,24 +55,34 @@ def _call_llm_json(
     image_url: str | None,
     *,
     model: str,
+    provider: str,
 ) -> str:
     from .llm import call_json
 
-    return call_json(system, user, image_url, model=model)
+    return call_json(system, user, image_url, model=model, provider=provider)
 
 
-def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
+def _select_backend(
+    call_fn: Optional[Callable],
+    model: Optional[str],
+    provider: Optional[str],
+):
     if call_fn is None:
-        selected_model = model or AZURE_DEPLOYMENT
+        selected_provider = normalize_provider(provider or LLM_PROVIDER)
+        selected_model = model or default_model(selected_provider)
         if not selected_model:
             raise RuntimeError(
-                "AZURE_DEPLOYMENT must be set. "
-                "Add it to MedRouteBench/.env or export in the calling environment."
+                f"No model configured for {selected_provider}. Pass --model or set "
+                f"{'OPENROUTER_MODEL' if selected_provider == 'openrouter' else 'AZURE_DEPLOYMENT'}."
             )
         return (
-            partial(_call_llm_json, model=selected_model),
+            partial(
+                _call_llm_json,
+                model=selected_model,
+                provider=selected_provider,
+            ),
             selected_model,
-            "azure-vision",
+            f"{selected_provider}-vision",
             {
                 "max_completion_tokens": MAX_TOKENS,
                 "max_retries": MAX_RETRIES,
@@ -96,13 +110,17 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "azure-vision":
+    if backend in {"azure-vision", "openrouter-vision"}:
         code_names.append("llm.py")
     return {
         "schema_version": RUN_SCHEMA_VERSION,
         "backend": backend,
         "model": model,
         "generation": generation,
+        "judge": {
+            "provider": JUDGE_PROVIDER,
+            "model": JUDGE_DEPLOYMENT or default_model(JUDGE_PROVIDER),
+        },
         "image_delivery": "pinned_huggingface_url_via_resolved_cdn",
         "selected_case_ids": selected_case_ids,
         "dataset": dataset_metadata,
@@ -120,6 +138,7 @@ def _resume_signature(provenance: dict) -> dict:
         "backend": provenance.get("backend"),
         "model": provenance.get("model"),
         "generation": provenance.get("generation"),
+        "judge": provenance.get("judge"),
         "image_delivery": provenance.get("image_delivery"),
         "selected_case_ids": provenance.get("selected_case_ids"),
         "dataset": provenance.get("dataset"),
@@ -192,6 +211,7 @@ def run_pipeline(
     n: int = 11,
     *,
     model: Optional[str] = None,
+    provider: Optional[str] = None,
     out_dir=None,
     workers: Optional[int] = None,
     verbose: bool = True,
@@ -209,7 +229,9 @@ def run_pipeline(
     if effective_workers < 1:
         raise ValueError("workers must be >= 1")
 
-    effective_call, selected_model, backend, generation = _select_backend(call_fn, model)
+    effective_call, selected_model, backend, generation = _select_backend(
+        call_fn, model, provider
+    )
     resolved_data = resolve_data_path(cases_path)
     payload = load_dataset(resolved_data)
     cases = _select_cases(payload, n, case_ids)
@@ -361,6 +383,12 @@ def _parse_args() -> argparse.Namespace:
         ),
     )
     parser.add_argument("--n", type=int, default=11, help="number of adapted cases")
+    parser.add_argument(
+        "--provider",
+        choices=("azure", "openrouter"),
+        default=None,
+        help="built-in provider (default: LLM_PROVIDER, otherwise azure)",
+    )
     parser.add_argument("--model", default=None, help="model identifier")
     parser.add_argument("--out", default=None, help="artifact output directory")
     parser.add_argument("--cases", default=None, help="adapted MedCTA subset JSON")
@@ -402,6 +430,7 @@ if __name__ == "__main__":
         report, traces = run_pipeline(
             n=args.n,
             model=args.model,
+            provider=args.provider,
             out_dir=args.out,
             workers=args.workers,
             resume_dir=args.resume,

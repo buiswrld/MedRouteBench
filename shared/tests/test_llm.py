@@ -4,22 +4,53 @@ import shared.llm as shared_llm
 from shared.llm import call_responses_json, resolve_image_url, vision_input
 
 
+def test_openrouter_client_uses_exact_base_url_and_optional_headers(monkeypatch):
+    captured = {}
+
+    def fake_openai(**kwargs):
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(shared_llm, "OPENROUTER_API_KEY", "test-key")
+    monkeypatch.setattr(
+        shared_llm, "OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1/"
+    )
+    monkeypatch.setattr(shared_llm, "OPENROUTER_HTTP_REFERER", "https://example.test")
+    monkeypatch.setattr(shared_llm, "OPENROUTER_APP_NAME", "MedRouteBench")
+    monkeypatch.setattr(shared_llm, "OpenAI", fake_openai)
+    shared_llm.clear_clients()
+
+    client = shared_llm.get_client("openrouter")
+
+    assert client is not None
+    assert captured == {
+        "base_url": "https://openrouter.ai/api/v1/",
+        "api_key": "test-key",
+        "default_headers": {
+            "HTTP-Referer": "https://example.test",
+            "X-Title": "MedRouteBench",
+        },
+    }
+    shared_llm.clear_clients()
+
+
 def test_call_responses_json_sends_json_mode_request(monkeypatch):
     captured = {}
 
     class Responses:
         def create(self, **kwargs):
             captured.update(kwargs)
-            return SimpleNamespace(output_text='{"ok":true}')
+            return SimpleNamespace(output=[], output_text='{"ok":true}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda: client)
+    monkeypatch.setattr(shared_llm, "get_client", lambda provider=None: client)
 
     result = call_responses_json(
         "system prompt",
         "user text",
         model="my-model",
         max_output_tokens=123,
+        provider="openrouter",
     )
 
     assert result == '{"ok":true}'
@@ -38,10 +69,10 @@ def test_call_responses_json_falls_back_without_json_mode_on_failure(monkeypatch
             captured.append(kwargs)
             if len(captured) == 1:
                 raise RuntimeError("provider code=json_validate_failed")
-            return SimpleNamespace(output_text='{"tool_name":"OCR"}')
+            return SimpleNamespace(output=[], output_text='{"tool_name":"OCR"}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda: client)
+    monkeypatch.setattr(shared_llm, "get_client", lambda provider=None: client)
 
     result = call_responses_json(
         "system prompt", "user text", model="my-model", max_output_tokens=64

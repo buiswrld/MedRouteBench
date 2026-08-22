@@ -22,11 +22,17 @@ from openai import (
 from .config import (
     AZURE_API_KEY,
     AZURE_ENDPOINT,
+    LLM_PROVIDER,
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
+    OPENROUTER_API_KEY,
+    OPENROUTER_APP_NAME,
+    OPENROUTER_BASE_URL,
+    OPENROUTER_HTTP_REFERER,
+    normalize_provider,
 )
 
-_client = None
+_clients = {}
 _client_lock = threading.Lock()
 _fallback_wait = wait_exponential(multiplier=1, min=1, max=60)
 _retryable_errors = (
@@ -37,23 +43,50 @@ _retryable_errors = (
 )
 
 
-def get_client():
-    global _client
-    if _client is None:
+def clear_clients() -> None:
+    """Clear cached clients (primarily useful for tests)."""
+    with _client_lock:
+        _clients.clear()
+
+
+def _client_settings(provider: str) -> tuple[str, str, dict[str, str]]:
+    if provider == "azure":
+        if not AZURE_ENDPOINT or not AZURE_API_KEY:
+            raise RuntimeError(
+                "AZURE_ENDPOINT and AZURE_API_KEY must be set. "
+                "Add them to MedRouteBench/.env or export them."
+            )
+        base = AZURE_ENDPOINT.rstrip("/")
+        if not base.endswith("/openai/v1"):
+            base += "/openai/v1"
+        return base + "/", AZURE_API_KEY, {}
+
+    if not OPENROUTER_API_KEY:
+        raise RuntimeError(
+            "OPENROUTER_API_KEY (or legacy OPENROUTER_KEY) must be set. "
+            "Add it to MedRouteBench/.env or export it."
+        )
+    headers = {}
+    if OPENROUTER_HTTP_REFERER:
+        headers["HTTP-Referer"] = OPENROUTER_HTTP_REFERER
+    if OPENROUTER_APP_NAME:
+        headers["X-Title"] = OPENROUTER_APP_NAME
+    return OPENROUTER_BASE_URL.rstrip("/") + "/", OPENROUTER_API_KEY, headers
+
+
+def get_client(provider: str | None = None):
+    """Return a cached OpenAI-compatible client for Azure or OpenRouter."""
+    selected = normalize_provider(provider or LLM_PROVIDER)
+    if selected not in _clients:
         # Double-checked locking so concurrent workers can't double-initialise.
         with _client_lock:
-            if _client is None:
-                if not AZURE_ENDPOINT or not AZURE_API_KEY:
-                    raise RuntimeError(
-                        "AZURE_ENDPOINT and AZURE_API_KEY must be set. "
-                        "Add them to MedRouteBench/.env or export in your environment."
-                    )
-                base = AZURE_ENDPOINT.rstrip("/")
-                if not base.endswith("/openai/v1"):
-                    base = base + "/openai/v1"
-                base = base + "/"  # OpenAI client requires trailing slash
-                _client = OpenAI(base_url=base, api_key=AZURE_API_KEY)
-    return _client
+            if selected not in _clients:
+                base_url, api_key, headers = _client_settings(selected)
+                kwargs = {"base_url": base_url, "api_key": api_key}
+                if headers:
+                    kwargs["default_headers"] = headers
+                _clients[selected] = OpenAI(**kwargs)
+    return _clients[selected]
 
 
 def _parse_retry_after_message(message: str) -> float | None:
@@ -156,6 +189,7 @@ def call_responses_json(
     *,
     model: str | None,
     max_output_tokens: int,
+    provider: str | None = None,
 ) -> str:
     """Call the Responses API in JSON mode and return the raw output text.
 
@@ -165,7 +199,7 @@ def call_responses_json(
     generation is empty, so a single retry without JSON mode is attempted
     before giving up.
     """
-    client = get_client()
+    client = get_client(provider=provider)
     request_kwargs = dict(
         model=model,
         instructions=instructions,

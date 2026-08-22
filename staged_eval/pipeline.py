@@ -10,7 +10,16 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, AZURE_DEPLOYMENT, WORKERS, SEED
+from .config import (
+    LLM_PROVIDER,
+    MAX_TOKENS,
+    PACKAGE_DIR,
+    RUNS_DIR,
+    SEED,
+    WORKERS,
+    default_model,
+    normalize_provider,
+)
 from shared import harness
 from shared.pipeline_utils import (
     callable_id as _callable_id,
@@ -35,25 +44,40 @@ from .schema import ACTIONS
 RUN_SCHEMA_VERSION = 1
 
 
-def _call_llm_json(system: str, user: str, *, model: str) -> str:
+def _call_llm_json(
+    system: str,
+    user: str,
+    *,
+    model: str,
+    provider: str,
+) -> str:
     """Load the built-in provider adapter only when selected."""
     from .llm import call_json
 
-    return call_json(system, user, model=model)
+    return call_json(system, user, model=model, provider=provider)
 
 
-def _select_backend(call_fn: Optional[Callable], model: Optional[str]):
+def _select_backend(
+    call_fn: Optional[Callable],
+    model: Optional[str],
+    provider: Optional[str],
+):
     if call_fn is None:
-        selected_model = model or AZURE_DEPLOYMENT
+        selected_provider = normalize_provider(provider or LLM_PROVIDER)
+        selected_model = model or default_model(selected_provider)
         if not selected_model:
             raise RuntimeError(
-                "AZURE_DEPLOYMENT must be set. "
-                "Add it to MedRouteBench/.env or export in your shell."
+                f"No model configured for {selected_provider}. Pass --model or set "
+                f"{'OPENROUTER_MODEL' if selected_provider == 'openrouter' else 'AZURE_DEPLOYMENT'}."
             )
         return (
-            partial(_call_llm_json, model=selected_model),
+            partial(
+                _call_llm_json,
+                model=selected_model,
+                provider=selected_provider,
+            ),
             selected_model,
-            "azure",
+            selected_provider,
             {"max_completion_tokens": MAX_TOKENS, "seed": SEED},
         )
 
@@ -79,7 +103,7 @@ def _build_provenance(
         "runner.py",
         "schema.py",
     ]
-    if backend == "azure":
+    if backend in {"azure", "openrouter"}:
         code_names.append("llm.py")
     code_files = {name: PACKAGE_DIR / name for name in code_names}
     return {
@@ -124,6 +148,7 @@ def run_pipeline(
     *,
     stratify: bool = True,
     model: Optional[str] = None,
+    provider: Optional[str] = None,
     out_dir=None,
     limit: Optional[int] = None,
     workers: Optional[int] = None,
@@ -145,8 +170,7 @@ def run_pipeline(
         raise ValueError("workers must be >= 1")
 
     effective_call, selected_model, backend, generation = _select_backend(
-        call_fn,
-        model,
+        call_fn, model, provider
     )
     resolved_cases = resolve_cases_path(cases_path, use_fixtures=use_fixtures)
     resolved_ground_truth = resolve_ground_truth_path(
@@ -326,6 +350,12 @@ def _parse_args() -> argparse.Namespace:
         help="disable proportional yes/no/maybe sampling",
     )
     parser.add_argument(
+        "--provider",
+        choices=("azure", "openrouter"),
+        default=None,
+        help="built-in provider (default: LLM_PROVIDER, otherwise azure)",
+    )
+    parser.add_argument(
         "--model",
         default=None,
         help="model identifier passed to the built-in backend and stored in provenance",
@@ -382,6 +412,7 @@ if __name__ == "__main__":
         n=args.n,
         stratify=not args.no_stratify,
         model=args.model,
+        provider=args.provider,
         out_dir=args.out,
         limit=args.limit,
         workers=args.workers,

@@ -1227,6 +1227,35 @@ def test_pipeline_resume_rejects_model_provenance_mismatch(tmp_path):
         )
 
 
+def test_pipeline_resume_rejects_judge_provenance_mismatch(tmp_path):
+    data_path = tmp_path / "cases.json"
+    _write_payload(data_path, _case("A"))
+    mapping = {"A": ("OCR", "gold answer")}
+    run_pipeline(
+        n=1,
+        model="test-model",
+        out_dir=tmp_path / "runs",
+        cases_path=data_path,
+        call_fn=PerfectBackend(mapping),
+        verbose=False,
+    )
+    run_dir = next((tmp_path / "runs").iterdir())
+    manifest_path = run_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest["provenance"]["judge"]["model"] = "different-judge"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="resume provenance"):
+        run_pipeline(
+            n=1,
+            model="test-model",
+            resume_dir=run_dir,
+            cases_path=data_path,
+            call_fn=PerfectBackend(mapping),
+            verbose=False,
+        )
+
+
 def test_pipeline_continues_after_one_case_inference_failure(tmp_path):
     data_path = tmp_path / "cases.json"
     _write_payload(data_path, _case("A"), _case("B"))
@@ -1294,12 +1323,13 @@ def test_interrupted_run_keeps_reproducible_partial_report(tmp_path):
 def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch):
     captured = {}
 
-    def _spy(system, request_input, *, model, max_output_tokens):
+    def _spy(system, request_input, *, model, max_output_tokens, provider):
         captured.update(
             system=system,
             request_input=request_input,
             model=model,
             max_output_tokens=max_output_tokens,
+            provider=provider,
         )
         return '{"ok":true}'
 
@@ -1310,10 +1340,12 @@ def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch)
         "user",
         "https://example.test/image.jpg",
         model="vision-model",
+        provider="openrouter",
     )
     assert result == '{"ok":true}'
     assert captured["system"] == "system"
     assert captured["model"] == "vision-model"
+    assert captured["provider"] == "openrouter"
     assert captured["request_input"] == [
         {
             "role": "user",
@@ -1328,14 +1360,20 @@ def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch)
 def test_call_json_sends_plain_text_input_when_no_image(monkeypatch):
     captured = {}
 
-    def _spy(system, request_input, *, model, max_output_tokens):
-        captured.update(system=system, request_input=request_input, model=model)
+    def _spy(system, request_input, *, model, max_output_tokens, provider):
+        captured.update(
+            system=system,
+            request_input=request_input,
+            model=model,
+            provider=provider,
+        )
         return "{}"
 
     monkeypatch.setattr(llm, "call_responses_json", _spy)
     llm.call_json("system", "user", None, model="text-model")
     assert captured["request_input"] == "user"
     assert captured["model"] == "text-model"
+    assert captured["provider"] == "azure"
 
 
 def test_run_judge_parses_and_clamps_score(monkeypatch):
@@ -1369,8 +1407,8 @@ def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeyp
     """
     captured = {}
 
-    def _spy(system, user, *, model, max_output_tokens):
-        captured.update(system=system, user=user)
+    def _spy(system, user, *, model, max_output_tokens, provider):
+        captured.update(system=system, user=user, provider=provider)
         return '{"score": 1.0}'
 
     monkeypatch.setattr(llm, "call_responses_json", _spy)
@@ -1378,6 +1416,7 @@ def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeyp
     assert score == 1.0
     assert "Liver mass" in captured["user"]
     assert "Hepatic lesion" in captured["user"]
+    assert captured["provider"] == llm.JUDGE_PROVIDER
 
 
 def test_retry_delay_parser_supports_minutes_and_long_wait_cap():

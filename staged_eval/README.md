@@ -51,6 +51,9 @@ python -m staged_eval.pipeline --n 20 --reversed
 # Specify a model override
 python -m staged_eval.pipeline --n 50 --model gpt-5-mini
 
+# Use an OpenRouter model
+python -m staged_eval.pipeline --provider openrouter --model qwen/qwen3.5-9b --n 50
+
 # Resume an interrupted run
 python -m staged_eval.pipeline --n 50 --resume staged_eval/runs/<run_id>
 ```

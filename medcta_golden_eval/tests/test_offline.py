@@ -1260,12 +1260,13 @@ def test_interrupted_run_keeps_reproducible_partial_report(tmp_path):
 def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch):
     captured = {}
 
-    def _spy(system, request_input, *, model, max_output_tokens):
+    def _spy(system, request_input, *, model, max_output_tokens, provider):
         captured.update(
             system=system,
             request_input=request_input,
             model=model,
             max_output_tokens=max_output_tokens,
+            provider=provider,
         )
         return '{"ok":true}'
 
@@ -1276,10 +1277,12 @@ def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch)
         "user",
         "https://example.test/image.jpg",
         model="vision-model",
+        provider="openrouter",
     )
     assert result == '{"ok":true}'
     assert captured["system"] == "system"
     assert captured["model"] == "vision-model"
+    assert captured["provider"] == "openrouter"
     assert captured["request_input"] == [
         {
             "role": "user",
@@ -1294,14 +1297,20 @@ def test_call_json_sends_vision_input_through_shared_responses_call(monkeypatch)
 def test_call_json_sends_plain_text_input_when_no_image(monkeypatch):
     captured = {}
 
-    def _spy(system, request_input, *, model, max_output_tokens):
-        captured.update(system=system, request_input=request_input, model=model)
+    def _spy(system, request_input, *, model, max_output_tokens, provider):
+        captured.update(
+            system=system,
+            request_input=request_input,
+            model=model,
+            provider=provider,
+        )
         return "{}"
 
     monkeypatch.setattr(llm, "call_responses_json", _spy)
     llm.call_json("system", "user", None, model="text-model")
     assert captured["request_input"] == "user"
     assert captured["model"] == "text-model"
+    assert captured["provider"] == "azure"
 
 
 def test_run_judge_parses_and_clamps_score(monkeypatch):
@@ -1335,8 +1344,8 @@ def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeyp
     """
     captured = {}
 
-    def _spy(system, user, *, model, max_output_tokens):
-        captured.update(system=system, user=user)
+    def _spy(system, user, *, model, max_output_tokens, provider):
+        captured.update(system=system, user=user, provider=provider)
         return '{"score": 1.0}'
 
     monkeypatch.setattr(llm, "call_responses_json", _spy)
@@ -1344,6 +1353,7 @@ def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeyp
     assert score == 1.0
     assert "Liver mass" in captured["user"]
     assert "Hepatic lesion" in captured["user"]
+    assert captured["provider"] == llm.JUDGE_PROVIDER
 
 
 def test_retry_delay_parser_supports_minutes_and_long_wait_cap():

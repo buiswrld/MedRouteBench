@@ -75,6 +75,10 @@ python -m medcta_golden_eval.pipeline --n 100
 # Specify the Azure deployment to use
 python -m medcta_golden_eval.pipeline --n 50 --model gpt-5-mini
 
+# Use an OpenRouter vision model; keep MEDCTA_JUDGE_PROVIDER and
+# MEDCTA_JUDGE_DEPLOYMENT fixed across candidate-model runs
+python -m medcta_golden_eval.pipeline --provider openrouter --model qwen/qwen3.5-9b --n 50
+
 # Resume an interrupted run
 python -m medcta_golden_eval.pipeline --n 100 --resume medcta_golden_eval/runs/<run_id>
 

@@ -646,8 +646,9 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
     )
     seen_models = []
 
-    def fake_call(_system, user, *, model):
+    def fake_call(_system, user, *, model, provider):
         seen_models.append(model)
+        assert provider == "azure"
         if user.startswith("STAGE 1"):
             return _output("ANSWER", "yes")
         return _output("KEEP_ANSWER", "yes")
@@ -664,6 +665,42 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
     assert seen_models == ["chosen-model", "chosen-model"]
     assert report["model"] == "chosen-model"
     assert report["backend"] == "azure"
+
+
+def test_openrouter_backend_is_forwarded_and_recorded(monkeypatch, tmp_path):
+    cases = [_case("A")]
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_cases",
+        lambda path=None, limit=None: cases,
+    )
+    monkeypatch.setattr(
+        "staged_eval.pipeline.load_ground_truth",
+        lambda path=None: {"A": "yes"},
+    )
+    seen = []
+
+    def fake_call(_system, user, *, model, provider):
+        seen.append((model, provider))
+        if user.startswith("STAGE 1"):
+            return _output("ANSWER", "yes")
+        return _output("KEEP_ANSWER", "yes")
+
+    monkeypatch.setattr("staged_eval.pipeline._call_llm_json", fake_call)
+    report, _ = run_pipeline(
+        n=1,
+        stratify=False,
+        provider="openrouter",
+        model="qwen/qwen3.5-9b",
+        out_dir=tmp_path,
+        verbose=False,
+    )
+
+    assert seen == [
+        ("qwen/qwen3.5-9b", "openrouter"),
+        ("qwen/qwen3.5-9b", "openrouter"),
+    ]
+    assert report["model"] == "qwen/qwen3.5-9b"
+    assert report["backend"] == "openrouter"
 
 
 def test_run_directories_are_unique(monkeypatch, tmp_path):

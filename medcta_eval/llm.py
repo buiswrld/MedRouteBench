@@ -11,7 +11,10 @@ from .config import (
     AZURE_DEPLOYMENT,
     IMAGE_URL_CACHE_TTL_SECONDS,
     JUDGE_DEPLOYMENT,
+    JUDGE_PROVIDER,
+    LLM_PROVIDER,
     MAX_TOKENS,
+    default_model,
 )
 
 
@@ -21,9 +24,11 @@ def call_json(
     image_url: str | None,
     *,
     model: str | None = None,
+    provider: str | None = None,
 ) -> str:
     """Call the configured vision model and return its raw JSON response text."""
-    effective_model = model or AZURE_DEPLOYMENT
+    effective_provider = provider or LLM_PROVIDER
+    effective_model = model or default_model(effective_provider) or AZURE_DEPLOYMENT
     if image_url:
         resolved_image_url = resolve_image_url(
             image_url, ttl_seconds=IMAGE_URL_CACHE_TTL_SECONDS
@@ -36,17 +41,19 @@ def call_json(
         request_input,
         model=effective_model,
         max_output_tokens=MAX_TOKENS,
+        provider=effective_provider,
     )
 
 
 def _run_judge(system_prompt: str, user: str) -> float | None:
-    effective_model = JUDGE_DEPLOYMENT or AZURE_DEPLOYMENT
+    effective_model = JUDGE_DEPLOYMENT or default_model(JUDGE_PROVIDER)
     try:
         raw = call_responses_json(
             system_prompt,
             user,
             model=effective_model,
             max_output_tokens=64,
+            provider=JUDGE_PROVIDER,
         )
         parsed = json.loads(raw)
         score = parsed.get("score")
