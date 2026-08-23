@@ -1403,6 +1403,38 @@ def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeyp
     assert score == 1.0
     assert "Liver mass" in captured["user"]
     assert "Hepatic lesion" in captured["user"]
+    assert captured["provider"] == llm.JUDGE_PROVIDER
+    assert captured["base_url"] == llm.JUDGE_BASE_URL
+    assert captured["client_profile"] == "judge"
+
+
+def test_report_surfaces_judge_failures_without_changing_accuracy_policy():
+    trace = {
+        "status": "completed",
+        "final_answer": "candidate answer",
+        "final_answer_score": None,
+        "final_answer_match": False,
+        "reference_tool_sequence": [],
+        "reference_step_count": 1,
+        "model_tool_sequence": [],
+        "trajectory_exact_match": False,
+        "steps": [
+            {
+                "current_answer": "candidate answer",
+                "current_answer_score": None,
+                "current_answer_correct": False,
+                "model_output": {"valid": True, "parsed": {"action": "FINAL_ANSWER"}},
+            }
+        ],
+        "stage_transitions": [{"answer_equivalence_score": None}],
+    }
+
+    report = build_report([trace], model="test")
+
+    assert report["final_answer_accuracy"]["rate"] == 0.0
+    assert report["final_answer_judge_failure_count"] == 1
+    assert report["step_answer_judge_failure_count"] == 1
+    assert report["answer_equivalence_judge_failure_count"] == 1
 
 
 def test_retry_delay_parser_supports_minutes_and_long_wait_cap():

@@ -222,6 +222,22 @@ def build_report(
         for trace in traces
         for step in trace.get("steps") or []
     )
+    final_answer_judge_failure_count = sum(
+        bool(trace.get("final_answer"))
+        and not isinstance(trace.get("final_answer_score"), (int, float))
+        for trace in evaluable_traces
+    )
+    step_answer_judge_failure_count = sum(
+        bool(step.get("current_answer"))
+        and not isinstance(step.get("current_answer_score"), (int, float))
+        for trace in evaluable_traces
+        for step in trace.get("steps") or []
+    )
+    answer_equivalence_judge_failure_count = sum(
+        not isinstance(transition.get("answer_equivalence_score"), (int, float))
+        for trace in evaluable_traces
+        for transition in trace.get("stage_transitions") or []
+    )
     return {
         "run_id": run_id,
         "model": model,
@@ -249,6 +265,16 @@ def build_report(
         "premature_finalization_progress": premature_finalization_progress(traces),
         "mean_score_before_premature_finalization": mean_score_before_premature_finalization(traces),
         "inference_failure_count": inference_failure_count,
+        "final_answer_judge_failure_count": final_answer_judge_failure_count,
+        "step_answer_judge_failure_count": step_answer_judge_failure_count,
+        "answer_equivalence_judge_failure_count": (
+            answer_equivalence_judge_failure_count
+        ),
+        "judge_failure_note": (
+            "Failure counts are diagnostics. Existing correctness fields retain "
+            "the frozen protocol, where a missing judge score does not pass the "
+            "correctness threshold."
+        ),
         "inference_failure_case_count": sum(
             trace.get("status") == "inference_failure" for trace in traces
         ),

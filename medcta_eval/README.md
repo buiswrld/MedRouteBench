@@ -38,7 +38,7 @@ python -m medcta_eval.pipeline
 python -m medcta_eval.pipeline --n 100
 
 # Specify the OpenRouter model to use
-python -m medcta_eval.pipeline --n 50 --model gpt-5-mini
+python -m medcta_eval.pipeline --n 50 --model openai/gpt-5-mini
 
 # Resume an interrupted run
 python -m medcta_eval.pipeline --n 100 --resume medcta_eval/runs/<run_id>
@@ -60,8 +60,22 @@ Artifacts are written atomically to `medcta_eval/runs/<UTC-timestamp>_<id>/`.
 Each run contains:
 - `manifest.json` — model, backend, code SHA-256 hashes, provenance
 - `trace_<case_id>.json` — per-case trace (steps, model outputs, scores)
+- `usage.jsonl` — append-only token and provider-reported cost record per successful API call
+- `usage_summary.json` — usage totals by provider, model, and candidate/judge role
 - `partial_report.json` — updated after every case during the run
 - `report.json` — final aggregated metrics (replaces `partial_report.json`)
+
+OpenRouter reports the charged request cost directly. Azure judge calls retain
+their token counts but remain marked unpriced because the response has no
+dollar-cost field.
+
+To create a seeded, model-blinded sample for human review without rerunning a
+model or changing saved metrics:
+
+```bash
+python -m shared.judge_audit medcta_eval/runs/<run_id> \
+  medcta_golden_eval/runs/<run_id> --out-dir judge_human_audit
+```
 
 ---
 
@@ -125,8 +139,9 @@ the answer itself changed.
 first — a case's gold answer may have more than one valid phrasing, and
 matching any single one of them is sufficient for a 1.0.
 
-`judge_answer` uses the same OpenRouter model, the same 0–1 semantic
-correctness scale and scoring rubric, and the same threshold
+`judge_answer` uses the fixed judge configured for the run (currently an Azure
+GPT-5.4 deployment), the same 0–1 semantic correctness scale and scoring rubric,
+and the same threshold
 (`FINAL_ACCURACY_CONFIDENCE_THRESHOLD`, 0.8) at every step. A score ≥ the
 threshold sets `current_answer_correct = True` (and, at the terminal step,
 `final_answer_match = True`). The mean final-step score across all cases is
