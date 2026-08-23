@@ -374,6 +374,12 @@ def test_wrong_tool_at_non_terminal_step_is_still_forced_onto_the_golden_tool():
     assert trace["status"] == "completed"
     assert trace["model_tool_sequence"] == ["OCR"]
     assert trace["trajectory_exact_match"] is True
+    assert trace["attempted_trajectory_exact_match"] is False
+    assert trace["attempted_model_actions"][0] == {
+        "step_index": 0,
+        "action": "CALL_TOOL",
+        "tool_name": "ImageDescription",
+    }
     first = trace["steps"][0]
     assert first["reference_tool_match"] is False
     assert first["attempted_early_exit"] is False
@@ -438,6 +444,12 @@ def test_prior_actions_history_reflects_forced_golden_action_not_the_real_attemp
     assert trace["model_actions"] == actions + [
         {"step_index": 2, "action": "FINAL_ANSWER", "tool_name": None}
     ]
+    assert trace["attempted_model_actions"] == [
+        {"step_index": 0, "action": "FINAL_ANSWER", "tool_name": None},
+        {"step_index": 1, "action": "CALL_TOOL", "tool_name": "OCR"},
+        {"step_index": 2, "action": "FINAL_ANSWER", "tool_name": None},
+    ]
+    assert trace["attempted_trajectory_exact_match"] is False
 
 
 def test_extra_tool_call_at_final_step_still_uses_the_models_answer(monkeypatch):

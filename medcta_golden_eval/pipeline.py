@@ -378,7 +378,8 @@ def run_pipeline(
 def inspect_trace(trace: dict) -> None:
     print(
         f"case_id={trace['case_id']} | status={trace['status']} | "
-        f"exact={trace['trajectory_exact_match']} | "
+        f"attempted_exact={trace.get('attempted_trajectory_exact_match')} | "
+        f"forced_path_complete={trace['trajectory_exact_match']} | "
         f"final_match={trace['final_answer_match']}"
     )
     for step in trace.get("steps") or []:

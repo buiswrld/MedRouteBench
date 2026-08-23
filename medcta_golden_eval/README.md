@@ -73,7 +73,7 @@ python -m medcta_golden_eval.pipeline
 python -m medcta_golden_eval.pipeline --n 100
 
 # Specify the OpenRouter model to use
-python -m medcta_golden_eval.pipeline --n 50 --model gpt-5-mini
+python -m medcta_golden_eval.pipeline --n 50 --model openai/gpt-5-mini
 
 # Resume an interrupted run
 python -m medcta_golden_eval.pipeline --n 100 --resume medcta_golden_eval/runs/<run_id>
@@ -83,8 +83,8 @@ python -m medcta_golden_eval.pipeline --report-existing medcta_golden_eval/runs/
 ```
 
 Artifacts are written atomically to `medcta_golden_eval/runs/<UTC-timestamp>_<id>/`,
-with the same `manifest.json` / `trace_<case_id>.json` / `partial_report.json`
-/ `report.json` layout as `medcta_eval`.
+with the same manifest, trace, usage ledger, usage summary, partial-report, and
+final-report layout as `medcta_eval`.
 
 ---
 
@@ -94,6 +94,8 @@ with the same `manifest.json` / `trace_<case_id>.json` / `partial_report.json`
 |---|---|---|
 | `steps[i].attempted_early_exit` | step | Model declared `FINAL_ANSWER` at a non-terminal reference step (overridden; the loop forced `CALL_TOOL` anyway) |
 | `steps[i].attempted_extra_tool_call` | step | Model declared `CALL_TOOL` at the terminal reference step (overridden; diagnostic only) |
+| `attempted_model_actions` | case | Actions actually declared by the model before golden-path overrides were applied |
+| `attempted_trajectory_exact_match` | case | Whether every declared action matched its reference step; unlike `trajectory_exact_match`, this is not made true by forced routing |
 | `attempted_premature_finalization` | case | `True` if any step attempted an early exit (case-level, mirrors `medcta_eval`'s per-case `premature_finalization` definition) |
 | `premature_finalization_progress` | case | Fraction of the reference tool sequence already forced-completed before the *first* attempted early exit; `None` if never attempted. Captured during the loop — `model_tool_sequence` alone can't reconstruct this here, since it always equals the *full* reference sequence once a case completes |
 
