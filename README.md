@@ -12,9 +12,8 @@
 
 The evidence boundary is the first normalized section label containing
 `RESULT`. Earlier contexts are preliminary evidence; that section and all later
-contexts are added at Stage 2. If no usable results boundary exists, contexts
-are split at `len(CONTEXTS) // 2`. Cases that cannot form two non-empty groups
-are excluded before model calls.
+contexts are added at Stage 2. Cases without a usable results boundary or two
+non-empty evidence groups are excluded before model calls.
 
 Only `QUESTION`, `CONTEXTS`, `LABELS`, and the model's own Stage 1 output enter
 the prompts. `LONG_ANSWER`, `final_decision`, `test_ground_truth`, and gold
@@ -24,7 +23,7 @@ labels are never included. Official labels from
 Run an evaluation with the built-in OpenRouter adapter:
 
 ```bash
-python -m staged_eval.pipeline --n 50 --model gpt-4o-mini --inspect 0
+python -m staged_eval.pipeline --n 50 --model openai/gpt-5-mini --inspect 0
 ```
 
 The selected model is passed to the backend that performs the request and is

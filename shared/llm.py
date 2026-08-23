@@ -27,6 +27,7 @@ from .config import (
     OPENROUTER_API_KEY,
     OPENROUTER_BASE_URL,
 )
+from .usage import record_response_usage
 
 _clients: dict[tuple[str, str, str], "OpenAI"] = {}
 _client_lock = threading.Lock()
@@ -216,6 +217,12 @@ def call_responses_json(
             response = client.responses.create(**request_kwargs)
         else:
             raise
+    record_response_usage(
+        response,
+        provider=provider,
+        client_profile=client_profile,
+        model=model,
+    )
     return _final_answer_text(response)
 
 

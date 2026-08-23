@@ -10,7 +10,15 @@ from functools import partial
 from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
-from .config import MAX_TOKENS, PACKAGE_DIR, RUNS_DIR, OPENROUTER_MODEL, WORKERS, SEED
+from .config import (
+    LLM_API,
+    MAX_TOKENS,
+    OPENROUTER_MODEL,
+    PACKAGE_DIR,
+    RUNS_DIR,
+    SEED,
+    WORKERS,
+)
 from shared import harness
 from shared.config import OPENROUTER_API_KEY
 from shared.pipeline_utils import (
@@ -18,6 +26,7 @@ from shared.pipeline_utils import (
     sha256_file as _sha256_file,
     write_json_atomic as _write_json_atomic,
 )
+from shared.usage import RunUsageTracker, activate_usage_tracker
 from .data import (
     FINAL_ANSWERS,
     eligible_cases,
@@ -63,11 +72,18 @@ def _select_backend(
                 "OPENROUTER_API_KEY must be set. "
                 "Add it to MedRouteBench/.env, export in your shell, or pass --api-key."
             )
+        generation = {
+            "api": LLM_API,
+            "max_completion_tokens": MAX_TOKENS,
+            "temperature": "provider_default",
+        }
+        if LLM_API == "chat":
+            generation["seed"] = SEED
         return (
             partial(_call_llm_json, model=selected_model, api_key=selected_api_key),
             selected_model,
             "openrouter",
-            {"max_completion_tokens": MAX_TOKENS, "seed": SEED},
+            generation,
         )
 
     cid = _callable_id(call_fn)
@@ -208,6 +224,7 @@ def run_pipeline(
         provenance=provenance,
         resume_signature_fn=_resume_signature,
     )
+    usage_tracker = RunUsageTracker(run_dir)
 
     selected_pmids = [case["pmid"] for case in cases]
     existing_by_pmid = {}
@@ -254,6 +271,7 @@ def run_pipeline(
             id_key="pmid",
             build_report_fn=report_fn,
         )
+        partial_report["usage"] = usage_tracker.summary()
         _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
     traces_by_pmid: dict = dict(existing_by_pmid)
@@ -289,19 +307,21 @@ def run_pipeline(
         traces_by_pmid[trace["pmid"]] = trace
         _write_partial()
 
-    harness.run_cases_concurrently(
-        pending,
-        run_one=_run_one,
-        id_key="pmid",
-        workers=effective_workers,
-        on_result=_on_result,
-        verbose=verbose,
-    )
+    with activate_usage_tracker(usage_tracker):
+        harness.run_cases_concurrently(
+            pending,
+            run_one=_run_one,
+            id_key="pmid",
+            workers=effective_workers,
+            on_result=_on_result,
+            verbose=verbose,
+        )
 
     # Deterministic order regardless of completion order or worker count.
     traces = [traces_by_pmid[pmid] for pmid in selected_pmids if pmid in traces_by_pmid]
 
     report = report_fn(traces)
+    report["usage"] = usage_tracker.write_summary()
     harness.finalize_report(run_dir, report)
     if verbose:
         print(json.dumps(report, indent=2))

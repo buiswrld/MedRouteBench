@@ -84,6 +84,54 @@ def test_call_responses_json_falls_back_without_json_mode_on_failure(monkeypatch
     assert "text" not in captured[1]
 
 
+def test_call_responses_json_records_provider_usage(monkeypatch, tmp_path):
+    response = SimpleNamespace(
+        id="gen-usage",
+        output=[],
+        output_text='{"ok":true}',
+        usage=SimpleNamespace(
+            input_tokens=25,
+            output_tokens=5,
+            total_tokens=30,
+            cost=0.0007,
+        ),
+    )
+    client = SimpleNamespace(
+        responses=SimpleNamespace(create=lambda **_kwargs: response)
+    )
+    monkeypatch.setattr(
+        shared_llm,
+        "get_client",
+        lambda api_key=None, provider="openrouter", base_url=None: client,
+    )
+    tracker = RunUsageTracker(tmp_path)
+
+    with activate_usage_tracker(tracker):
+        result = call_responses_json(
+            "system prompt",
+            "user text",
+            model="provider/model",
+            max_output_tokens=32,
+            provider="openrouter",
+        )
+
+    assert result == '{"ok":true}'
+    assert tracker.summary()["by_route"] == [
+        {
+            "provider": "openrouter",
+            "client_profile": "candidate",
+            "model": "provider/model",
+            "calls": 1,
+            "input_tokens": 25,
+            "output_tokens": 5,
+            "total_tokens": 30,
+            "priced_calls": 1,
+            "unpriced_calls": 0,
+            "provider_reported_cost_usd": 0.0007,
+        }
+    ]
+
+
 def test_vision_input_builds_content_items():
     result = vision_input("describe this", "https://example.test/image.jpg")
     assert result == [

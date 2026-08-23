@@ -5,6 +5,7 @@ from shared.llm import (
     get_client,
     make_retry_decorator,
 )
+from shared.usage import record_response_usage
 from .config import (
     LLM_API,
     MAX_TOKENS,
@@ -26,6 +27,12 @@ def _call_chat_json(
         max_completion_tokens=MAX_TOKENS,
         response_format={"type": "json_object"},
         seed=SEED,
+    )
+    record_response_usage(
+        resp,
+        provider="openrouter",
+        client_profile="candidate",
+        model=model,
     )
     return resp.choices[0].message.content
 
@@ -52,4 +59,3 @@ def call_json(
             api_key=api_key,
         )
     return _call_chat_json(system, user, model=effective_model, api_key=api_key)
-

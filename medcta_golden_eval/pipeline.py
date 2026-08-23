@@ -39,6 +39,7 @@ from shared.pipeline_utils import (
     sha256_file as _sha256_file,
     write_json_atomic as _write_json_atomic,
 )
+from shared.usage import RunUsageTracker, activate_usage_tracker
 from .data import load_dataset, resolve_data_path
 from .metrics import build_report
 from .runner import run_case
@@ -100,6 +101,7 @@ def _select_backend(
             "openrouter-vision",
             {
                 "max_completion_tokens": MAX_TOKENS,
+                "temperature": "provider_default",
                 "max_retries": MAX_RETRIES,
                 "max_retry_wait_seconds": MAX_RETRY_WAIT_SECONDS,
             },
@@ -223,6 +225,7 @@ def report_existing_run(run_dir, *, verbose: bool = True) -> Tuple[dict, list[di
     )
     report["report_source"] = "recomputed_from_saved_traces"
     report["metrics_code_sha256"] = _sha256_file(PACKAGE_DIR / "metrics.py")
+    report["usage"] = RunUsageTracker(resolved_run_dir).summary()
     report_path = resolved_run_dir / (
         "report.json" if report["run_complete"] else "partial_report.json"
     )
@@ -278,6 +281,7 @@ def run_pipeline(
         provenance=provenance,
         resume_signature_fn=_resume_signature,
     )
+    usage_tracker = RunUsageTracker(run_dir)
 
     existing_by_id: dict[str, dict] = {}
     if resume_dir is not None:
@@ -314,6 +318,7 @@ def run_pipeline(
             id_key="case_id",
             build_report_fn=report_fn,
         )
+        partial_report["usage"] = usage_tracker.summary()
         _write_json_atomic(run_dir / "partial_report.json", partial_report)
 
     _write_partial()
@@ -342,14 +347,15 @@ def run_pipeline(
         traces_by_id[trace["case_id"]] = trace
         _write_partial()
 
-    harness.run_cases_concurrently(
-        pending,
-        run_one=_run_one,
-        id_key="case_id",
-        workers=effective_workers,
-        on_result=_on_result,
-        verbose=verbose,
-    )
+    with activate_usage_tracker(usage_tracker):
+        harness.run_cases_concurrently(
+            pending,
+            run_one=_run_one,
+            id_key="case_id",
+            workers=effective_workers,
+            on_result=_on_result,
+            verbose=verbose,
+        )
 
     # Deterministic order regardless of completion order or worker count.
     traces = [traces_by_id[cid] for cid in selected_case_ids if cid in traces_by_id]
@@ -362,6 +368,7 @@ def run_pipeline(
         id_key="case_id",
         build_report_fn=report_fn,
     )
+    report["usage"] = usage_tracker.write_summary()
     harness.finalize_report(run_dir, report)
     if verbose:
         print(json.dumps(report, indent=2, ensure_ascii=False))
