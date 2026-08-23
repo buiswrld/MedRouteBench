@@ -16,6 +16,13 @@ from pathlib import Path
 from typing import Callable, Optional, Tuple
 
 from .config import (
+    ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD,
+    FINAL_ACCURACY_CONFIDENCE_THRESHOLD,
+    JUDGE_API_KEY,
+    JUDGE_BASE_URL,
+    JUDGE_MODEL,
+    JUDGE_MODEL_FAMILY,
+    JUDGE_PROVIDER,
     MAX_TOKENS,
     OPENROUTER_MODEL,
     PACKAGE_DIR,
@@ -78,6 +85,15 @@ def _select_backend(
                 "Add it to MedRouteBench/.env, export in the calling environment, "
                 "or pass --api-key."
             )
+        if not JUDGE_MODEL:
+            raise RuntimeError(
+                "MEDCTA_JUDGE_MODEL or MEDCTA_JUDGE_DEPLOYMENT must be set. "
+                "Configure the fixed GPT-5.4 judge deployment."
+            )
+        if JUDGE_PROVIDER == "azure" and (not JUDGE_BASE_URL or not JUDGE_API_KEY):
+            raise RuntimeError(
+                "The Azure MedCTA judge requires a configured endpoint and API key."
+            )
         return (
             partial(_call_llm_json, model=selected_model, api_key=selected_api_key),
             selected_model,
@@ -101,6 +117,7 @@ def _build_provenance(
     backend: str,
     generation: Optional[dict],
 ) -> dict:
+    candidate_family = model.split("/", 1)[0].lower() if "/" in model else None
     code_names = [
         "data.py",
         "metrics.py",
@@ -116,6 +133,20 @@ def _build_provenance(
         "backend": backend,
         "model": model,
         "generation": generation,
+        "judge": {
+            "provider": JUDGE_PROVIDER,
+            "model": JUDGE_MODEL,
+            "model_family": JUDGE_MODEL_FAMILY,
+            "candidate_model_family": candidate_family,
+            "same_family_as_candidate": (
+                candidate_family == JUDGE_MODEL_FAMILY
+                if candidate_family is not None
+                else None
+            ),
+            "answer_accuracy_threshold": FINAL_ACCURACY_CONFIDENCE_THRESHOLD,
+            "answer_equivalence_threshold": ANSWER_EQUIVALENCE_CONFIDENCE_THRESHOLD,
+            "prompt_file_sha256": _sha256_file(PACKAGE_DIR / "prompts.py"),
+        },
         "image_delivery": "pinned_huggingface_url_via_resolved_cdn",
         "selected_case_ids": selected_case_ids,
         "dataset": dataset_metadata,
@@ -133,6 +164,7 @@ def _resume_signature(provenance: dict) -> dict:
         "backend": provenance.get("backend"),
         "model": provenance.get("model"),
         "generation": provenance.get("generation"),
+        "judge": provenance.get("judge"),
         "image_delivery": provenance.get("image_delivery"),
         "selected_case_ids": provenance.get("selected_case_ids"),
         "dataset": provenance.get("dataset"),

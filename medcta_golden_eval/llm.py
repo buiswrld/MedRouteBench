@@ -10,7 +10,9 @@ from shared.llm import (
 from .config import (
     IMAGE_URL_CACHE_TTL_SECONDS,
     JUDGE_API_KEY,
+    JUDGE_BASE_URL,
     JUDGE_MODEL,
+    JUDGE_PROVIDER,
     MAX_TOKENS,
     OPENROUTER_MODEL,
 )
@@ -43,7 +45,9 @@ def call_json(
 
 
 def _run_judge(system_prompt: str, user: str) -> float | None:
-    effective_model = JUDGE_MODEL or OPENROUTER_MODEL
+    effective_model = JUDGE_MODEL
+    if not effective_model:
+        return None
     try:
         raw = call_responses_json(
             system_prompt,
@@ -51,6 +55,9 @@ def _run_judge(system_prompt: str, user: str) -> float | None:
             model=effective_model,
             max_output_tokens=64,
             api_key=JUDGE_API_KEY,
+            provider=JUDGE_PROVIDER,
+            base_url=JUDGE_BASE_URL,
+            client_profile="judge",
         )
         parsed = json.loads(raw)
         score = parsed.get("score")

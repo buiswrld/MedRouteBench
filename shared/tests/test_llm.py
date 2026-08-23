@@ -2,6 +2,30 @@ from types import SimpleNamespace
 
 import shared.llm as shared_llm
 from shared.llm import call_responses_json, resolve_image_url, vision_input
+from shared.usage import RunUsageTracker, activate_usage_tracker
+
+
+def test_azure_client_normalizes_the_fixed_judge_endpoint(monkeypatch):
+    captured = {}
+
+    def _fake_openai(**kwargs):
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(shared_llm, "OpenAI", _fake_openai)
+    shared_llm._clients.clear()
+
+    shared_llm.get_client(
+        "judge-key",
+        provider="azure",
+        base_url="https://judge-resource.services.ai.azure.com",
+    )
+
+    assert captured == {
+        "base_url": "https://judge-resource.services.ai.azure.com/openai/v1/",
+        "api_key": "judge-key",
+    }
+    shared_llm._clients.clear()
 
 
 def test_call_responses_json_sends_json_mode_request(monkeypatch):
@@ -13,7 +37,11 @@ def test_call_responses_json_sends_json_mode_request(monkeypatch):
             return SimpleNamespace(output_text='{"ok":true}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda api_key=None: client)
+    monkeypatch.setattr(
+        shared_llm,
+        "get_client",
+        lambda api_key=None, provider="openrouter", base_url=None: client,
+    )
 
     result = call_responses_json(
         "system prompt",
@@ -41,7 +69,11 @@ def test_call_responses_json_falls_back_without_json_mode_on_failure(monkeypatch
             return SimpleNamespace(output_text='{"tool_name":"OCR"}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda api_key=None: client)
+    monkeypatch.setattr(
+        shared_llm,
+        "get_client",
+        lambda api_key=None, provider="openrouter", base_url=None: client,
+    )
 
     result = call_responses_json(
         "system prompt", "user text", model="my-model", max_output_tokens=64
