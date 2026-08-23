@@ -1,0 +1,54 @@
+{
+  "pmid": "19520213",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "A list of telephone numbers of UK hospitals with a radiology department was obtained from the Royal College of Radiologists. One hundred hospitals were then randomly selected for inclusion in the survey. An 18-item questionnaire was successfully administered to consultant radiologists from 84 departments."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.20,\"reason_for_action\":\"Methods show 84 consultant radiologists surveyed, but no results on satisfaction/support are provided in the evidence, so the conclusion cannot be determined.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.2,
+      "reason_for_action": "Methods show 84 consultant radiologists surveyed, but no results on satisfaction/support are provided in the evidence, so the conclusion cannot be determined."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Sixty-one percent of departments had a named radiologist to report their skeletal surveys, 16% assigned surveys to a random radiologist, and 23% referred them elsewhere. Only 52% of departments had a dedicated paediatric radiologist, thus in a significant proportion of departments (25%) initial reports on skeletal surveys for physical abuse were provided by non-paediatric radiologists. Fifteen percent did not have ready access to a paediatric radiology opinion. Sixty-one percent thought that the service could be improved. Expert evidence was provided by 5% of respondents. Seventy-three percent would never consider providing expert evidence, even if given adequate radiology and/or legal training."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "A list of telephone numbers of UK hospitals with a radiology department was obtained from the Royal College of Radiologists. One hundred hospitals were then randomly selected for inclusion in the survey. An 18-item questionnaire was successfully administered to consultant radiologists from 84 departments."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Sixty-one percent of departments had a named radiologist to report their skeletal surveys, 16% assigned surveys to a random radiologist, and 23% referred them elsewhere. Only 52% of departments had a dedicated paediatric radiologist, thus in a significant proportion of departments (25%) initial reports on skeletal surveys for physical abuse were provided by non-paediatric radiologists. Fifteen percent did not have ready access to a paediatric radiology opinion. Sixty-one percent thought that the service could be improved. Expert evidence was provided by 5% of respondents. Seventy-three percent would never consider providing expert evidence, even if given adequate radiology and/or legal training."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.85,\"reason_for_action\":\"61% thought the service could be improved; only 52% had a dedicated paediatric radiologist, 15% lacked ready access, and many would not provide expert evidence—indicating dissatisfaction/insufficient support.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.85,
+      "reason_for_action": "61% thought the service could be improved; only 52% had a dedicated paediatric radiologist, 15% lacked ready access, and many would not provide expert evidence—indicating dissatisfaction/insufficient support."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.846
+}

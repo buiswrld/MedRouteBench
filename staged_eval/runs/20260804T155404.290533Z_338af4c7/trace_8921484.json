@@ -1,0 +1,62 @@
+{
+  "pmid": "8921484",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "After 34 weeks gestation, summary measures of location for birthweight (e.g means and centiles) increase more slowly for Australian Aborigines than for whites. A similar pattern has been observed for blacks in the US. This study tests whether the reported pattern is due to differential misclassification of gestational age."
+    },
+    {
+      "label": "METHODS",
+      "context": "Simulation was used to measure the potential effect of differential misclassification of gestational age. Reported gestational age data were obtained from Queensland Perinatal Data Collection (QPDC). Estimates of the true distributions of gestational age were obtained by assuming various (plausible) types of misclassification and applying these to the reported distributions. Previous studies and data from the QPDC were used to help specify the birthweight distributions used in the simulations."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.70,\"reason_for_action\":\"Only background and simulation methods are provided; no results or conclusions are given. Without the simulation outcomes, we cannot determine whether gestational age misclassification explains the birthweight differences.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.7,
+      "reason_for_action": "Only background and simulation methods are provided; no results or conclusions are given. Without the simulation outcomes, we cannot determine whether gestational age misclassification explains the birthweight differences."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "At full term, the parameters of the birthweight distributions were robust to gestational age misclassification. At preterm, the 10th centiles were robust to misclassification. In contrast, the 90th centiles were sensitive to even minor misclassification. Extreme types of misclassification were required to remove the divergence in median birthweights for Aborigines and whites."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "After 34 weeks gestation, summary measures of location for birthweight (e.g means and centiles) increase more slowly for Australian Aborigines than for whites. A similar pattern has been observed for blacks in the US. This study tests whether the reported pattern is due to differential misclassification of gestational age."
+    },
+    {
+      "label": "METHODS",
+      "context": "Simulation was used to measure the potential effect of differential misclassification of gestational age. Reported gestational age data were obtained from Queensland Perinatal Data Collection (QPDC). Estimates of the true distributions of gestational age were obtained by assuming various (plausible) types of misclassification and applying these to the reported distributions. Previous studies and data from the QPDC were used to help specify the birthweight distributions used in the simulations."
+    },
+    {
+      "label": "RESULTS",
+      "context": "At full term, the parameters of the birthweight distributions were robust to gestational age misclassification. At preterm, the 10th centiles were robust to misclassification. In contrast, the 90th centiles were sensitive to even minor misclassification. Extreme types of misclassification were required to remove the divergence in median birthweights for Aborigines and whites."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.85,\"reason_for_action\":\"Simulations showed birthweight parameters were robust to gestational age misclassification and only extreme misclassification could remove the median divergence, so misclassification is unlikely to explain the difference.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.85,
+      "reason_for_action": "Simulations showed birthweight parameters were robust to gestational age misclassification and only extreme misclassification could remove the median divergence, so misclassification is unlikely to explain the difference."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.487
+}

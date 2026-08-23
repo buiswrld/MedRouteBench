@@ -1,0 +1,110 @@
+{
+  "pmid": "19913785",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Little is known about whether a routinely inserted endoscopic nasobiliary drainage (ENBD) tube improves the clinical course in patients with choledocholithiasis-induced acute cholangitis after clearance of choledocholithiasis."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "The aim of this study was to investigate the need for ENBD on the clinical outcomes of patients with acute cholangitis undergoing endoscopic clearance of common bile duct (CBD) stones."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Prospective, randomized study."
+    },
+    {
+      "label": "SETTING",
+      "context": "Tertiary referral center."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "A total of 104 patients with choledocholithiasis-induced acute cholangitis who underwent primary endoscopic treatment were compared according to insertion of an ENBD tube (51 in the ENBD group and 53 in the no-ENBD group)."
+    },
+    {
+      "label": "INTERVENTION",
+      "context": "Insertion of an ENBD tube after clearance of CBD stones."
+    },
+    {
+      "label": "MAIN OUTCOME MEASUREMENTS",
+      "context": "Recurrence of cholangitis and length of hospital stay after clearance of CBD stones."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.20,\"reason_for_action\":\"A randomized trial compares ENBD vs no-ENBD in 104 patients, but no outcome results (recurrence or hospital stay) are provided in the supplied evidence, so necessity cannot be determined.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.2,
+      "reason_for_action": "A randomized trial compares ENBD vs no-ENBD in 104 patients, but no outcome results (recurrence or hospital stay) are provided in the supplied evidence, so necessity cannot be determined."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Baseline clinical characteristics were similar between both groups. There were no significant differences in the recurrence rate of cholangitis at 24 weeks (3.9% for the ENBD group vs 3.8% for the no-ENBD group at 24 weeks; P = .99) and length of hospital stay (7.9 days [standard error = 1.2] for the ENBD group vs 7.9 days [standard error = 0.7]for the no-ENBD group; P = .98). However, procedure time was longer (26.2 [SE = 1.8] minutes vs 22.7 [SE = 1.0]minutes, respectively; P = .01) and the discomfort score was higher (4.9 [SE = 0.4] vs 2.8 [SE = 0.3], respectively; P = .02) in the ENBD group than in the no-ENBD group."
+    },
+    {
+      "label": "LIMITATIONS",
+      "context": "Single-center study."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Little is known about whether a routinely inserted endoscopic nasobiliary drainage (ENBD) tube improves the clinical course in patients with choledocholithiasis-induced acute cholangitis after clearance of choledocholithiasis."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "The aim of this study was to investigate the need for ENBD on the clinical outcomes of patients with acute cholangitis undergoing endoscopic clearance of common bile duct (CBD) stones."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Prospective, randomized study."
+    },
+    {
+      "label": "SETTING",
+      "context": "Tertiary referral center."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "A total of 104 patients with choledocholithiasis-induced acute cholangitis who underwent primary endoscopic treatment were compared according to insertion of an ENBD tube (51 in the ENBD group and 53 in the no-ENBD group)."
+    },
+    {
+      "label": "INTERVENTION",
+      "context": "Insertion of an ENBD tube after clearance of CBD stones."
+    },
+    {
+      "label": "MAIN OUTCOME MEASUREMENTS",
+      "context": "Recurrence of cholangitis and length of hospital stay after clearance of CBD stones."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Baseline clinical characteristics were similar between both groups. There were no significant differences in the recurrence rate of cholangitis at 24 weeks (3.9% for the ENBD group vs 3.8% for the no-ENBD group at 24 weeks; P = .99) and length of hospital stay (7.9 days [standard error = 1.2] for the ENBD group vs 7.9 days [standard error = 0.7]for the no-ENBD group; P = .98). However, procedure time was longer (26.2 [SE = 1.8] minutes vs 22.7 [SE = 1.0]minutes, respectively; P = .01) and the discomfort score was higher (4.9 [SE = 0.4] vs 2.8 [SE = 0.3], respectively; P = .02) in the ENBD group than in the no-ENBD group."
+    },
+    {
+      "label": "LIMITATIONS",
+      "context": "Single-center study."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.2,\"reason_for_action\":\"Randomized trial (n=104) showed no difference in recurrence or hospital stay at 24 weeks but increased procedure time and discomfort with ENBD; thus routine insertion is not clearly beneficial, leaving uncertainty.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.2,
+      "reason_for_action": "Randomized trial (n=104) showed no difference in recurrence or hospital stay at 24 weeks but increased procedure time and discomfort with ENBD; thus routine insertion is not clearly beneficial, leaving uncertainty."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.242
+}

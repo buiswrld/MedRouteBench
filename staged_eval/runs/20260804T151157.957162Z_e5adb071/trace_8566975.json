@@ -1,0 +1,66 @@
+{
+  "pmid": "8566975",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine whether the host immune response to gonorrhoea provides limited serovar specific protection from reinfection."
+    },
+    {
+      "label": "SUBJECTS",
+      "context": "508 episodes of gonorrhoea diagnosed at a city centre genitourinary medicine clinic including 22 patients with multiple infections over a 4 year period."
+    },
+    {
+      "label": "METHODS",
+      "context": "Patients with recurrent gonococcal infection were analysed with respect to the initial and subsequent serovars isolated."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "No significant difference was seen in the prevalence of serovars isolated following a repeat infection compared with those without repeat infections. The site of the initial infection did not appear to influence the subsequent serovar isolated."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine whether the host immune response to gonorrhoea provides limited serovar specific protection from reinfection."
+    },
+    {
+      "label": "SUBJECTS",
+      "context": "508 episodes of gonorrhoea diagnosed at a city centre genitourinary medicine clinic including 22 patients with multiple infections over a 4 year period."
+    },
+    {
+      "label": "METHODS",
+      "context": "Patients with recurrent gonococcal infection were analysed with respect to the initial and subsequent serovars isolated."
+    },
+    {
+      "label": "RESULTS",
+      "context": "No significant difference was seen in the prevalence of serovars isolated following a repeat infection compared with those without repeat infections. The site of the initial infection did not appear to influence the subsequent serovar isolated."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 6.906
+}

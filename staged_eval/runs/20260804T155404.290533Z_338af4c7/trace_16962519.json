@@ -1,0 +1,86 @@
+{
+  "pmid": "16962519",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "STUDY OBJECTIVE",
+      "context": "To estimate changes in uterine myoma volume during pregnancy."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Review of departmental electronic perinatal database and medical records. Canadian Task Force Classification II-3."
+    },
+    {
+      "label": "SETTING",
+      "context": "Obstetrical ultrasound unit in an academic tertiary care center."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "One hundred-seven patients diagnosed with uterine myomas during pregnancy and who had two or more obstetrical ultrasounds in different periods of pregnancy."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "We analyzed the change in volume of uterine myomas between the first half of pregnancy (up until 19 weeks), third quarter (20-30 weeks), and last quarter (31 weeks to term). The volume of largest uterine myoma was calculated using the formula Volume (mm3)=Pi/6x(length mm)x(width mm)x(height mm)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"The supplied evidence describes study objective, design, patients and methods for measuring myoma volume but provides no results or outcome data, so growth cannot be confirmed.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "The supplied evidence describes study objective, design, patients and methods for measuring myoma volume but provides no results or outcome data, so growth cannot be confirmed."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "MEASUREMENTS AND MAIN RESULTS",
+      "context": "The mean age of the population was 31+/-6 years. Between the first and the second study periods, the percentage of uterine myomas that decreased in size was 55.1% (95% CI: 43-66), with a mean decrease in volume of 35%+/-4%; while the percentage of uterine myomas that enlarged was 44.9% (95% CI: 34-56), with a mean increase in volume of 69%+/-11%. Between the second and the third study periods, 75% (95% CI: 56-87) became smaller, with a mean decrease in volume of 30%+/-3%; while 25% (95% CI: 13-43) enlarged, with a mean increase in volume of 102%+/-62%."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "STUDY OBJECTIVE",
+      "context": "To estimate changes in uterine myoma volume during pregnancy."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Review of departmental electronic perinatal database and medical records. Canadian Task Force Classification II-3."
+    },
+    {
+      "label": "SETTING",
+      "context": "Obstetrical ultrasound unit in an academic tertiary care center."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "One hundred-seven patients diagnosed with uterine myomas during pregnancy and who had two or more obstetrical ultrasounds in different periods of pregnancy."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "We analyzed the change in volume of uterine myomas between the first half of pregnancy (up until 19 weeks), third quarter (20-30 weeks), and last quarter (31 weeks to term). The volume of largest uterine myoma was calculated using the formula Volume (mm3)=Pi/6x(length mm)x(width mm)x(height mm)."
+    },
+    {
+      "label": "MEASUREMENTS AND MAIN RESULTS",
+      "context": "The mean age of the population was 31+/-6 years. Between the first and the second study periods, the percentage of uterine myomas that decreased in size was 55.1% (95% CI: 43-66), with a mean decrease in volume of 35%+/-4%; while the percentage of uterine myomas that enlarged was 44.9% (95% CI: 34-56), with a mean increase in volume of 69%+/-11%. Between the second and the third study periods, 75% (95% CI: 56-87) became smaller, with a mean decrease in volume of 30%+/-3%; while 25% (95% CI: 13-43) enlarged, with a mean increase in volume of 102%+/-62%."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.78,\"reason_for_action\":\"Study shows a majority of myomas decreased in volume across pregnancy (55% decreased vs 45% enlarged early; 75% decreased vs 25% enlarged later), so they do not consistently grow.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.78,
+      "reason_for_action": "Study shows a majority of myomas decreased in volume across pregnancy (55% decreased vs 45% enlarged early; 75% decreased vs 25% enlarged later), so they do not consistently grow."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 10.033
+}

@@ -1,0 +1,78 @@
+{
+  "pmid": "20121683",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Community-based medical education is growing to meet the increased demand for quality clinical education in expanded settings, and its sustainability relies on patient participation. This study investigated patients' views on being used as an educational resource for teaching medical students."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Questionnaire-based survey."
+    },
+    {
+      "label": "SETTING AND PARTICIPANTS",
+      "context": "Patients attending six rural and 11 regional general practices in New South Wales over 18 teaching sessions in November 2008, who consented to student involvement in their consultation."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Patient perceptions, expectations and acceptance of medical student involvement in consultations, assessed by surveys before and after their consultations."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\",\"confidence\":0.8,\"reason_for_action\":\"Study participants consented to student involvement in consultations and were surveyed on their acceptance, indicating patients were willing participants in regional and rural community-based medical education.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes",
+      "confidence": 0.8,
+      "reason_for_action": "Study participants consented to student involvement in consultations and were surveyed on their acceptance, indicating patients were willing participants in regional and rural community-based medical education."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "118 of 122 patients consented to medical student involvement; of these, 117 (99%) completed a survey before the consultation, and 100 (85%) after the consultation. Patients were overwhelmingly positive about their doctor and practice being involved in student teaching and felt they themselves played an important role. Pre-consultation, patients expressed reluctance to allow students to conduct some or all aspects of the consultation independently. However, after the consultation, they reported they would have accepted higher levels of involvement than actually occurred."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Community-based medical education is growing to meet the increased demand for quality clinical education in expanded settings, and its sustainability relies on patient participation. This study investigated patients' views on being used as an educational resource for teaching medical students."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Questionnaire-based survey."
+    },
+    {
+      "label": "SETTING AND PARTICIPANTS",
+      "context": "Patients attending six rural and 11 regional general practices in New South Wales over 18 teaching sessions in November 2008, who consented to student involvement in their consultation."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Patient perceptions, expectations and acceptance of medical student involvement in consultations, assessed by surveys before and after their consultations."
+    },
+    {
+      "label": "RESULTS",
+      "context": "118 of 122 patients consented to medical student involvement; of these, 117 (99%) completed a survey before the consultation, and 100 (85%) after the consultation. Patients were overwhelmingly positive about their doctor and practice being involved in student teaching and felt they themselves played an important role. Pre-consultation, patients expressed reluctance to allow students to conduct some or all aspects of the consultation independently. However, after the consultation, they reported they would have accepted higher levels of involvement than actually occurred."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\",\"confidence\":0.8,\"reason_for_action\":\"118/122 patients consented and survey responses were overwhelmingly positive about student involvement; patients reported willingness to play an educational role and accepted higher involvement after consultations.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes",
+      "confidence": 0.8,
+      "reason_for_action": "118/122 patients consented and survey responses were overwhelmingly positive about student involvement; patients reported willingness to play an educational role and accepted higher involvement after consultations."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 9.74
+}

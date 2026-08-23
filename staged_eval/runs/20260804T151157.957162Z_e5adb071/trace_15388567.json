@@ -1,0 +1,58 @@
+{
+  "pmid": "15388567",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To examine the evidence base of sports medicine research and assess how relevant and applicable it is to everyday practice."
+    },
+    {
+      "label": "METHODS",
+      "context": "Original research articles, short reports, and case reports published in four major sport and exercise medicine journals were studied and classified according to the main topic of study and type of subjects used."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The most common topic was sports science, and very few studies related to the treatment of injuries and medical conditions. The majority of published articles used healthy subjects sampled from the sedentary population, and few studies have been carried out on injured participants."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To examine the evidence base of sports medicine research and assess how relevant and applicable it is to everyday practice."
+    },
+    {
+      "label": "METHODS",
+      "context": "Original research articles, short reports, and case reports published in four major sport and exercise medicine journals were studied and classified according to the main topic of study and type of subjects used."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The most common topic was sports science, and very few studies related to the treatment of injuries and medical conditions. The majority of published articles used healthy subjects sampled from the sedentary population, and few studies have been carried out on injured participants."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 5.631
+}

@@ -1,0 +1,66 @@
+{
+  "pmid": "24622801",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Implant-related infections represent one of the most severe complications in orthopaedics. A fast-resorbable, antibacterial-loaded hydrogel may reduce or prevent bacterial colonization and biofilm formation of implanted biomaterials.QUESTIONS/"
+    },
+    {
+      "label": "PURPOSES",
+      "context": "We asked: (1) Is a fast-resorbable hydrogel able to deliver antibacterial compounds in vitro? (2) Can a hydrogel (alone or antibacterial-loaded) coating on implants reduce bacterial colonization? And (3) is intraoperative coating feasible and resistant to press-fit implant insertion?"
+    },
+    {
+      "label": "METHODS",
+      "context": "We tested the ability of Disposable Antibacterial Coating (DAC) hydrogel (Novagenit Srl, Mezzolombardo, Italy) to deliver antibacterial agents using spectrophotometry and a microbiologic assay. Antibacterial and antibiofilm activity were determined by broth microdilution and a crystal violet assay, respectively. Coating resistance to press-fit insertion was tested in rabbit tibias and human femurs."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Complete release of all tested antibacterial compounds was observed in less than 96 hours. Bactericidal and antibiofilm effect of DAC hydrogel in combination with various antibacterials was shown in vitro. Approximately 80% of the hydrogel coating was retrieved on the implant after press-fit insertion."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Implant-related infections represent one of the most severe complications in orthopaedics. A fast-resorbable, antibacterial-loaded hydrogel may reduce or prevent bacterial colonization and biofilm formation of implanted biomaterials.QUESTIONS/"
+    },
+    {
+      "label": "PURPOSES",
+      "context": "We asked: (1) Is a fast-resorbable hydrogel able to deliver antibacterial compounds in vitro? (2) Can a hydrogel (alone or antibacterial-loaded) coating on implants reduce bacterial colonization? And (3) is intraoperative coating feasible and resistant to press-fit implant insertion?"
+    },
+    {
+      "label": "METHODS",
+      "context": "We tested the ability of Disposable Antibacterial Coating (DAC) hydrogel (Novagenit Srl, Mezzolombardo, Italy) to deliver antibacterial agents using spectrophotometry and a microbiologic assay. Antibacterial and antibiofilm activity were determined by broth microdilution and a crystal violet assay, respectively. Coating resistance to press-fit insertion was tested in rabbit tibias and human femurs."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Complete release of all tested antibacterial compounds was observed in less than 96 hours. Bactericidal and antibiofilm effect of DAC hydrogel in combination with various antibacterials was shown in vitro. Approximately 80% of the hydrogel coating was retrieved on the implant after press-fit insertion."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 6.161
+}

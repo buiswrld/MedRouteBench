@@ -1,0 +1,78 @@
+{
+  "pmid": "25103647",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To examine whether government-funded, low-income vision care programs improve use of eye care services by low-income individuals in Canada."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Cross-sectional survey."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "27,375 white respondents to the Canadian Community Health Survey (CCHS) Healthy Aging 2008/2009."
+    },
+    {
+      "label": "METHODS",
+      "context": "Government-funded, low-income vision care programs were reviewed. The amount of assistance provided was compared with professional fee schedules for general/routine eye examinations and market prices for eyeglasses. The utilization of eye care providers was derived from the CCHS."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.40,\"reason_for_action\":\"No results are reported in the provided evidence. Methods describe program review and cross-sectional survey of white respondents, so causal effect or clear improvement in utilization cannot be confirmed from given data.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.4,
+      "reason_for_action": "No results are reported in the provided evidence. Methods describe program review and cross-sectional survey of white respondents, so causal effect or clear improvement in utilization cannot be confirmed from given data."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "To receive low-income vision care assistance, individuals must be in receipt of social assistance. Criteria for receiving social assistance are stringent. The Canadian Financial Capability Survey revealed that 7.9% of Canadians aged 45 to 64 years and 5.5% aged ≥65 years received social assistance in 2009. The CCHS found in 2008/2009 that 12.5% of citizens aged 45 to 64 years and 13.2% of those aged ≥65 years had difficulty paying for basic expenses such as food. In 5 provinces, low-income vision care assistance fully covers a general/routine eye examination. In the remainder, the assistance provided is insufficient for a general/routine eye examination. The assistance for eyeglasses is inadequate in 5 provinces, requiring out-of-pocket copayments. Among middle-aged whites who self-reported not having glaucoma, cataracts, diabetes, or vision problems not corrected by lenses, utilization of eye care providers was 28.1% among those with financial difficulty versus 41.9% among those without (p<0.05), giving a prevalence ratio 0.68 (95% CI 0.57-0.80) adjusted for age, sex and education."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To examine whether government-funded, low-income vision care programs improve use of eye care services by low-income individuals in Canada."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Cross-sectional survey."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "27,375 white respondents to the Canadian Community Health Survey (CCHS) Healthy Aging 2008/2009."
+    },
+    {
+      "label": "METHODS",
+      "context": "Government-funded, low-income vision care programs were reviewed. The amount of assistance provided was compared with professional fee schedules for general/routine eye examinations and market prices for eyeglasses. The utilization of eye care providers was derived from the CCHS."
+    },
+    {
+      "label": "RESULTS",
+      "context": "To receive low-income vision care assistance, individuals must be in receipt of social assistance. Criteria for receiving social assistance are stringent. The Canadian Financial Capability Survey revealed that 7.9% of Canadians aged 45 to 64 years and 5.5% aged ≥65 years received social assistance in 2009. The CCHS found in 2008/2009 that 12.5% of citizens aged 45 to 64 years and 13.2% of those aged ≥65 years had difficulty paying for basic expenses such as food. In 5 provinces, low-income vision care assistance fully covers a general/routine eye examination. In the remainder, the assistance provided is insufficient for a general/routine eye examination. The assistance for eyeglasses is inadequate in 5 provinces, requiring out-of-pocket copayments. Among middle-aged whites who self-reported not having glaucoma, cataracts, diabetes, or vision problems not corrected by lenses, utilization of eye care providers was 28.1% among those with financial difficulty versus 41.9% among those without (p<0.05), giving a prevalence ratio 0.68 (95% CI 0.57-0.80) adjusted for age, sex and education."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.85,\"reason_for_action\":\"Programs often provide insufficient coverage and eyeglass aid is inadequate; low-income respondents had lower utilization (28.1% vs 41.9%, adjusted PR 0.68), suggesting no improvement.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.85,
+      "reason_for_action": "Programs often provide insufficient coverage and eyeglass aid is inadequate; low-income respondents had lower utilization (28.1% vs 41.9%, adjusted PR 0.68), suggesting no improvement."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "overreaction",
+  "_elapsed_seconds": 8.559
+}

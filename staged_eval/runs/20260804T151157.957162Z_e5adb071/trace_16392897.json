@@ -1,0 +1,58 @@
+{
+  "pmid": "16392897",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Quantitative real-time PCR has become the predominant molecular technique to monitor BCRABL levels in response to treatment in Ph(+) leukemia patients. However, without some form of standardized methodology between laboratories, the correlation of results is difficult."
+    },
+    {
+      "label": "METHODS",
+      "context": "Using TaqMan-based assays, parallel quantitative real-time PCR analysis was performed on 70 clinical specimens at Vanderbilt University Medical Center and Virginia Commonwealth University. While the same positive control cell line (K562) and quality control gene (BCR) were used, the RNA isolation technique, cDNA synthesis, BCR control cell line, and PCR primer and probe sequences were different."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The detection of BCRABL-positive results spanned a dynamic range from 10(0) to 10(5)/100,000 cells. Forty-three samples were negative at both facilities. A Spearman rank correlation analysis was performed for the 22 BCRABL-positive paired results. The correlation coefficient, r(s), was 0.9435 (p<0.00001), suggesting a strong correlation of the results. One discordant result was obtained for consecutive samples from one patient with a low BCRABL copy number as a result of a minimal RNA yield at one laboratory."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Quantitative real-time PCR has become the predominant molecular technique to monitor BCRABL levels in response to treatment in Ph(+) leukemia patients. However, without some form of standardized methodology between laboratories, the correlation of results is difficult."
+    },
+    {
+      "label": "METHODS",
+      "context": "Using TaqMan-based assays, parallel quantitative real-time PCR analysis was performed on 70 clinical specimens at Vanderbilt University Medical Center and Virginia Commonwealth University. While the same positive control cell line (K562) and quality control gene (BCR) were used, the RNA isolation technique, cDNA synthesis, BCR control cell line, and PCR primer and probe sequences were different."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The detection of BCRABL-positive results spanned a dynamic range from 10(0) to 10(5)/100,000 cells. Forty-three samples were negative at both facilities. A Spearman rank correlation analysis was performed for the 22 BCRABL-positive paired results. The correlation coefficient, r(s), was 0.9435 (p<0.00001), suggesting a strong correlation of the results. One discordant result was obtained for consecutive samples from one patient with a low BCRABL copy number as a result of a minimal RNA yield at one laboratory."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "overreaction",
+  "_elapsed_seconds": 6.985
+}

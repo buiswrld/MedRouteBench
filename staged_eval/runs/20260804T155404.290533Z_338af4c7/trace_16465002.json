@@ -1,0 +1,70 @@
+{
+  "pmid": "16465002",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To study the correlation and agreement between end-tidal carbon dioxide (EtCO2) and arterial carbon dioxide (PaCO(2)) in ventilated extremely low birth weight (ELBW) infants in the first week of life."
+    },
+    {
+      "label": "METHODS",
+      "context": "Retrospective chart review of all ELBW (<1,000 g) infants admitted to a level III NICU from January 2003 to December 2003. Data collected included demographic details and simultaneous EtCO(2) (mainstream capnography) and arterial blood gas values (pH, PaCO(2), PaO(2))."
+    },
+    {
+      "label": "OUTCOME",
+      "context": "The correlation coefficient, degree of bias with 95% confidence interval between the EtCO(2) and PaCO(2)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.33,\"reason_for_action\":\"The study described assessed correlation and bias between EtCO2 and PaCO2 in ELBW infants, but the provided evidence lists objectives/methods/outcome measures without reporting the actual results, so correlation is unknown.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.33,
+      "reason_for_action": "The study described assessed correlation and bias between EtCO2 and PaCO2 in ELBW infants, but the provided evidence lists objectives/methods/outcome measures without reporting the actual results, so correlation is unknown."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "There were 754 end-tidal and arterial CO(2) pairs from 31 ELBW infants (21 male and 10 female). The overall EtCO(2) values were significantly lower than PaCO(2) value. In only 89/754(11.8%) pairs, the EtCO(2) was higher than the PaCO(2). The overall bias was 5.6 +/- 6.9 mmHg (95% C.I. 5.11-6.09). The intraclass correlation coefficient was 0.81. Using EtCO2 ranges of 30 to 50 mmHg, the capnographic method was able to identify 84% of instances where PaCO(2) was between 35 (<35 = hypocarbia) and 55 mmHg (>55= hypercapnia)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To study the correlation and agreement between end-tidal carbon dioxide (EtCO2) and arterial carbon dioxide (PaCO(2)) in ventilated extremely low birth weight (ELBW) infants in the first week of life."
+    },
+    {
+      "label": "METHODS",
+      "context": "Retrospective chart review of all ELBW (<1,000 g) infants admitted to a level III NICU from January 2003 to December 2003. Data collected included demographic details and simultaneous EtCO(2) (mainstream capnography) and arterial blood gas values (pH, PaCO(2), PaO(2))."
+    },
+    {
+      "label": "OUTCOME",
+      "context": "The correlation coefficient, degree of bias with 95% confidence interval between the EtCO(2) and PaCO(2)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "There were 754 end-tidal and arterial CO(2) pairs from 31 ELBW infants (21 male and 10 female). The overall EtCO(2) values were significantly lower than PaCO(2) value. In only 89/754(11.8%) pairs, the EtCO(2) was higher than the PaCO(2). The overall bias was 5.6 +/- 6.9 mmHg (95% C.I. 5.11-6.09). The intraclass correlation coefficient was 0.81. Using EtCO2 ranges of 30 to 50 mmHg, the capnographic method was able to identify 84% of instances where PaCO(2) was between 35 (<35 = hypocarbia) and 55 mmHg (>55= hypercapnia)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.70,\"reason_for_action\":\"Study shows good correlation (intraclass correlation 0.81) but EtCO2 was significantly lower with mean bias 5.6±6.9 mmHg and variability; correlates but is not fully reliable alone.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.7,
+      "reason_for_action": "Study shows good correlation (intraclass correlation 0.81) but EtCO2 was significantly lower with mean bias 5.6±6.9 mmHg and variability; correlates but is not fully reliable alone."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 9.848
+}

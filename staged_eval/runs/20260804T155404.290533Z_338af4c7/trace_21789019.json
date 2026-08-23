@@ -1,0 +1,62 @@
+{
+  "pmid": "21789019",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "AIMS AND BACKGROUND",
+      "context": "The increasingly older population confronts oncologists with an imposing challenge: older cancer patients have specific healthcare needs both independent of and associated with the diagnosis of cancer. The aim of the present study is to examine whether elderly versus younger cancer patients have different needs with respect to attendance, treatment and information."
+    },
+    {
+      "label": "METHODS AND STUDY DESIGN",
+      "context": "This is an observational and cross-sectional study. Cancer patients aged 35 to 82 years were consecutively interviewed. The group was divided into two subgroups aged ≤65 and ≥66 years old. The Needs Evaluation Questionnaire (NEQ) was used to assess patients' needs and demographic variables were collected. Data analysis was carried out by means of cross-tabulation analyses and the chi-square test."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"Background states older cancer patients have specific healthcare needs both independent of and associated with cancer; the study was designed to examine differing needs between ≤65 and ≥66 using the NEQ.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "Background states older cancer patients have specific healthcare needs both independent of and associated with cancer; the study was designed to examine differing needs between ≤65 and ≥66 using the NEQ."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The requests most frequently expressed by the older group concerned financial-insurance information (73.9%), the need to talk to people with the same illness (71.7%), the need to receive more comprehensible information from doctors and nurses (71.7%), and the need for a better dialogue with clinicians (69.6%). Few significant differences between the two age subgroups were found, with the exception of issues such as the need for intimacy and support."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "AIMS AND BACKGROUND",
+      "context": "The increasingly older population confronts oncologists with an imposing challenge: older cancer patients have specific healthcare needs both independent of and associated with the diagnosis of cancer. The aim of the present study is to examine whether elderly versus younger cancer patients have different needs with respect to attendance, treatment and information."
+    },
+    {
+      "label": "METHODS AND STUDY DESIGN",
+      "context": "This is an observational and cross-sectional study. Cancer patients aged 35 to 82 years were consecutively interviewed. The group was divided into two subgroups aged ≤65 and ≥66 years old. The Needs Evaluation Questionnaire (NEQ) was used to assess patients' needs and demographic variables were collected. Data analysis was carried out by means of cross-tabulation analyses and the chi-square test."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The requests most frequently expressed by the older group concerned financial-insurance information (73.9%), the need to talk to people with the same illness (71.7%), the need to receive more comprehensible information from doctors and nurses (71.7%), and the need for a better dialogue with clinicians (69.6%). Few significant differences between the two age subgroups were found, with the exception of issues such as the need for intimacy and support."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"Study found older patients more often requested financial/insurance information, peer support, clearer information and better dialogue, with notable differences in intimacy/support needs, supporting that needs differ.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "Study found older patients more often requested financial/insurance information, peer support, clearer information and better dialogue, with notable differences in intimacy/support needs, supporting that needs differ."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 7.917
+}

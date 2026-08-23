@@ -1,0 +1,54 @@
+{
+  "pmid": "26864326",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "METHODS",
+      "context": "In this single-centre prospective study, triage nurses estimated the probability of admission using a 100 mm visual analogue scale (VAS), and GAPS was generated automatically from triage data. We compared calibration using rank sum tests, discrimination using area under receiver operating characteristic curves (AUC) and accuracy with McNemar's test."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.25,\"reason_for_action\":\"Only methods are provided (nurses used VAS; GAPS computed; comparisons planned). No results or performance metrics are given, so superiority cannot be determined from supplied evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.25,
+      "reason_for_action": "Only methods are provided (nurses used VAS; GAPS computed; comparisons planned). No results or performance metrics are given, so superiority cannot be determined from supplied evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Of 1829 attendances, 745 (40.7%) were admitted, not significantly different from GAPS' prediction of 750 (41.0%, p=0.678). In contrast, the nurses' mean VAS predicted 865 admissions (47.3%), overestimating by 6.6% (p<0.0001). GAPS discriminated between admission and discharge as well as nurses, its AUC 0.876 compared with 0.875 for VAS (p=0.93). As a binary predictor, its accuracy was 80.6%, again comparable with VAS (79.0%), p=0.18. In the minority of attendances, when nurses felt at least 95% certain of the outcome, VAS' accuracy was excellent, at 92.4%. However, in the remaining majority, GAPS significantly outperformed VAS on calibration (+1.2% vs +9.2%, p<0.0001), discrimination (AUC 0.810 vs 0.759, p=0.001) and accuracy (75.1% vs 68.9%, p=0.0009). When we used GAPS, but 'over-ruled' it when clinical certainty was ≥95%, this significantly outperformed either method, with AUC 0.891 (0.877-0.907) and accuracy 82.5% (80.7%-84.2%)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "METHODS",
+      "context": "In this single-centre prospective study, triage nurses estimated the probability of admission using a 100 mm visual analogue scale (VAS), and GAPS was generated automatically from triage data. We compared calibration using rank sum tests, discrimination using area under receiver operating characteristic curves (AUC) and accuracy with McNemar's test."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Of 1829 attendances, 745 (40.7%) were admitted, not significantly different from GAPS' prediction of 750 (41.0%, p=0.678). In contrast, the nurses' mean VAS predicted 865 admissions (47.3%), overestimating by 6.6% (p<0.0001). GAPS discriminated between admission and discharge as well as nurses, its AUC 0.876 compared with 0.875 for VAS (p=0.93). As a binary predictor, its accuracy was 80.6%, again comparable with VAS (79.0%), p=0.18. In the minority of attendances, when nurses felt at least 95% certain of the outcome, VAS' accuracy was excellent, at 92.4%. However, in the remaining majority, GAPS significantly outperformed VAS on calibration (+1.2% vs +9.2%, p<0.0001), discrimination (AUC 0.810 vs 0.759, p=0.001) and accuracy (75.1% vs 68.9%, p=0.0009). When we used GAPS, but 'over-ruled' it when clinical certainty was ≥95%, this significantly outperformed either method, with AUC 0.891 (0.877-0.907) and accuracy 82.5% (80.7%-84.2%)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.78,\"reason_for_action\":\"Results show nurses are not superior: overall AUC and accuracy were similar (AUC 0.875 vs 0.876, p=0.93; accuracy 79.0% vs 80.6%, p=0.18). GAPS outperformed nurses in the majority; combined use was best.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.78,
+      "reason_for_action": "Results show nurses are not superior: overall AUC and accuracy were similar (AUC 0.875 vs 0.876, p=0.93; accuracy 79.0% vs 80.6%, p=0.18). GAPS outperformed nurses in the majority; combined use was best."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 15.458
+}

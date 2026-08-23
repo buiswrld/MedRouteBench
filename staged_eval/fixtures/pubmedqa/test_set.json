@@ -1,0 +1,50 @@
+{
+  "F001": {
+    "QUESTION": "Does treatment A improve marker X in adults with condition Y?",
+    "CONTEXTS": [
+      "A randomized pilot study enrolled adults with condition Y and measured marker X at baseline.",
+      "Participants receiving treatment A had a larger marker X improvement than controls at follow-up."
+    ],
+    "LABELS": ["BACKGROUND", "RESULTS"]
+  },
+  "F002": {
+    "QUESTION": "Is imaging method B more accurate than standard assessment for disease Z?",
+    "CONTEXTS": [
+      "Investigators compared imaging method B with standard clinical assessment in patients suspected of disease Z.",
+      "Accuracy was similar between methods, and confidence intervals crossed the prespecified superiority margin."
+    ],
+    "LABELS": ["BACKGROUND", "RESULTS"]
+  },
+  "F003": {
+    "QUESTION": "Are serum levels of protein C associated with later adverse events?",
+    "CONTEXTS": [
+      "A cohort study collected serum protein C levels from patients at hospital discharge.",
+      "Higher protein C levels were associated with adverse events, but adjustment for comorbidity weakened the estimate."
+    ],
+    "LABELS": ["BACKGROUND", "RESULTS"]
+  },
+  "F004": {
+    "QUESTION": "Does intervention D reduce readmission after surgery?",
+    "CONTEXTS": [
+      "The trial evaluated intervention D among surgical patients discharged from two hospitals.",
+      "Readmission rates were lower in the intervention group than in usual care."
+    ],
+    "LABELS": ["BACKGROUND", "RESULTS"]
+  },
+  "F005": {
+    "QUESTION": "Is biomarker E a reliable standalone diagnostic test for syndrome Q?",
+    "CONTEXTS": [
+      "Researchers assessed biomarker E among patients referred for possible syndrome Q.",
+      "Sensitivity and specificity were insufficient for standalone diagnosis."
+    ],
+    "LABELS": ["BACKGROUND", "RESULTS"]
+  },
+  "F006": {
+    "QUESTION": "Do patients with exposure F have improved survival compared with unexposed patients?",
+    "CONTEXTS": [
+      "A retrospective analysis compared survival among exposed and unexposed patients.",
+      "Exposed patients appeared to survive longer, but residual confounding could not be excluded."
+    ],
+    "LABELS": ["BACKGROUND", "RESULTS"]
+  }
+}

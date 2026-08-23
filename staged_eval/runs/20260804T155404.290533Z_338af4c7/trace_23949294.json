@@ -1,0 +1,62 @@
+{
+  "pmid": "23949294",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Recently, there has been increasing interest in the role of \"treatment as prevention\" (TasP). Some of the questions regarding TasP strategies arise from the perceived difficulties in achieving and maintaining viral load (VL) suppression over time and the risk of emergence of viral resistance that could compromise future treatment options. This study was conducted to assess these questions in a resource-limited setting."
+    },
+    {
+      "label": "METHODOLOGY",
+      "context": "We performed a retrospective observational study of HIV-infected patients diagnosed in the pre-HAART era on follow-up at a private center from Buenos Aires, Argentina. Socio-demographic, clinical, and laboratory data were extracted from clinical charts. Analyses were performed to test for potential associations of selected variables with current virologic failure or use of third-line drugs."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.67,\"reason_for_action\":\"The provided text gives background and methods only; no outcomes or results on long-term viral suppression or resistance are reported, so feasibility cannot be determined from this evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.67,
+      "reason_for_action": "The provided text gives background and methods only; no outcomes or results on long-term viral suppression or resistance are reported, so feasibility cannot be determined from this evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Of 619 patients on follow-up, 82 (13.2%) were diagnosed in the pre-HAART era. At the time of our study, 79 (96.3%) patients were on HAART, with a median duration of 14 years (IQR 12-15) of therapy, and exposure to mono or dual nucleoside reverse transcriptase inhibitors regimens in 47.8% of cases. Sixty-nine patients (87.3%) had undetectable VL, 37 (46.8%) never presented virologic failure, and 19 (24.1%) experienced only one failure. Thirteen patients (16.5%) were receiving third-line ART regimens, with an average of 2.7-fold more virologic failures than those on first- or second-line regimens (p = 0.007)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Recently, there has been increasing interest in the role of \"treatment as prevention\" (TasP). Some of the questions regarding TasP strategies arise from the perceived difficulties in achieving and maintaining viral load (VL) suppression over time and the risk of emergence of viral resistance that could compromise future treatment options. This study was conducted to assess these questions in a resource-limited setting."
+    },
+    {
+      "label": "METHODOLOGY",
+      "context": "We performed a retrospective observational study of HIV-infected patients diagnosed in the pre-HAART era on follow-up at a private center from Buenos Aires, Argentina. Socio-demographic, clinical, and laboratory data were extracted from clinical charts. Analyses were performed to test for potential associations of selected variables with current virologic failure or use of third-line drugs."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Of 619 patients on follow-up, 82 (13.2%) were diagnosed in the pre-HAART era. At the time of our study, 79 (96.3%) patients were on HAART, with a median duration of 14 years (IQR 12-15) of therapy, and exposure to mono or dual nucleoside reverse transcriptase inhibitors regimens in 47.8% of cases. Sixty-nine patients (87.3%) had undetectable VL, 37 (46.8%) never presented virologic failure, and 19 (24.1%) experienced only one failure. Thirteen patients (16.5%) were receiving third-line ART regimens, with an average of 2.7-fold more virologic failures than those on first- or second-line regimens (p = 0.007)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.78,\"reason_for_action\":\"Results show 69/82 (87.3%) had undetectable viral load with median 14 years on HAART, indicating it is feasible to maintain viral suppression over time in this cohort.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.78,
+      "reason_for_action": "Results show 69/82 (87.3%) had undetectable viral load with median 14 years on HAART, indicating it is feasible to maintain viral suppression over time in this cohort."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 9.451
+}

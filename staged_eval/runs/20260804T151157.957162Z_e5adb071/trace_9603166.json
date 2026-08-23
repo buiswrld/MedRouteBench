@@ -1,0 +1,58 @@
+{
+  "pmid": "9603166",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Human immunodeficiency virus (HIV)-infected patients have generally been excluded from transplantation. Recent advances in the management and prognosis of these patients suggest that this policy should be reevaluated."
+    },
+    {
+      "label": "METHODS",
+      "context": "To explore the current views of U.S. transplant centers toward transplanting asymptomatic HIV-infected patients with end-stage renal disease, a written survey was mailed to the directors of transplantation at all 248 renal transplant centers in the United States."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "All 148 responding centers said they require HIV testing of prospective kidney recipients, and 84% of these centers would not transplant an individual who refuses HIV testing. The vast majority of responding centers would not transplant a kidney from a cadaveric (88%) or a living donor (91%) into an asymptomatic HIV-infected patient who is otherwise a good candidate for transplantation. Among the few centers that would consider transplanting an HIV-infected patient, not a single center had performed such a transplant in the year prior to the survey. Most centers fear that transplantation in the face of HIV infection would be harmful to the individual, and some believe that it would be a waste of precious organs."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Human immunodeficiency virus (HIV)-infected patients have generally been excluded from transplantation. Recent advances in the management and prognosis of these patients suggest that this policy should be reevaluated."
+    },
+    {
+      "label": "METHODS",
+      "context": "To explore the current views of U.S. transplant centers toward transplanting asymptomatic HIV-infected patients with end-stage renal disease, a written survey was mailed to the directors of transplantation at all 248 renal transplant centers in the United States."
+    },
+    {
+      "label": "RESULTS",
+      "context": "All 148 responding centers said they require HIV testing of prospective kidney recipients, and 84% of these centers would not transplant an individual who refuses HIV testing. The vast majority of responding centers would not transplant a kidney from a cadaveric (88%) or a living donor (91%) into an asymptomatic HIV-infected patient who is otherwise a good candidate for transplantation. Among the few centers that would consider transplanting an HIV-infected patient, not a single center had performed such a transplant in the year prior to the survey. Most centers fear that transplantation in the face of HIV infection would be harmful to the individual, and some believe that it would be a waste of precious organs."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 3.829
+}

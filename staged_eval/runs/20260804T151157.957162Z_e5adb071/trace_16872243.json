@@ -1,0 +1,50 @@
+{
+  "pmid": "16872243",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "METHOD",
+      "context": "In this study, an expert panel assessed causality of adverse reports by using the WHO global introspection (GI) method. The same reports were independently assessed using 15 published algorithms. The causality assessment level 'possible' was considered the lower limit for a report to be considered to be drug related. For a given algorithm, sensitivity was determined by the proportion of reports simultaneously classified as drug related by the algorithm and the GI method. Specificity was measured as the proportion of reports simultaneously considered non-drug related. The analysis was performed for the total sample and within serious or unexpected events."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Five hundred adverse reports were studied. Algorithms presented high rates of sensitivity (average of 93%, positive predictive value of 89%) and low rates of specificity (average of 7%, negative predictive value of 31%)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "METHOD",
+      "context": "In this study, an expert panel assessed causality of adverse reports by using the WHO global introspection (GI) method. The same reports were independently assessed using 15 published algorithms. The causality assessment level 'possible' was considered the lower limit for a report to be considered to be drug related. For a given algorithm, sensitivity was determined by the proportion of reports simultaneously classified as drug related by the algorithm and the GI method. Specificity was measured as the proportion of reports simultaneously considered non-drug related. The analysis was performed for the total sample and within serious or unexpected events."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Five hundred adverse reports were studied. Algorithms presented high rates of sensitivity (average of 93%, positive predictive value of 89%) and low rates of specificity (average of 7%, negative predictive value of 31%)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 5.372
+}

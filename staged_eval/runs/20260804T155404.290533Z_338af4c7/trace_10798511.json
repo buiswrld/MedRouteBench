@@ -1,0 +1,62 @@
+{
+  "pmid": "10798511",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Physical examination to detect abdominal injuries has been considered unreliable in alcohol-intoxicated trauma patients. Computed tomography (CT) plays the primary role in these abdominal evaluations."
+    },
+    {
+      "label": "METHODS",
+      "context": "We reviewed medical records of all blunt trauma patients admitted to our trauma service from January 1, 1992, to March 31, 1998. Study patients had a blood alcohol level>or =80 mg/dL, Glasgow Coma Scale (GCS) score of 15, and unremarkable abdominal examination."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"Background states exam is unreliable in intoxicated patients and CT is primary, but provided methods give no outcome data—insufficient evidence to conclude CT is always necessary.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "Background states exam is unreliable in intoxicated patients and CT is primary, but provided methods give no outcome data—insufficient evidence to conclude CT is always necessary."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Of 324 patients studied, 317 (98%) had CT scans negative for abdominal injury. Abdominal injuries were identified in 7 patients (2%), with only 2 (0.6%) requiring abdominal exploration. A significant association was found between major chest injury and abdominal injury."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Physical examination to detect abdominal injuries has been considered unreliable in alcohol-intoxicated trauma patients. Computed tomography (CT) plays the primary role in these abdominal evaluations."
+    },
+    {
+      "label": "METHODS",
+      "context": "We reviewed medical records of all blunt trauma patients admitted to our trauma service from January 1, 1992, to March 31, 1998. Study patients had a blood alcohol level>or =80 mg/dL, Glasgow Coma Scale (GCS) score of 15, and unremarkable abdominal examination."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Of 324 patients studied, 317 (98%) had CT scans negative for abdominal injury. Abdominal injuries were identified in 7 patients (2%), with only 2 (0.6%) requiring abdominal exploration. A significant association was found between major chest injury and abdominal injury."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.82,\"reason_for_action\":\"In 324 intoxicated blunt trauma patients with normal abdominal exams, only 7 (2%) had injuries and 2 (0.6%) required exploration—CT therefore not always necessary; reserve for clinical concern or associated major chest injury.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.82,
+      "reason_for_action": "In 324 intoxicated blunt trauma patients with normal abdominal exams, only 7 (2%) had injuries and 2 (0.6%) required exploration—CT therefore not always necessary; reserve for clinical concern or associated major chest injury."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.532
+}

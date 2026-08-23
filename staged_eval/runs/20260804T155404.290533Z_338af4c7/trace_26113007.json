@@ -1,0 +1,62 @@
+{
+  "pmid": "26113007",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Orthodontic patients show high prevalence of tooth-size discrepancy. This study investigates the possible association between arch form, clinically significant tooth-size discrepancy, and sagittal molar relationship."
+    },
+    {
+      "label": "METHODS",
+      "context": "Pretreatment orthodontic casts of 230 Saudi patients were classified into one of three arch form types (tapered, ovoid, and square) using digitally scanned images of the mandibular arches. Bolton ratio was calculated, sagittal molar relationship was defined according to Angle classification, and correlations were analyzed using ANOVA, chi-square, and t-tests."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.25,\"reason_for_action\":\"Only study background and methods are provided (classification, Bolton ratio, molar relationship, analyses). No results or conclusions are given, so influence cannot be determined from supplied evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.25,
+      "reason_for_action": "Only study background and methods are provided (classification, Bolton ratio, molar relationship, analyses). No results or conclusions are given, so influence cannot be determined from supplied evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "No single arch form was significantly more common than the others. Furthermore, no association was observed between the presence of significant Bolton discrepancy and the sagittal molar relationship or arch form. Overall Bolton discrepancy is significantly more prevalent in males."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Orthodontic patients show high prevalence of tooth-size discrepancy. This study investigates the possible association between arch form, clinically significant tooth-size discrepancy, and sagittal molar relationship."
+    },
+    {
+      "label": "METHODS",
+      "context": "Pretreatment orthodontic casts of 230 Saudi patients were classified into one of three arch form types (tapered, ovoid, and square) using digitally scanned images of the mandibular arches. Bolton ratio was calculated, sagittal molar relationship was defined according to Angle classification, and correlations were analyzed using ANOVA, chi-square, and t-tests."
+    },
+    {
+      "label": "RESULTS",
+      "context": "No single arch form was significantly more common than the others. Furthermore, no association was observed between the presence of significant Bolton discrepancy and the sagittal molar relationship or arch form. Overall Bolton discrepancy is significantly more prevalent in males."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.95,\"reason_for_action\":\"Study results found no association between arch form and either sagittal molar relationship or significant Bolton tooth-size discrepancy.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.95,
+      "reason_for_action": "Study results found no association between arch form and either sagittal molar relationship or significant Bolton tooth-size discrepancy."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 5.324
+}

@@ -1,0 +1,58 @@
+{
+  "pmid": "23539689",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To characterize the use and delivery of cough and cold medicines in children younger than 6 presenting to an inner-city pediatric emergency department (PED) following 2007 FDA warnings."
+    },
+    {
+      "label": "METHODS",
+      "context": "A cross-sectional observational study was performed using a convenience sampling of PED patients during the fall of 2010. Caregivers were presented with 6 commonly used cough medicine preparations and were asked to demonstrate if and how they would administer these to their children."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In all, 65 patients and their caregivers consented and participated in the study. During the demonstration, 82% (53/65) stated that they would treat with cough or cold medicines, and 72% (38/53) incorrectly dosed the medication they desired to give."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To characterize the use and delivery of cough and cold medicines in children younger than 6 presenting to an inner-city pediatric emergency department (PED) following 2007 FDA warnings."
+    },
+    {
+      "label": "METHODS",
+      "context": "A cross-sectional observational study was performed using a convenience sampling of PED patients during the fall of 2010. Caregivers were presented with 6 commonly used cough medicine preparations and were asked to demonstrate if and how they would administer these to their children."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In all, 65 patients and their caregivers consented and participated in the study. During the demonstration, 82% (53/65) stated that they would treat with cough or cold medicines, and 72% (38/53) incorrectly dosed the medication they desired to give."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 5.721
+}

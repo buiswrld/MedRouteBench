@@ -1,0 +1,62 @@
+{
+  "pmid": "24298614",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "AIMS",
+      "context": "The clinical and prognostic value of the previous node classification of TNM staging in early gastric cancer (EGC) has been less definitive. The aim was to assess the suitability of the revised node staging for prediction of clinical behavior of EGC."
+    },
+    {
+      "label": "METHODOLOGY",
+      "context": "Between 2005 and 2008, 1,845 patients were diagnosed with EGC and underwent surgery at Severance Hospitals. Clinicopathological characteristics were analyzed with comparisons between sixth and seventh TNM staging."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"Provided text gives aim and methods comparing 6th vs 7th TNM in 1,845 EGC patients but contains no results or conclusions, so suitability cannot be determined from the supplied evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "Provided text gives aim and methods comparing 6th vs 7th TNM in 1,845 EGC patients but contains no results or conclusions, so suitability cannot be determined from the supplied evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "When comparing IB with IIA upstaged based on seventh staging, poor differentiation, signet ring cell, diffuse, undifferentiated types, perineural invasion (PNI), larger size and younger age, were more significantly associated with IIA. Clinicopathological factors were compared between N0/N1 and N2/N3 based on both staging. In mucosal cancer, younger age, diffuse and undifferentiated types were more significantly associated with N2/N3 based on seventh staging. In submucosal cancer, larger size, poor differentiation, signet ring cell, diffuse, undifferentiated types, PNI and deeper submucosal invasion, were more significantly associated with N2/N3 based on seventh staging."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "AIMS",
+      "context": "The clinical and prognostic value of the previous node classification of TNM staging in early gastric cancer (EGC) has been less definitive. The aim was to assess the suitability of the revised node staging for prediction of clinical behavior of EGC."
+    },
+    {
+      "label": "METHODOLOGY",
+      "context": "Between 2005 and 2008, 1,845 patients were diagnosed with EGC and underwent surgery at Severance Hospitals. Clinicopathological characteristics were analyzed with comparisons between sixth and seventh TNM staging."
+    },
+    {
+      "label": "RESULTS",
+      "context": "When comparing IB with IIA upstaged based on seventh staging, poor differentiation, signet ring cell, diffuse, undifferentiated types, perineural invasion (PNI), larger size and younger age, were more significantly associated with IIA. Clinicopathological factors were compared between N0/N1 and N2/N3 based on both staging. In mucosal cancer, younger age, diffuse and undifferentiated types were more significantly associated with N2/N3 based on seventh staging. In submucosal cancer, larger size, poor differentiation, signet ring cell, diffuse, undifferentiated types, PNI and deeper submucosal invasion, were more significantly associated with N2/N3 based on seventh staging."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.75,\"reason_for_action\":\"Study results show the 7th TNM upstaging better correlates with adverse clinicopathologic features (poor differentiation, signet ring cell, diffuse type, PNI, larger size, N2/N3), supporting suitability.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.75,
+      "reason_for_action": "Study results show the 7th TNM upstaging better correlates with adverse clinicopathologic features (poor differentiation, signet ring cell, diffuse type, PNI, larger size, N2/N3), supporting suitability."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.679
+}

@@ -1,0 +1,62 @@
+{
+  "pmid": "21228436",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The purpose of this study was to evaluate the impact of a patient-safety curriculum administered during a paediatric clerkship on medical students' attitudes towards patient safety."
+    },
+    {
+      "label": "METHODS",
+      "context": "Medical students viewed an online video introducing them to systems-based analyses of medical errors. Faculty presented an example of a medication administration error and demonstrated use of the Learning From Defects tool to investigate the defect. Student groups identified and then analysed medication errors during their clinical rotation using the Learning From Defects framework to organise and present their findings. Outcomes included patient safety attitudinal changes, as measured by questions derived from the Safety Attitudes Questionnaire."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.45,\"reason_for_action\":\"The study describes a curriculum and measured attitudes with the Safety Attitudes Questionnaire, but no outcome/results are provided in the excerpts, so impact cannot be determined from the given evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.45,
+      "reason_for_action": "The study describes a curriculum and measured attitudes with the Safety Attitudes Questionnaire, but no outcome/results are provided in the excerpts, so impact cannot be determined from the given evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "108 students completed the curriculum between July 2008 and July 2009. All student groups (25 total) identified, analysed and presented patient safety concerns. Curriculum effectiveness was demonstrated by significant changes on questionnaire items related to patient safety attitudes. The majority of students felt that the curriculum was relevant to their clinical rotation and should remain part of the clerkship."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The purpose of this study was to evaluate the impact of a patient-safety curriculum administered during a paediatric clerkship on medical students' attitudes towards patient safety."
+    },
+    {
+      "label": "METHODS",
+      "context": "Medical students viewed an online video introducing them to systems-based analyses of medical errors. Faculty presented an example of a medication administration error and demonstrated use of the Learning From Defects tool to investigate the defect. Student groups identified and then analysed medication errors during their clinical rotation using the Learning From Defects framework to organise and present their findings. Outcomes included patient safety attitudinal changes, as measured by questions derived from the Safety Attitudes Questionnaire."
+    },
+    {
+      "label": "RESULTS",
+      "context": "108 students completed the curriculum between July 2008 and July 2009. All student groups (25 total) identified, analysed and presented patient safety concerns. Curriculum effectiveness was demonstrated by significant changes on questionnaire items related to patient safety attitudes. The majority of students felt that the curriculum was relevant to their clinical rotation and should remain part of the clerkship."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.88,\"reason_for_action\":\"Results report significant changes on Safety Attitudes Questionnaire items after the curriculum (108 students), indicating teaching them to investigate medication errors changed attitudes toward patient safety.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.88,
+      "reason_for_action": "Results report significant changes on Safety Attitudes Questionnaire items after the curriculum (108 students), indicating teaching them to investigate medication errors changed attitudes toward patient safety."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.589
+}

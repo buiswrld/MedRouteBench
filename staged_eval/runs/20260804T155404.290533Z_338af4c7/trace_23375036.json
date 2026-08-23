@@ -1,0 +1,62 @@
+{
+  "pmid": "23375036",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine whether the OraQuick® HIV-1/2 Assay (OraSure Technologies, Inc., Bethlehem, PA, USA) in sputum is a valid tool for HIV surveillance among TB patients."
+    },
+    {
+      "label": "METHODS",
+      "context": "A cross sectional study was carried out on sputa of patients diagnosed with tuberculosis. Sputa were tested for antibodies to HIV using OraQuick® HIV-1/2 Assay (OraSure Technologies, Inc., Bethlehem, PA, USA). The results were compared with results of serum ELISA."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.40,\"reason_for_action\":\"Methods state sputum OraQuick was compared to serum ELISA in a cross-sectional study, but no results or performance metrics are provided in the supplied evidence, so effectiveness cannot be determined.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.4,
+      "reason_for_action": "Methods state sputum OraQuick was compared to serum ELISA in a cross-sectional study, but no results or performance metrics are provided in the supplied evidence, so effectiveness cannot be determined."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Compared to serum ELISA, the OraQuick® HIV-1/2 Assay in sputum specimens reported 90% sensitivity (9/10) and 100% specificity (307/307), with a positive predictive value of 100% (95%CI: 66.37%-100.00%) and a negative predictive value of 99.68% (95%CI: 98.20%-99.99%)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine whether the OraQuick® HIV-1/2 Assay (OraSure Technologies, Inc., Bethlehem, PA, USA) in sputum is a valid tool for HIV surveillance among TB patients."
+    },
+    {
+      "label": "METHODS",
+      "context": "A cross sectional study was carried out on sputa of patients diagnosed with tuberculosis. Sputa were tested for antibodies to HIV using OraQuick® HIV-1/2 Assay (OraSure Technologies, Inc., Bethlehem, PA, USA). The results were compared with results of serum ELISA."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Compared to serum ELISA, the OraQuick® HIV-1/2 Assay in sputum specimens reported 90% sensitivity (9/10) and 100% specificity (307/307), with a positive predictive value of 100% (95%CI: 66.37%-100.00%) and a negative predictive value of 99.68% (95%CI: 98.20%-99.99%)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.6,\"reason_for_action\":\"Study showed 90% sensitivity (9/10) and 100% specificity (307/307) versus serum ELISA, but very few HIV-positive samples limit precision and generalizability, so effectiveness remains uncertain.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "Study showed 90% sensitivity (9/10) and 100% specificity (307/307) versus serum ELISA, but very few HIV-positive samples limit precision and generalizability, so effectiveness remains uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 10.768
+}

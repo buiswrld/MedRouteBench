@@ -1,0 +1,58 @@
+{
+  "pmid": "26879871",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Studies have linked ethnic differences in depression rates with neighbourhood ethnic density although results have not been conclusive. We looked at this using a novel approach analysing whole population data covering just over one million GP patients in four London boroughs."
+    },
+    {
+      "label": "METHOD",
+      "context": "Using a dataset of GP records for all patients registered in Lambeth, Hackney, Tower Hamlets and Newham in 2013 we investigated new diagnoses of depression and antidepressant use for: Indian, Pakistani, Bangladeshi, black Caribbean and black African patients. Neighbourhood effects were assessed independently of GP practice using a cross-classified multilevel model."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Black and minority ethnic groups are up to four times less likely to be newly diagnosed with depression or prescribed antidepressants compared to white British patients. We found an inverse relationship between neighbourhood ethnic density and new depression diagnosis for some groups, where an increase of 10% own-ethnic density was associated with a statistically significant (p<0.05) reduced odds of depression for Pakistani [odds ratio (OR) 0.81, 95% confidence interval (CI) 0.70-0.93], Indian (OR 0.88, CI 0.81-0.95), African (OR 0.88, CI 0.78-0.99) and Bangladeshi (OR 0.94, CI 0.90-0.99) patients. Black Caribbean patients, however, showed the opposite effect (OR 1.26, CI 1.09-1.46). The results for antidepressant use were very similar although the corresponding effect for black Caribbeans was no longer statistically significant (p = 0.07)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Studies have linked ethnic differences in depression rates with neighbourhood ethnic density although results have not been conclusive. We looked at this using a novel approach analysing whole population data covering just over one million GP patients in four London boroughs."
+    },
+    {
+      "label": "METHOD",
+      "context": "Using a dataset of GP records for all patients registered in Lambeth, Hackney, Tower Hamlets and Newham in 2013 we investigated new diagnoses of depression and antidepressant use for: Indian, Pakistani, Bangladeshi, black Caribbean and black African patients. Neighbourhood effects were assessed independently of GP practice using a cross-classified multilevel model."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Black and minority ethnic groups are up to four times less likely to be newly diagnosed with depression or prescribed antidepressants compared to white British patients. We found an inverse relationship between neighbourhood ethnic density and new depression diagnosis for some groups, where an increase of 10% own-ethnic density was associated with a statistically significant (p<0.05) reduced odds of depression for Pakistani [odds ratio (OR) 0.81, 95% confidence interval (CI) 0.70-0.93], Indian (OR 0.88, CI 0.81-0.95), African (OR 0.88, CI 0.78-0.99) and Bangladeshi (OR 0.94, CI 0.90-0.99) patients. Black Caribbean patients, however, showed the opposite effect (OR 1.26, CI 1.09-1.46). The results for antidepressant use were very similar although the corresponding effect for black Caribbeans was no longer statistically significant (p = 0.07)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.331
+}

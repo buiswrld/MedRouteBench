@@ -1,0 +1,62 @@
+{
+  "pmid": "14968373",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Treatment of obstructive hydrocephalus in children with tuberculous meningitis (TBM) depends on the level of the cerebrospinal fluid (CSF) block. Air-encephalography is regarded as the gold standard for differentiating communicating and non-communicating hydrocephalus. Since air-encephalography involves a lumbar puncture, it carries the risk of cerebral herniation. AIM. The aim of this study was to determine whether communicating and non-communicating hydrocephalus in TBM can be differentiated by means of cranial computerised tomography (CT)."
+    },
+    {
+      "label": "METHODS",
+      "context": "A number of CT indices were measured in 50 children with communicating and 34 children with non-communicating hydrocephalus according to air-encephalographic findings."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.30,\"reason_for_action\":\"The provided excerpts state the study aim and that CT indices were measured in two groups, but no results or conclusions are given here, so ability of CT to predict CSF block level cannot be determined from the supplied text.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.3,
+      "reason_for_action": "The provided excerpts state the study aim and that CT indices were measured in two groups, but no results or conclusions are given here, so ability of CT to predict CSF block level cannot be determined from the supplied text."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The only CT finding that correlated with the type of hydrocephalus was the shape of the third ventricle. Significantly more children with non-communicating hydrocephalus had a rounded third ventricle than those with communicating hydrocephalus."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Treatment of obstructive hydrocephalus in children with tuberculous meningitis (TBM) depends on the level of the cerebrospinal fluid (CSF) block. Air-encephalography is regarded as the gold standard for differentiating communicating and non-communicating hydrocephalus. Since air-encephalography involves a lumbar puncture, it carries the risk of cerebral herniation. AIM. The aim of this study was to determine whether communicating and non-communicating hydrocephalus in TBM can be differentiated by means of cranial computerised tomography (CT)."
+    },
+    {
+      "label": "METHODS",
+      "context": "A number of CT indices were measured in 50 children with communicating and 34 children with non-communicating hydrocephalus according to air-encephalographic findings."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The only CT finding that correlated with the type of hydrocephalus was the shape of the third ventricle. Significantly more children with non-communicating hydrocephalus had a rounded third ventricle than those with communicating hydrocephalus."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.3,\"reason_for_action\":\"Results show only one CT finding (rounded third ventricle) correlated with non-communicating hydrocephalus, indicating CT has limited predictive value; thus answer remains 'maybe'.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.3,
+      "reason_for_action": "Results show only one CT finding (rounded third ventricle) correlated with non-communicating hydrocephalus, indicating CT has limited predictive value; thus answer remains 'maybe'."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.426
+}

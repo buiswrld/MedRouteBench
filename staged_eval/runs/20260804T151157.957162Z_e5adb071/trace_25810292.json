@@ -1,0 +1,58 @@
+{
+  "pmid": "25810292",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "Traditional resectional techniques and chordal transfer are difficult to apply in video-assisted mitral valve repair. Using artificial chords appears easier in this setting. The purpose of this study was to review the effectiveness and reproducibility of neochordal repair as a routine approach to minimally invasive mitral repair, and to assess the stability of neochord implantation using the figure-of-eight suture without pledgets in this setting."
+    },
+    {
+      "label": "METHODS",
+      "context": "This is a retrospective review of all patients who underwent minimally invasive video-assisted mitral valve repair from 2008 to 2013. The primary endpoints were recurrent mitral regurgitation and reoperation."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A total of 426 consecutive patients were included during the study period, with a mean age of 55 ± 18 years. Neochords were used in all patients, and in association with leaflet resection in 47 patients. One patient was not repairable and underwent valve replacement (repair rate, 99.8%). Fifteen patients had Grade I (3.5%) regurgitation, whereas the remainder had none. Patients were fast-tracked, with 25% extubated in the operation theatre and the remainder within 6 h. There were 5 deaths within 30 days (1.2%). Follow-up ranged 3-60 months, during which all of the patients remained with no or trace mitral regurgitation. No de-insertion or rupture of any neochords was found, and no patients required a reoperation."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "Traditional resectional techniques and chordal transfer are difficult to apply in video-assisted mitral valve repair. Using artificial chords appears easier in this setting. The purpose of this study was to review the effectiveness and reproducibility of neochordal repair as a routine approach to minimally invasive mitral repair, and to assess the stability of neochord implantation using the figure-of-eight suture without pledgets in this setting."
+    },
+    {
+      "label": "METHODS",
+      "context": "This is a retrospective review of all patients who underwent minimally invasive video-assisted mitral valve repair from 2008 to 2013. The primary endpoints were recurrent mitral regurgitation and reoperation."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A total of 426 consecutive patients were included during the study period, with a mean age of 55 ± 18 years. Neochords were used in all patients, and in association with leaflet resection in 47 patients. One patient was not repairable and underwent valve replacement (repair rate, 99.8%). Fifteen patients had Grade I (3.5%) regurgitation, whereas the remainder had none. Patients were fast-tracked, with 25% extubated in the operation theatre and the remainder within 6 h. There were 5 deaths within 30 days (1.2%). Follow-up ranged 3-60 months, during which all of the patients remained with no or trace mitral regurgitation. No de-insertion or rupture of any neochords was found, and no patients required a reoperation."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 4.833
+}
