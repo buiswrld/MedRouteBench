@@ -9,13 +9,28 @@ inference (`run_case`), and metrics (`build_report`).
 """
 
 import datetime
+import importlib.metadata
 import json
+import platform
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Callable, Iterable, List, Optional, Tuple
 
 from .pipeline_utils import create_run_dir, write_json_atomic
+
+
+def _runtime_versions() -> dict:
+    packages = {}
+    for distribution in ("openai", "tenacity", "python-dotenv", "Pillow"):
+        try:
+            packages[distribution] = importlib.metadata.version(distribution)
+        except importlib.metadata.PackageNotFoundError:
+            packages[distribution] = None
+    return {
+        "python": platform.python_version(),
+        "packages": packages,
+    }
 
 
 def resolve_run_dir(
@@ -56,6 +71,7 @@ def resolve_run_dir(
         manifest = {
             "run_id": run_id,
             "created_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "runtime": _runtime_versions(),
             "provenance": provenance,
             **(extra_manifest_fields or {}),
         }

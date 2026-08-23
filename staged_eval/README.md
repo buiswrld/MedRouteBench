@@ -10,9 +10,9 @@ biomedical question-answering dataset.
 
 PubMedQA cases contain a question, multiple labelled context sections
 (e.g. BACKGROUND, METHODS, RESULTS), and an official gold label. The
-evaluation splits those contexts at the **first section labelled RESULTS**
-(falling back to the midpoint) so Stage 1 sees only the preliminary evidence
-and Stage 2 sees everything.
+evaluation splits those contexts at the **first section labelled RESULTS** so
+Stage 1 sees only the preliminary evidence and Stage 2 sees everything. Cases
+without a usable RESULTS boundary are excluded.
 
 **Stage 1 — Preliminary Commitment**
 
@@ -49,7 +49,7 @@ python -m staged_eval.pipeline --n 20 --no-stratify
 python -m staged_eval.pipeline --n 20 --reversed
 
 # Specify a model override
-python -m staged_eval.pipeline --n 50 --model gpt-5-mini
+python -m staged_eval.pipeline --n 50 --model openai/gpt-5-mini
 
 # Resume an interrupted run
 python -m staged_eval.pipeline --n 50 --resume staged_eval/runs/<run_id>
@@ -70,6 +70,8 @@ Artifacts are written atomically to `staged_eval/runs/<UTC-timestamp>_<id>/`.
 Each run contains:
 - `manifest.json` — model, backend, data and code SHA-256 hashes, provenance
 - `trace_<pmid>.json` — per-case trace (stage outputs, label, gold)
+- `usage.jsonl` — append-only token and provider-reported cost record per successful API call
+- `usage_summary.json` — usage totals by provider and model
 - `partial_report.json` — updated after every case during the run
 - `report.json` — final aggregated metrics (replaces `partial_report.json`)
 
@@ -83,8 +85,8 @@ The runner loads cases from `data/pubmedqa/test_set.json` (or `ori_pqal.json`
 as a fallback) and gold labels from `data/pubmedqa/test_ground_truth.json`.
 
 Only **eligible** cases enter the evaluation: cases must have an official gold
-label and must be splittable into two non-empty evidence stages. Cases with no
-RESULTS section and fewer than two contexts are excluded before any model calls.
+label, a usable RESULTS boundary, and non-empty evidence on both sides of that
+boundary. The current PubMedQA test set contains 482 eligible cases.
 
 By default the selected sample is **stratified** — proportionally distributed
 across `yes`, `no`, and `maybe` gold labels using the largest-remainder
@@ -95,8 +97,7 @@ across `yes`, `no`, and `maybe` gold labels using the largest-remainder
 For each case, the evidence split boundary is determined as follows:
 1. Find the first normalized section label containing `RESULT`.
 2. If that index creates two non-empty groups, use it (`strategy: first_results_section`).
-3. Otherwise split at `len(CONTEXTS) // 2` (`strategy: half_split`).
-4. If neither produces two non-empty groups, the case is excluded.
+3. Otherwise, exclude the case.
 
 Everything **before** the split index goes to `stage1_evidence`; the split
 index and everything after it goes to `stage2_added_evidence`.

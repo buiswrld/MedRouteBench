@@ -1147,6 +1147,13 @@ def _write_payload(path: Path, *cases):
     path.write_text(json.dumps(_payload(*cases)), encoding="utf-8")
 
 
+def test_builtin_backend_fails_before_inference_without_fixed_judge(monkeypatch):
+    monkeypatch.setattr(pipeline_module, "JUDGE_MODEL", None)
+
+    with pytest.raises(RuntimeError, match="MEDCTA_JUDGE_MODEL"):
+        pipeline_module._select_backend(None, "candidate/model", "candidate-key")
+
+
 def test_pipeline_writes_manifest_report_and_one_trace_per_case(tmp_path):
     data_path = tmp_path / "cases.json"
     _write_payload(data_path, _case("A"), _case("B"))
@@ -1339,6 +1346,7 @@ def test_call_json_sends_plain_text_input_when_no_image(monkeypatch):
 
 
 def test_run_judge_parses_and_clamps_score(monkeypatch):
+    monkeypatch.setattr(llm, "JUDGE_MODEL", "gpt-5.4")
     monkeypatch.setattr(
         llm, "call_responses_json", lambda *_args, **_kwargs: '{"score": 1.5}'
     )
@@ -1369,15 +1377,64 @@ def test_judge_answer_includes_every_accepted_answer_in_the_judge_prompt(monkeyp
     """
     captured = {}
 
-    def _spy(system, user, *, model, max_output_tokens, api_key=None):
-        captured.update(system=system, user=user)
+    def _spy(
+        system,
+        user,
+        *,
+        model,
+        max_output_tokens,
+        api_key=None,
+        provider="openrouter",
+        base_url=None,
+        client_profile="candidate",
+    ):
+        captured.update(
+            system=system,
+            user=user,
+            provider=provider,
+            base_url=base_url,
+            client_profile=client_profile,
+        )
         return '{"score": 1.0}'
 
     monkeypatch.setattr(llm, "call_responses_json", _spy)
+    monkeypatch.setattr(llm, "JUDGE_MODEL", "gpt-5.4")
     score = llm.judge_answer(["Liver mass", "Hepatic lesion"], "Hepatic lesion")
     assert score == 1.0
     assert "Liver mass" in captured["user"]
     assert "Hepatic lesion" in captured["user"]
+    assert captured["provider"] == llm.JUDGE_PROVIDER
+    assert captured["base_url"] == llm.JUDGE_BASE_URL
+    assert captured["client_profile"] == "judge"
+
+
+def test_report_surfaces_judge_failures_without_changing_accuracy_policy():
+    trace = {
+        "status": "completed",
+        "final_answer": "candidate answer",
+        "final_answer_score": None,
+        "final_answer_match": False,
+        "reference_tool_sequence": [],
+        "reference_step_count": 1,
+        "model_tool_sequence": [],
+        "trajectory_exact_match": False,
+        "steps": [
+            {
+                "current_answer": "candidate answer",
+                "current_answer_score": None,
+                "current_answer_correct": False,
+                "model_output": {"valid": True, "parsed": {"action": "FINAL_ANSWER"}},
+            }
+        ],
+        "stage_transitions": [{"answer_equivalence_score": None}],
+    }
+
+    report = build_report([trace], model="test")
+
+    assert report["final_answer_accuracy"]["rate"] == 0.0
+    assert report["final_answer_judge_failure_count"] == 1
+    assert report["step_answer_judge_failure_count"] == 1
+    assert report["answer_equivalence_judge_failure_count"] == 1
 
 
 def test_retry_delay_parser_supports_minutes_and_long_wait_cap():

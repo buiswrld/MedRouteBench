@@ -1,10 +1,28 @@
 
 # secrets
 .env
+.env.*
+!.env.example
+
 # local evaluation artifacts
 medcta_eval/runs/
 medcta_golden_eval/runs/
 staged_eval/runs/
 analysis/
-__pycache__/
+judge_human_audit/
+judge_human_audit.csv
+judge_human_audit_key.json
 
+# Python and test caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# macOS
+.DS_Store

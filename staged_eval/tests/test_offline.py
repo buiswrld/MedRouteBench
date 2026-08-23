@@ -657,6 +657,7 @@ def test_builtin_backend_receives_the_reported_model(monkeypatch, tmp_path):
         n=1,
         stratify=False,
         model="chosen-model",
+        api_key="test-key",
         out_dir=tmp_path,
         verbose=False,
     )

@@ -209,6 +209,7 @@ def run_case(
     accepted_answers = case["ground_truth"]["accepted_answers"]
 
     prior_actions: list[dict] = []
+    attempted_actions: list[dict] = []
     prior_observations: list[dict] = []
     model_tool_sequence: list[str] = []
     step_traces: list[dict] = []
@@ -224,6 +225,7 @@ def run_case(
         "reference_step_count": len(case["reference_steps"]),
         "model_tool_sequence": model_tool_sequence,
         "model_actions": prior_actions,
+        "attempted_model_actions": attempted_actions,
         "steps": step_traces,
         "status": "pending",
         "termination_reason": None,
@@ -280,6 +282,13 @@ def run_case(
             break
 
         actual = result["parsed"]
+        attempted_actions.append(
+            {
+                "step_index": expected["step_index"],
+                "action": actual["action"],
+                "tool_name": actual["tool_name"],
+            }
+        )
 
         # current_answer_score: raw 0-1 judge score (or None on judge failure).
         # current_answer_correct: that score thresholded at
@@ -376,6 +385,9 @@ def run_case(
     trace["trajectory_exact_match"] = (
         model_tool_sequence == reference_sequence
         and trace["completed_reference_finalization"]
+    )
+    trace["attempted_trajectory_exact_match"] = bool(step_traces) and all(
+        bool(step.get("action_match")) for step in step_traces
     )
 
     scored_steps = [s for s in step_traces if s.get("current_answer") is not None]

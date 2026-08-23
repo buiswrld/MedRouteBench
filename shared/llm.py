@@ -20,13 +20,16 @@ from openai import (
 )
 
 from .config import (
+    JUDGE_AZURE_API_KEY,
+    JUDGE_AZURE_ENDPOINT,
     MAX_RETRIES,
     MAX_RETRY_WAIT_SECONDS,
     OPENROUTER_API_KEY,
     OPENROUTER_BASE_URL,
 )
+from .usage import record_response_usage
 
-_clients: dict[str, "OpenAI"] = {}
+_clients: dict[tuple[str, str, str], "OpenAI"] = {}
 _client_lock = threading.Lock()
 _fallback_wait = wait_exponential(multiplier=1, min=1, max=60)
 _retryable_errors = (
@@ -37,25 +40,43 @@ _retryable_errors = (
 )
 
 
-def get_client(api_key: str | None = None):
-    """Return a cached client for the given API key (default: OPENROUTER_API_KEY).
+def get_client(
+    api_key: str | None = None,
+    *,
+    provider: str = "openrouter",
+    base_url: str | None = None,
+):
+    """Return a cached OpenAI-compatible client for candidate or judge calls.
 
-    Cached per key so callers that need a distinct key for a subset of calls
-    (e.g. a separate judge key) don't pay for a fresh client on every call,
-    while the common single-key case still reuses one client process-wide.
+    Candidate calls remain on OpenRouter by default. Azure is available for
+    the fixed MedCTA judge and uses the same OpenAI-compatible Responses API.
     """
-    key = api_key or OPENROUTER_API_KEY
+    selected_provider = provider.strip().lower()
+    if selected_provider == "openrouter":
+        key = api_key or OPENROUTER_API_KEY
+        # Keep the existing OpenRouter client settings unchanged.
+        resolved_base_url = base_url or OPENROUTER_BASE_URL
+    elif selected_provider == "azure":
+        key = api_key or JUDGE_AZURE_API_KEY
+        resolved_base_url = (base_url or JUDGE_AZURE_ENDPOINT or "").rstrip("/")
+        if resolved_base_url and not resolved_base_url.endswith("/openai/v1"):
+            resolved_base_url += "/openai/v1"
+        resolved_base_url += "/"
+    else:
+        raise ValueError("provider must be 'openrouter' or 'azure'")
     if not key:
         raise RuntimeError(
-            "OPENROUTER_API_KEY must be set. "
-            "Add it to MedRouteBench/.env or export in your environment."
+            f"API key is not configured for {selected_provider}."
         )
-    if key not in _clients:
+    if not resolved_base_url or resolved_base_url == "/":
+        raise RuntimeError(f"base URL is not configured for {selected_provider}.")
+    cache_key = (selected_provider, resolved_base_url, key)
+    if cache_key not in _clients:
         # Double-checked locking so concurrent workers can't double-initialise.
         with _client_lock:
-            if key not in _clients:
-                _clients[key] = OpenAI(base_url=OPENROUTER_BASE_URL, api_key=key)
-    return _clients[key]
+            if cache_key not in _clients:
+                _clients[cache_key] = OpenAI(base_url=resolved_base_url, api_key=key)
+    return _clients[cache_key]
 
 
 def _parse_retry_after_message(message: str) -> float | None:
@@ -140,10 +161,10 @@ def _final_answer_text(response) -> str:
     """
     final_answer_texts = [
         content.text
-        for item in response.output
+        for item in getattr(response, "output", [])
         if getattr(item, "type", None) == "message"
         and getattr(item, "phase", None) == "final_answer"
-        for content in item.content
+        for content in getattr(item, "content", [])
         if getattr(content, "type", None) == "output_text"
     ]
     if final_answer_texts:
@@ -159,6 +180,9 @@ def call_responses_json(
     model: str | None,
     max_output_tokens: int,
     api_key: str | None = None,
+    provider: str = "openrouter",
+    base_url: str | None = None,
+    client_profile: str = "candidate",
 ) -> str:
     """Call the Responses API in JSON mode and return the raw output text.
 
@@ -166,10 +190,11 @@ def call_responses_json(
     Responses-API content items (e.g. from ``vision_input``); building that
     shape is the caller's job. Some providers reject JSON-mode requests when
     generation is empty, so a single retry without JSON mode is attempted
-    before giving up. ``api_key`` overrides OPENROUTER_API_KEY for this call
-    (e.g. a separate judge key); defaults to the shared key when omitted.
+    before giving up. ``provider`` selects the configured OpenRouter candidate
+    route or Azure judge route; explicit key and base-URL arguments override
+    that route's shared configuration.
     """
-    client = get_client(api_key)
+    client = get_client(api_key, provider=provider, base_url=base_url)
     request_kwargs = dict(
         model=model,
         instructions=instructions,
@@ -192,6 +217,12 @@ def call_responses_json(
             response = client.responses.create(**request_kwargs)
         else:
             raise
+    record_response_usage(
+        response,
+        provider=provider,
+        client_profile=client_profile,
+        model=model,
+    )
     return _final_answer_text(response)
 
 

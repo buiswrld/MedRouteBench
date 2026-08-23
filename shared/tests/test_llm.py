@@ -2,6 +2,30 @@ from types import SimpleNamespace
 
 import shared.llm as shared_llm
 from shared.llm import call_responses_json, resolve_image_url, vision_input
+from shared.usage import RunUsageTracker, activate_usage_tracker
+
+
+def test_azure_client_normalizes_the_fixed_judge_endpoint(monkeypatch):
+    captured = {}
+
+    def _fake_openai(**kwargs):
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(shared_llm, "OpenAI", _fake_openai)
+    shared_llm._clients.clear()
+
+    shared_llm.get_client(
+        "judge-key",
+        provider="azure",
+        base_url="https://judge-resource.services.ai.azure.com",
+    )
+
+    assert captured == {
+        "base_url": "https://judge-resource.services.ai.azure.com/openai/v1/",
+        "api_key": "judge-key",
+    }
+    shared_llm._clients.clear()
 
 
 def test_call_responses_json_sends_json_mode_request(monkeypatch):
@@ -13,7 +37,11 @@ def test_call_responses_json_sends_json_mode_request(monkeypatch):
             return SimpleNamespace(output_text='{"ok":true}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda api_key=None: client)
+    monkeypatch.setattr(
+        shared_llm,
+        "get_client",
+        lambda api_key=None, provider="openrouter", base_url=None: client,
+    )
 
     result = call_responses_json(
         "system prompt",
@@ -41,7 +69,11 @@ def test_call_responses_json_falls_back_without_json_mode_on_failure(monkeypatch
             return SimpleNamespace(output_text='{"tool_name":"OCR"}')
 
     client = SimpleNamespace(responses=Responses())
-    monkeypatch.setattr(shared_llm, "get_client", lambda api_key=None: client)
+    monkeypatch.setattr(
+        shared_llm,
+        "get_client",
+        lambda api_key=None, provider="openrouter", base_url=None: client,
+    )
 
     result = call_responses_json(
         "system prompt", "user text", model="my-model", max_output_tokens=64
@@ -50,6 +82,54 @@ def test_call_responses_json_falls_back_without_json_mode_on_failure(monkeypatch
     assert result == '{"tool_name":"OCR"}'
     assert captured[0]["text"] == {"format": {"type": "json_object"}}
     assert "text" not in captured[1]
+
+
+def test_call_responses_json_records_provider_usage(monkeypatch, tmp_path):
+    response = SimpleNamespace(
+        id="gen-usage",
+        output=[],
+        output_text='{"ok":true}',
+        usage=SimpleNamespace(
+            input_tokens=25,
+            output_tokens=5,
+            total_tokens=30,
+            cost=0.0007,
+        ),
+    )
+    client = SimpleNamespace(
+        responses=SimpleNamespace(create=lambda **_kwargs: response)
+    )
+    monkeypatch.setattr(
+        shared_llm,
+        "get_client",
+        lambda api_key=None, provider="openrouter", base_url=None: client,
+    )
+    tracker = RunUsageTracker(tmp_path)
+
+    with activate_usage_tracker(tracker):
+        result = call_responses_json(
+            "system prompt",
+            "user text",
+            model="provider/model",
+            max_output_tokens=32,
+            provider="openrouter",
+        )
+
+    assert result == '{"ok":true}'
+    assert tracker.summary()["by_route"] == [
+        {
+            "provider": "openrouter",
+            "client_profile": "candidate",
+            "model": "provider/model",
+            "calls": 1,
+            "input_tokens": 25,
+            "output_tokens": 5,
+            "total_tokens": 30,
+            "priced_calls": 1,
+            "unpriced_calls": 0,
+            "provider_reported_cost_usd": 0.0007,
+        }
+    ]
 
 
 def test_vision_input_builds_content_items():
