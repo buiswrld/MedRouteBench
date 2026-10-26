@@ -1,0 +1,24 @@
+{
+  "python_syntax_files_checked": 48,
+  "syntax_target": "Python 3.10",
+  "schema_smoke_packages": 3,
+  "cohort": {
+    "raw_pqal": 1000,
+    "gold_ids": 500,
+    "eligible": 482,
+    "labels": {
+      "yes": 264,
+      "no": 165,
+      "maybe": 53
+    }
+  },
+  "original_dataset_bytes_preserved": true,
+  "denominator_example": {
+    "stage1": 2,
+    "final": 1
+  },
+  "full_pytest_suite_executed": false,
+  "reason": "pytest and API dependencies unavailable; package installation blocked",
+  "live_model_calls": 0,
+  "source_git_head": "7af5c7ab682f779ebdea46d345b6e13e34c361f3"
+}

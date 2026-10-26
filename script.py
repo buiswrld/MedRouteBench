@@ -33,9 +33,12 @@ import medcta_eval.pipeline as medcta_pipeline
 import medcta_golden_eval.pipeline as medcta_golden_pipeline
 import staged_eval.pipeline as staged_pipeline
 
+# Add an explicit experiment before running. No paid batch is enabled by default.
 EXPERIMENTS = [
-    {"experiment": "medcta_golden", "runs": 3, "model": "anthropic/claude-opus-4.6", "api_key": ""}
+    # {"experiment": "medcta_golden", "runs": 1, "model": "provider/model-id",
+    #  "n": 107, "cases": "data/medcta/fullset_v1.json"},
 ]
+
 
 EXPERIMENT_MODULES = {
     "medcta": medcta_pipeline,
@@ -130,6 +133,9 @@ def main() -> None:
         "--dry-run", action="store_true", help="print what would run, without running it"
     )
     args = parser.parse_args()
+
+    if not EXPERIMENTS:
+        parser.error("No experiments configured. Edit EXPERIMENTS and inspect --dry-run first.")
 
     problems = validate(EXPERIMENTS)
     if problems:

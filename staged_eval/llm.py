@@ -46,8 +46,8 @@ def call_json(
 ) -> str:
     """Call the LLM API with JSON mode enabled.
 
-    Uses chat.completions by default, or the Responses API when LLM_API is
-    "responses". Returns the raw content string (a JSON object).
+    Uses the Responses API by default, or chat.completions when LLM_API is
+    "chat". Returns the raw content string (a JSON object).
     """
     effective_model = model or OPENROUTER_MODEL
     if LLM_API == "responses":
