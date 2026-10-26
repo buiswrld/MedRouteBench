@@ -1,0 +1,82 @@
+{
+  "pmid": "22491528",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine if composite measures based on process indicators are consistent with short-term outcome indicators in surgical colorectal cancer care."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Longitudinal analysis of consistency between composite measures based on process indicators and outcome indicators for 85 Dutch hospitals."
+    },
+    {
+      "label": "SETTING",
+      "context": "The Dutch Surgical Colorectal Audit database, the Netherlands."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "4732 elective patients with colon carcinoma and 2239 with rectum carcinoma treated in 85 hospitals were included in the analyses."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "All available process indicators were aggregated into five different composite measures. The association of the different composite measures with risk-adjusted postoperative mortality and morbidity was analysed at the patient and hospital level."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "At the patient level, only one of the composite measures was negatively associated with morbidity for rectum carcinoma. At the hospital level, a strong negative association was found between composite measures and hospital mortality and morbidity rates for rectum carcinoma (p<0.05), and hospital morbidity rates for colon carcinoma."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine if composite measures based on process indicators are consistent with short-term outcome indicators in surgical colorectal cancer care."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Longitudinal analysis of consistency between composite measures based on process indicators and outcome indicators for 85 Dutch hospitals."
+    },
+    {
+      "label": "SETTING",
+      "context": "The Dutch Surgical Colorectal Audit database, the Netherlands."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "4732 elective patients with colon carcinoma and 2239 with rectum carcinoma treated in 85 hospitals were included in the analyses."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "All available process indicators were aggregated into five different composite measures. The association of the different composite measures with risk-adjusted postoperative mortality and morbidity was analysed at the patient and hospital level."
+    },
+    {
+      "label": "RESULTS",
+      "context": "At the patient level, only one of the composite measures was negatively associated with morbidity for rectum carcinoma. At the hospital level, a strong negative association was found between composite measures and hospital mortality and morbidity rates for rectum carcinoma (p<0.05), and hospital morbidity rates for colon carcinoma."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 5.472
+}

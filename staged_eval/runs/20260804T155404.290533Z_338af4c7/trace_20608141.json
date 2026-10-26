@@ -1,0 +1,62 @@
+{
+  "pmid": "20608141",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Prostate-specific antigen (PSA) levels can show wide fluctuations when repeatedly measured. Here we investigatewd if: (a) biopsy timing influences the prostate cancer (PC) detection rate in patients with fluctuating PSA (flu-PSA) in comparison with patients with steadily increasing PSA (si-PSA); (b) PSA slope estimated in patients with flu-PSA predicts a different risk of cancer detection; (c) flu-PSA and si-PSA patients develop PC in topographically different sites; (d) the behaviour of pre-operative PSA is an expression of a disease with defferent characteristics to the following radical prostatectomy."
+    },
+    {
+      "label": "METHODS",
+      "context": "The study involved 211 patients who underwent at least a second biopsy after a first negative prostate biopsy. PSA Slope, PSA velocity (PSAV) and PSA doubling time (PSADT) were estimated. Flu-PSA level was defined as a PSA series with at least one PSA value lower than the one immediately preceding it."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.25,\"reason_for_action\":\"Only the study aim and methods are provided (definitions, measures). No outcomes or results are given, so we cannot determine if fluctuating PSA is sufficiently reassuring to avoid biopsy.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.25,
+      "reason_for_action": "Only the study aim and methods are provided (definitions, measures). No outcomes or results are given, so we cannot determine if fluctuating PSA is sufficiently reassuring to avoid biopsy."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "82 patients had flu-PSA levels and 129 si-PSA levels. There were no significant differences between the two groups in terms of cancer detection, clinical or pathological stage, but the si-PSA group with cancer had a higher Gleason score. No difference was found for PSA Slope between flu-PSA patients with cancer and those without."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "INTRODUCTION",
+      "context": "Prostate-specific antigen (PSA) levels can show wide fluctuations when repeatedly measured. Here we investigatewd if: (a) biopsy timing influences the prostate cancer (PC) detection rate in patients with fluctuating PSA (flu-PSA) in comparison with patients with steadily increasing PSA (si-PSA); (b) PSA slope estimated in patients with flu-PSA predicts a different risk of cancer detection; (c) flu-PSA and si-PSA patients develop PC in topographically different sites; (d) the behaviour of pre-operative PSA is an expression of a disease with defferent characteristics to the following radical prostatectomy."
+    },
+    {
+      "label": "METHODS",
+      "context": "The study involved 211 patients who underwent at least a second biopsy after a first negative prostate biopsy. PSA Slope, PSA velocity (PSAV) and PSA doubling time (PSADT) were estimated. Flu-PSA level was defined as a PSA series with at least one PSA value lower than the one immediately preceding it."
+    },
+    {
+      "label": "RESULTS",
+      "context": "82 patients had flu-PSA levels and 129 si-PSA levels. There were no significant differences between the two groups in terms of cancer detection, clinical or pathological stage, but the si-PSA group with cancer had a higher Gleason score. No difference was found for PSA Slope between flu-PSA patients with cancer and those without."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.80,\"reason_for_action\":\"Study found no significant difference in cancer detection between fluctuating and steadily increasing PSA; fluctuating PSA alone is not reassuring enough to omit biopsy.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.8,
+      "reason_for_action": "Study found no significant difference in cancer detection between fluctuating and steadily increasing PSA; fluctuating PSA alone is not reassuring enough to omit biopsy."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.118
+}

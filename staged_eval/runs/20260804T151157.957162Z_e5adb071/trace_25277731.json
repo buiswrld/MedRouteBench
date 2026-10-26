@@ -1,0 +1,58 @@
+{
+  "pmid": "25277731",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Sternal fractures in childhood are rare. The aim of the study was to investigate the accident mechanism, the detection of radiological and sonographical criteria and consideration of associated injuries."
+    },
+    {
+      "label": "METHOD",
+      "context": "In the period from January 2010 to December 2012 all inpatients and outpatients with sternal fractures were recorded according to the documentation."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A total of 4 children aged 5-14 years with a sternal fracture were treated in 2 years, 2 children were hospitalized for pain management and 2 remained in outpatient care."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Sternal fractures in childhood are rare. The aim of the study was to investigate the accident mechanism, the detection of radiological and sonographical criteria and consideration of associated injuries."
+    },
+    {
+      "label": "METHOD",
+      "context": "In the period from January 2010 to December 2012 all inpatients and outpatients with sternal fractures were recorded according to the documentation."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A total of 4 children aged 5-14 years with a sternal fracture were treated in 2 years, 2 children were hospitalized for pain management and 2 remained in outpatient care."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 4.759
+}

@@ -1,0 +1,58 @@
+{
+  "pmid": "18594195",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND AND AIMS",
+      "context": "Refusal of patients to participate in intervention programs is an important problem in clinical trials but, in general, researchers devote relatively little attention to it. In this article, a comparison is made between patients who, after having been invited, agreed to participate in a self-management intervention (participants) and those who refused (refusers). Compared with other studies of refusers, relatively more information could be gathered with regard to both their characteristics and reasons for refusing, because all potential participants were invited personally."
+    },
+    {
+      "label": "METHODS",
+      "context": "Older patients from a Dutch outpatient clinic were invited to participate in a self-management intervention, and their characteristics were assessed. Demographic data were collected, as well as data on physical functioning and lack of emotional support. People who refused to participate were asked to give their reasons for refusing."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Of the 361 patients invited, 267 (74%) refused participation. These refusers were more restricted in their mobility, lived further away from the location of the intervention, and had a partner more often than did the participants. No differences were found in level of education, age or gender. The main reasons given by respondents for refusing to participate were lack of time, travel distance, and transport problems."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND AND AIMS",
+      "context": "Refusal of patients to participate in intervention programs is an important problem in clinical trials but, in general, researchers devote relatively little attention to it. In this article, a comparison is made between patients who, after having been invited, agreed to participate in a self-management intervention (participants) and those who refused (refusers). Compared with other studies of refusers, relatively more information could be gathered with regard to both their characteristics and reasons for refusing, because all potential participants were invited personally."
+    },
+    {
+      "label": "METHODS",
+      "context": "Older patients from a Dutch outpatient clinic were invited to participate in a self-management intervention, and their characteristics were assessed. Demographic data were collected, as well as data on physical functioning and lack of emotional support. People who refused to participate were asked to give their reasons for refusing."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Of the 361 patients invited, 267 (74%) refused participation. These refusers were more restricted in their mobility, lived further away from the location of the intervention, and had a partner more often than did the participants. No differences were found in level of education, age or gender. The main reasons given by respondents for refusing to participate were lack of time, travel distance, and transport problems."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 4.785
+}

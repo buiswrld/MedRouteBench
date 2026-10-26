@@ -1,0 +1,98 @@
+{
+  "run_id": "20260804T155404.290533Z_338af4c7",
+  "model": "gpt-5-mini",
+  "backend": "azure",
+  "provenance": {
+    "schema_version": 1,
+    "backend": "azure",
+    "model": "gpt-5-mini",
+    "generation": {
+      "max_completion_tokens": 2048,
+      "seed": 42
+    },
+    "use_fixtures": false,
+    "cases": {
+      "path": "C:\\Users\\Chuanhai\\Documents\\algoverse\\MedRouteBench\\data\\pubmedqa\\ori_pqal.json",
+      "sha256": "fb1f109a9bad1f96369a0d5343e3710d251c8f237e8369be86e30bd7e430523d"
+    },
+    "ground_truth": {
+      "path": "C:\\Users\\Chuanhai\\Documents\\algoverse\\MedRouteBench\\data\\pubmedqa\\test_ground_truth.json",
+      "sha256": "9ffa4b5847b84c4ba7001d8900b562a3300d19ea92e480b24c5c2b404d76bab9"
+    },
+    "code_sha256": {
+      "data.py": "c9968a7482664cd7cfc504f7b73e71f4d1b72002f984d3de1b77e6f3a39df619",
+      "metrics.py": "0b98f6e4d9c15d8b5d11145afe4ee1296d37ed53ef53ed3bbdaa04af642ca399",
+      "pipeline.py": "6576d5d1b881cc08ff25ee89acc45fc238dc8a6d6970ade12e30d83fc7ce3cb8",
+      "prompts.py": "0793de1c018b69fcf1563ce89621a6a681dcbfe185a82b3eb733781f752ba6c4",
+      "runner.py": "d46616f4f067183ba4002e3d084cbc9769566581be7138df75a61105570ba9d4",
+      "schema.py": "39143230dc07b55d941c7660a045c6ae68ca63737da2258c0d75d6d7f3e33ea3",
+      "llm.py": "d86eb2f531c71d53e70490220d68a98da41ee9aa4068be8372ca8f67b5c1f6fc"
+    },
+    "actions": [
+      "ANSWER",
+      "KEEP_ANSWER",
+      "REVISE_ANSWER",
+      "ABSTAIN"
+    ]
+  },
+  "n_selected_cases": 482,
+  "n_completed_cases": 482,
+  "n_invalid_cases": 0,
+  "dataset_counts": {
+    "loaded": 1000,
+    "with_official_gold": 500,
+    "eligible_two_stage": 482,
+    "skipped_unsplittable": 18
+  },
+  "sample_label_counts": {
+    "yes": 264,
+    "no": 165,
+    "maybe": 53
+  },
+  "trace_label_counts": {
+    "successful_revision": 259,
+    "missed_revision": 146,
+    "kept_correct": 58,
+    "overreaction": 19
+  },
+  "stage1_answer_accuracy": {
+    "rate": 0.15975103734439833,
+    "numerator": 77,
+    "denominator": 482
+  },
+  "final_answer_accuracy": {
+    "rate": 0.6576763485477178,
+    "numerator": 317,
+    "denominator": 482
+  },
+  "successful_revision_rate": {
+    "rate": 0.6395061728395062,
+    "numerator": 259,
+    "denominator": 405
+  },
+  "missed_revision_rate": {
+    "rate": 0.36049382716049383,
+    "numerator": 146,
+    "denominator": 405
+  },
+  "overreaction_rate": {
+    "rate": 0.24675324675324675,
+    "numerator": 19,
+    "denominator": 77
+  },
+  "kept_correct_rate": {
+    "rate": 0.7532467532467533,
+    "numerator": 58,
+    "denominator": 77
+  },
+  "final_abstention_rate": {
+    "rate": 0.0,
+    "numerator": 0,
+    "denominator": 482
+  },
+  "maintenance_rate": {
+    "rate": 0.3962655601659751,
+    "numerator": 191,
+    "denominator": 482
+  }
+}

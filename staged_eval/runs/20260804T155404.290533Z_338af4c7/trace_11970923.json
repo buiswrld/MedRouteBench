@@ -1,0 +1,62 @@
+{
+  "pmid": "11970923",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND AND AIMS",
+      "context": "The prevalence of retinal haemorrhages after convulsions is not well established. As these haemorrhages are considered characteristic of child abuse, we investigated their occurrence after convulsive episodes to see whether the finding of haemorrhage should prompt further investigation."
+    },
+    {
+      "label": "METHODS",
+      "context": "Prospective study of 153 children (aged 2 months to 2 years), seen in the emergency department after a convulsive episode. After a thorough history and physical examination, a retinal examination was performed by an ophthalmologist. If findings were positive, further investigation was undertaken to rule out systemic disorder or child abuse."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.55,\"reason_for_action\":\"Insufficient data in the provided excerpt—study was designed because retinal haemorrhages are linked to abuse, but no results/conclusions are given; cannot determine whether further investigation is warranted.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.55,
+      "reason_for_action": "Insufficient data in the provided excerpt—study was designed because retinal haemorrhages are linked to abuse, but no results/conclusions are given; cannot determine whether further investigation is warranted."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "One child was found with unilateral retinal haemorrhages following an episode of a simple febrile convulsion. A thorough investigation uncovered no other reason for this finding."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND AND AIMS",
+      "context": "The prevalence of retinal haemorrhages after convulsions is not well established. As these haemorrhages are considered characteristic of child abuse, we investigated their occurrence after convulsive episodes to see whether the finding of haemorrhage should prompt further investigation."
+    },
+    {
+      "label": "METHODS",
+      "context": "Prospective study of 153 children (aged 2 months to 2 years), seen in the emergency department after a convulsive episode. After a thorough history and physical examination, a retinal examination was performed by an ophthalmologist. If findings were positive, further investigation was undertaken to rule out systemic disorder or child abuse."
+    },
+    {
+      "label": "RESULTS",
+      "context": "One child was found with unilateral retinal haemorrhages following an episode of a simple febrile convulsion. A thorough investigation uncovered no other reason for this finding."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.55,\"reason_for_action\":\"Study found retinal haemorrhage in only 1 of 153 convulsing children, with no other cause identified. Rare occurrence but possible; supports case-by-case further investigation rather than a definitive yes/no.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.55,
+      "reason_for_action": "Study found retinal haemorrhage in only 1 of 153 convulsing children, with no other cause identified. Rare occurrence but possible; supports case-by-case further investigation rather than a definitive yes/no."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 9.739
+}

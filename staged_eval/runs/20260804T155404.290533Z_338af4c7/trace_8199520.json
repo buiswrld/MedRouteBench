@@ -1,0 +1,86 @@
+{
+  "pmid": "8199520",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To explore expressed needs, both formal and informal, of family caregivers of frail elderly. To evaluate roles of physicians."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Questionnaire survey of members of the Montreal Jewish community providing care for frail elderly family members."
+    },
+    {
+      "label": "SETTING",
+      "context": "Jewish community of Montreal."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Volunteer caregivers who were caring for a family member or friend 60 years or older, who had greatest responsibility for providing physical or emotional support to an elderly person, who saw themselves as caregivers, and who could speak English or French were studied. Of 118 volunteers, 32 were excluded because they withdrew for personal reasons or because they did not meet study criteria."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Demographic variables, functional status of the care receiver, use of home care services, and needs assessment to identify additional services."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.15,\"reason_for_action\":\"The provided evidence describes objectives and methods but gives no results about physicians' responsiveness to caregiver needs, so conclusions cannot be drawn from the supplied information.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.15,
+      "reason_for_action": "The provided evidence describes objectives and methods but gives no results about physicians' responsiveness to caregiver needs, so conclusions cannot be drawn from the supplied information."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "An average of 75.4% respondents did not use formal support services. Just under half of caregivers were dissatisfied with the attention they received from the health care system, and more than one third expressed feelings of stress, depression, guilt, and isolation."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To explore expressed needs, both formal and informal, of family caregivers of frail elderly. To evaluate roles of physicians."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Questionnaire survey of members of the Montreal Jewish community providing care for frail elderly family members."
+    },
+    {
+      "label": "SETTING",
+      "context": "Jewish community of Montreal."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Volunteer caregivers who were caring for a family member or friend 60 years or older, who had greatest responsibility for providing physical or emotional support to an elderly person, who saw themselves as caregivers, and who could speak English or French were studied. Of 118 volunteers, 32 were excluded because they withdrew for personal reasons or because they did not meet study criteria."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Demographic variables, functional status of the care receiver, use of home care services, and needs assessment to identify additional services."
+    },
+    {
+      "label": "RESULTS",
+      "context": "An average of 75.4% respondents did not use formal support services. Just under half of caregivers were dissatisfied with the attention they received from the health care system, and more than one third expressed feelings of stress, depression, guilt, and isolation."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.70,\"reason_for_action\":\"Results report just under half of caregivers were dissatisfied with attention from the health care system and many experienced stress/isolation, indicating physicians are often not meeting caregivers' needs.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.7,
+      "reason_for_action": "Results report just under half of caregivers were dissatisfied with attention from the health care system and many experienced stress/isolation, indicating physicians are often not meeting caregivers' needs."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 9.714
+}

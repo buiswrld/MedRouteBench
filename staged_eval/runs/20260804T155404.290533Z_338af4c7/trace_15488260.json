@@ -1,0 +1,70 @@
+{
+  "pmid": "15488260",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Rates of relapse and predictive relapse factors were studied over more than 4 years in a sample of Spanish outpatients with DSM-III-R criteria for unipolar major depressive episode."
+    },
+    {
+      "label": "METHODS",
+      "context": "A final sample of 139 outpatient was followed monthly in a naturalistic study. The Structured Clinical Interview for DSM-III-R was used. Phases of evolution were recorded using the Hamilton Depression Rating Scale, applying the Frank criteria. Survival analysis, Kaplan-Meier product limit and proportional hazards models were used."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.40,\"reason_for_action\":\"The study methods indicate remission type was analyzed as a potential predictor using survival/proportional-hazards models, but no results or conclusions are provided in the supplied evidence, so significance is uncertain.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.4,
+      "reason_for_action": "The study methods indicate remission type was analyzed as a potential predictor using survival/proportional-hazards models, but no results or conclusions are provided in the supplied evidence, so significance is uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A higher rate of relapses was observed in the partial remission group (91.4%) compared to the complete remission one (51.3%). The four factors with predictive relapse value were: \"partial remission versus complete remission\", \"the intensity of clinical symptoms\", \"the age\" and \"the number of previous depressive episodes\". The existence of partial remission was the most powerful predictive factor."
+    },
+    {
+      "label": "LIMITATIONS",
+      "context": "The decreasing sample size during the follow-up and the difficulty in warranting the treatment compliance."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Rates of relapse and predictive relapse factors were studied over more than 4 years in a sample of Spanish outpatients with DSM-III-R criteria for unipolar major depressive episode."
+    },
+    {
+      "label": "METHODS",
+      "context": "A final sample of 139 outpatient was followed monthly in a naturalistic study. The Structured Clinical Interview for DSM-III-R was used. Phases of evolution were recorded using the Hamilton Depression Rating Scale, applying the Frank criteria. Survival analysis, Kaplan-Meier product limit and proportional hazards models were used."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A higher rate of relapses was observed in the partial remission group (91.4%) compared to the complete remission one (51.3%). The four factors with predictive relapse value were: \"partial remission versus complete remission\", \"the intensity of clinical symptoms\", \"the age\" and \"the number of previous depressive episodes\". The existence of partial remission was the most powerful predictive factor."
+    },
+    {
+      "label": "LIMITATIONS",
+      "context": "The decreasing sample size during the follow-up and the difficulty in warranting the treatment compliance."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.9,\"reason_for_action\":\"Results show relapse rates 91.4% (partial) vs 51.3% (complete) and list 'partial remission vs complete remission' as the most powerful predictive relapse factor.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.9,
+      "reason_for_action": "Results show relapse rates 91.4% (partial) vs 51.3% (complete) and list 'partial remission vs complete remission' as the most powerful predictive relapse factor."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.125
+}

@@ -1,0 +1,62 @@
+{
+  "pmid": "23283159",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "To investigate the effect of obesity at the start of adolescence on the prevalence, incidence and maintenance of chest wheezing among individuals aged 11-15 years in a birth cohort in a developing country."
+    },
+    {
+      "label": "METHODS",
+      "context": "The seventh follow-up of the 1993 Pelotas birth cohort occurred in 2004 (individuals aged 10-11 years). Between January and August 2008, the eighth follow-up of the cohort was conducted. All the individuals of the original cohort who were alive (who were then adolescents aged between 14 and 15 years) were targets for the study. The International Study of Asthma and Allergies in Childhood (ISAAC) questionnaire was used to define wheezing. In addition to the body mass index (BMI), used to define obesity by the World Health Organization (WHO) criteria, we assessed skinfold thickness."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.2,\"reason_for_action\":\"The provided excerpts give study purpose and methods (BMI/skin folds, ISAAC questionnaire) but no results or effect estimates, so association between obesity and adolescent wheeze cannot be determined from this evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.2,
+      "reason_for_action": "The provided excerpts give study purpose and methods (BMI/skin folds, ISAAC questionnaire) but no results or effect estimates, so association between obesity and adolescent wheeze cannot be determined from this evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "From the original cohort, 4,349 individuals were located (85.7% follow-up rate). The prevalence of chest wheezing at 11 and 15 years were 13.5% (95% CI: 12.5%-14.5%) and 12.1% (95% CI: 11.1%-13.1%), respectively. The prevalence of wheezing at both times was 4.5% (95% CI: 3.9%-5.1%) and the incidence of wheezing was 7.5% (95% CI: 6.7%-8.3%). Independent of the effect of various confounding variables, the prevalence of wheezing at 15 years was 50% greater among obese individuals than among eutrophic individuals at 11 years (RR 1.53; 95% CI: 1.14-2.05). The greater the skinfold tertile at 11 years, the higher the prevalence of wheezing at 15 years was (p = .011). Weight status and skinfolds did not present any association with incident wheezing. After controlling for confounding factors, the risk of persistent wheezing among obese individuals at 11 years was 1.82 (95% CI: 1.30-2.54)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "To investigate the effect of obesity at the start of adolescence on the prevalence, incidence and maintenance of chest wheezing among individuals aged 11-15 years in a birth cohort in a developing country."
+    },
+    {
+      "label": "METHODS",
+      "context": "The seventh follow-up of the 1993 Pelotas birth cohort occurred in 2004 (individuals aged 10-11 years). Between January and August 2008, the eighth follow-up of the cohort was conducted. All the individuals of the original cohort who were alive (who were then adolescents aged between 14 and 15 years) were targets for the study. The International Study of Asthma and Allergies in Childhood (ISAAC) questionnaire was used to define wheezing. In addition to the body mass index (BMI), used to define obesity by the World Health Organization (WHO) criteria, we assessed skinfold thickness."
+    },
+    {
+      "label": "RESULTS",
+      "context": "From the original cohort, 4,349 individuals were located (85.7% follow-up rate). The prevalence of chest wheezing at 11 and 15 years were 13.5% (95% CI: 12.5%-14.5%) and 12.1% (95% CI: 11.1%-13.1%), respectively. The prevalence of wheezing at both times was 4.5% (95% CI: 3.9%-5.1%) and the incidence of wheezing was 7.5% (95% CI: 6.7%-8.3%). Independent of the effect of various confounding variables, the prevalence of wheezing at 15 years was 50% greater among obese individuals than among eutrophic individuals at 11 years (RR 1.53; 95% CI: 1.14-2.05). The greater the skinfold tertile at 11 years, the higher the prevalence of wheezing at 15 years was (p = .011). Weight status and skinfolds did not present any association with incident wheezing. After controlling for confounding factors, the risk of persistent wheezing among obese individuals at 11 years was 1.82 (95% CI: 1.30-2.54)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.88,\"reason_for_action\":\"Study results: obesity at 11y was associated with higher prevalence of wheeze at 15y (RR 1.53) and greater risk of persistent wheeze (RR 1.82), supporting obesity as a risk factor for adolescent wheezing.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.88,
+      "reason_for_action": "Study results: obesity at 11y was associated with higher prevalence of wheeze at 15y (RR 1.53) and greater risk of persistent wheeze (RR 1.82), supporting obesity as a risk factor for adolescent wheezing."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.64
+}

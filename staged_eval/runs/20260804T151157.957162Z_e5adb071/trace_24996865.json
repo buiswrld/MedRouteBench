@@ -1,0 +1,58 @@
+{
+  "pmid": "24996865",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "Reconstructing the natural joint line in knee revision surgery improves clinical and functional outcome but may be challenging when both cartilage and bone were removed during previous operations. Assessing joint lines (JLs) by means of bony landmarks is inadvisable because of large variations in human anatomy. Because of the inherent symmetry of the human body, we hypothesised that JLs may be directly assessed by measuring the distances from the bony landmarks to the JL of the contralateral knee by means of radiographic images."
+    },
+    {
+      "label": "METHODS",
+      "context": "Using scaled weight-bearing radiographs in anteroposterior view of both knees, two independent observers measured the distances from the fibular head, the medial and lateral epicondyle, and the adductor tubercle to the JL. A two-sided p value of ≤0.05 was considered statistically significant."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Two hundred knees of 100 patients (50 men and 50 women) were examined. For the fibular head, the mean difference between the treated and the control knee was 0.0 mm with narrow confidence limits ranging from -1.1 to 1.1."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "Reconstructing the natural joint line in knee revision surgery improves clinical and functional outcome but may be challenging when both cartilage and bone were removed during previous operations. Assessing joint lines (JLs) by means of bony landmarks is inadvisable because of large variations in human anatomy. Because of the inherent symmetry of the human body, we hypothesised that JLs may be directly assessed by measuring the distances from the bony landmarks to the JL of the contralateral knee by means of radiographic images."
+    },
+    {
+      "label": "METHODS",
+      "context": "Using scaled weight-bearing radiographs in anteroposterior view of both knees, two independent observers measured the distances from the fibular head, the medial and lateral epicondyle, and the adductor tubercle to the JL. A two-sided p value of ≤0.05 was considered statistically significant."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Two hundred knees of 100 patients (50 men and 50 women) were examined. For the fibular head, the mean difference between the treated and the control knee was 0.0 mm with narrow confidence limits ranging from -1.1 to 1.1."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 5.544
+}

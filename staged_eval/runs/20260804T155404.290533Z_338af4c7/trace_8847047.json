@@ -1,0 +1,62 @@
+{
+  "pmid": "8847047",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "AIMS",
+      "context": "The purpose of this study is to examine whether or not well differentiated (w-d) hepatocellular carcinoma (HCC) is indeed clinically early cancer."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "Seventy six patients with solitary small HCCs up to 3 cm in diameter, who underwent hepatectomy, were observed for at least 2 years for possible recurrence. These patients were divided into two groups: 10 patients with w-d HCCs (Edmondson and Steiner's grade I) and 66 patients with less differentiated (l-d) HCCs (Edmondson and Steiner's grade I-II, II-III, and III)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"Provided text gives study aim and patient grouping but no outcome or recurrence/survival results; insufficient evidence to conclude whether well-differentiated small HCC is clinically early cancer.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "Provided text gives study aim and patient grouping but no outcome or recurrence/survival results; insufficient evidence to conclude whether well-differentiated small HCC is clinically early cancer."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The histological analysis revealed that w-d HCCs had lower incidences of fibrous capsule formation (P<0.01), when compared to l-d HCCs. There were no significant differences in the incidence of intrahepatic metastasis, or portal vein invasion. In a resected specimen of w-d HCC, barium sulfate and gelatin were injected into portal vein and a transparent specimen was made. The transparent specimen showed that the portal vein in the tumor seemed to be intact. Microscopically, cancer cell infiltration into the fibrous frame of the portal tract was present. There were no significant differences in the disease free survival between the two groups. An analysis of tumor volume doubling time in recurrent foci suggested that minute cancerous foci had been present at the time of operation."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "AIMS",
+      "context": "The purpose of this study is to examine whether or not well differentiated (w-d) hepatocellular carcinoma (HCC) is indeed clinically early cancer."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "Seventy six patients with solitary small HCCs up to 3 cm in diameter, who underwent hepatectomy, were observed for at least 2 years for possible recurrence. These patients were divided into two groups: 10 patients with w-d HCCs (Edmondson and Steiner's grade I) and 66 patients with less differentiated (l-d) HCCs (Edmondson and Steiner's grade I-II, II-III, and III)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The histological analysis revealed that w-d HCCs had lower incidences of fibrous capsule formation (P<0.01), when compared to l-d HCCs. There were no significant differences in the incidence of intrahepatic metastasis, or portal vein invasion. In a resected specimen of w-d HCC, barium sulfate and gelatin were injected into portal vein and a transparent specimen was made. The transparent specimen showed that the portal vein in the tumor seemed to be intact. Microscopically, cancer cell infiltration into the fibrous frame of the portal tract was present. There were no significant differences in the disease free survival between the two groups. An analysis of tumor volume doubling time in recurrent foci suggested that minute cancerous foci had been present at the time of operation."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.88,\"reason_for_action\":\"Study found no significant difference in disease-free survival or intrahepatic metastasis/portal vein invasion; microscopic infiltration and minute foci were present, so well-differentiated small HCC is not necessarily clinically early.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.88,
+      "reason_for_action": "Study found no significant difference in disease-free survival or intrahepatic metastasis/portal vein invasion; microscopic infiltration and minute foci were present, so well-differentiated small HCC is not necessarily clinically early."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 9.788
+}

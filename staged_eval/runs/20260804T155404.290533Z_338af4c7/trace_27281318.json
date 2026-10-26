@@ -1,0 +1,62 @@
+{
+  "pmid": "27281318",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study aims to study femoral tunnel lengths drilled with a flexible reamer and the distance to important lateral structures obtained by flexing the knee at various angles and by drilling the guide pins arthroscopically to resemble clinical practice. The purpose of this cadaveric study was twofold: 1. to determine whether femoral tunnel lengths of greater than 20 mm can be created with a flexible reamer system at 90 ° of knee flexion and 2. to determine whether the lateral structures of the knee are safe with this technique."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ten fresh cadaveric knees were utilized. The intra-osseous length can be measured with a specially de - signed flexible guide pin. Flexible pins were inserted with the knee at 70°, 90°, and 120° of flexion. The intra-osseous length was measured with the measuring device. Each speci - men was dissected around the lateral aspect of the knee to identify the critical structures, the common peroneal nerve, and the LCL. The distance from the guide pins to the com - mon peroneal nerve and femoral attachment of the LCL were measured with a standard flexible paper ruler to the nearest millimeter."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.45,\"reason_for_action\":\"The excerpt states the study's aims and methods (measuring tunnel lengths at 70°, 90°, 120°) but gives no results. Without outcome data on tunnel lengths or safety, a definitive yes/no cannot be determined.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.45,
+      "reason_for_action": "The excerpt states the study's aims and methods (measuring tunnel lengths at 70°, 90°, 120°) but gives no results. Without outcome data on tunnel lengths or safety, a definitive yes/no cannot be determined."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "There is a trend for progressively increasing mean intra-osseous length associated with increased flexion of the knee. The mean intra-osseous length for 70° flexion was 25.2 mm (20 mm to 32 mm), which was statistically significant when compared to mean intra-osseous lengths of 32.1 mm (22 mm to 45 mm) and 38.0 mm (34 mm to 45 mm) in the 90° and 120° flexion groups, respectively (p<0.05). There were no significant differences among the groups with respect to distance to the LCL. There is a trend toward longer distances to the common peroneal nerve with increased flexion. There was a statistically significant dif - ference when comparing 120° versus 70° (p<0.05)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study aims to study femoral tunnel lengths drilled with a flexible reamer and the distance to important lateral structures obtained by flexing the knee at various angles and by drilling the guide pins arthroscopically to resemble clinical practice. The purpose of this cadaveric study was twofold: 1. to determine whether femoral tunnel lengths of greater than 20 mm can be created with a flexible reamer system at 90 ° of knee flexion and 2. to determine whether the lateral structures of the knee are safe with this technique."
+    },
+    {
+      "label": "METHODS",
+      "context": "Ten fresh cadaveric knees were utilized. The intra-osseous length can be measured with a specially de - signed flexible guide pin. Flexible pins were inserted with the knee at 70°, 90°, and 120° of flexion. The intra-osseous length was measured with the measuring device. Each speci - men was dissected around the lateral aspect of the knee to identify the critical structures, the common peroneal nerve, and the LCL. The distance from the guide pins to the com - mon peroneal nerve and femoral attachment of the LCL were measured with a standard flexible paper ruler to the nearest millimeter."
+    },
+    {
+      "label": "RESULTS",
+      "context": "There is a trend for progressively increasing mean intra-osseous length associated with increased flexion of the knee. The mean intra-osseous length for 70° flexion was 25.2 mm (20 mm to 32 mm), which was statistically significant when compared to mean intra-osseous lengths of 32.1 mm (22 mm to 45 mm) and 38.0 mm (34 mm to 45 mm) in the 90° and 120° flexion groups, respectively (p<0.05). There were no significant differences among the groups with respect to distance to the LCL. There is a trend toward longer distances to the common peroneal nerve with increased flexion. There was a statistically significant dif - ference when comparing 120° versus 70° (p<0.05)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.90,\"reason_for_action\":\"Results show mean intra-osseous length at 90° = 32.1 mm (range 22–45 mm), exceeding the 20 mm threshold; lateral structure distances were not significantly different, supporting adequacy.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.9,
+      "reason_for_action": "Results show mean intra-osseous length at 90° = 32.1 mm (range 22–45 mm), exceeding the 20 mm threshold; lateral structure distances were not significantly different, supporting adequacy."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.973
+}

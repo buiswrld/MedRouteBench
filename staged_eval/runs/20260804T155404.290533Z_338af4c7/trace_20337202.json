@@ -1,0 +1,62 @@
+{
+  "pmid": "20337202",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine the duration of continuing pregnancy after antenatal corticosteroid (AC) administration and to evaluate the potential opportunity for rescue AC."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "Retrospective analysis of women at 24-32 weeks' gestation who received AC at one institution."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.60,\"reason_for_action\":\"Only the study objective and design are provided (retrospective analysis at 24–32 wks); no results on duration of pregnancy after AC or rates enabling rescue are given, so outcome is undetermined.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "Only the study objective and design are provided (retrospective analysis at 24–32 wks); no results on duration of pregnancy after AC or rates enabling rescue are given, so outcome is undetermined."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Six hundred ninety-two women received AC. Two hundred forty-seven (35.7%) delivered at>or = 34 weeks' gestation. Three hundred twenty-one (46.4%) delivered within 1 week of AC; 92 of those women (13.3%) delivered within 24 hours. Only 124 (17.9%) remained pregnant 1 week after AC and delivered at<34 weeks. The latter were compared to women delivering>2 week after AC but>or = 34 weeks. More likely to deliver at<34 weeks were those women who received AC for premature preterm rupture of membranes (OR 3.83, 95% CI 2.06-7.17), twins (OR 2.90, 95% CI 1.42-5.95) or before 28 weeks (OR 2.21, 95% CI 1.38-3.52)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine the duration of continuing pregnancy after antenatal corticosteroid (AC) administration and to evaluate the potential opportunity for rescue AC."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "Retrospective analysis of women at 24-32 weeks' gestation who received AC at one institution."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Six hundred ninety-two women received AC. Two hundred forty-seven (35.7%) delivered at>or = 34 weeks' gestation. Three hundred twenty-one (46.4%) delivered within 1 week of AC; 92 of those women (13.3%) delivered within 24 hours. Only 124 (17.9%) remained pregnant 1 week after AC and delivered at<34 weeks. The latter were compared to women delivering>2 week after AC but>or = 34 weeks. More likely to deliver at<34 weeks were those women who received AC for premature preterm rupture of membranes (OR 3.83, 95% CI 2.06-7.17), twins (OR 2.90, 95% CI 1.42-5.95) or before 28 weeks (OR 2.21, 95% CI 1.38-3.52)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.75,\"reason_for_action\":\"Only 17.9% remained pregnant 1+ week and delivered <34 wks, so a limited but real opportunity for rescue—more likely with PPROM, twins, or delivery before 28 weeks.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.75,
+      "reason_for_action": "Only 17.9% remained pregnant 1+ week and delivered <34 wks, so a limited but real opportunity for rescue—more likely with PPROM, twins, or delivery before 28 weeks."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 11.404
+}

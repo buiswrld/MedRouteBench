@@ -1,0 +1,70 @@
+{
+  "pmid": "16735905",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "STUDY OBJECTIVES",
+      "context": "To investigate polysomnographic and anthropomorphic factors predicting need of high optimal continuous positive airway pressure (CPAP)."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Retrospective data analysis."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Three hundred fifty-three consecutive obstructive sleep apnea (OSA) patients who had a successful manual CPAP titration in our sleep disorders unit."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.45,\"reason_for_action\":\"Only the study objective, design, and patient count are provided; no results or conclusions are given, so it is not possible to determine whether OSA severity predicts need for high CPAP.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.45,
+      "reason_for_action": "Only the study objective, design, and patient count are provided; no results or conclusions are given, so it is not possible to determine whether OSA severity predicts need for high CPAP."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "MEASUREMENTS AND RESULTS",
+      "context": "The mean optimal CPAP was 9.5 +/- 2.4 cm H2O. The optimal CPAP pressure increases with an increase in OSA severity from 7.79 +/- 2.2 in the mild, to 8.7 +/- 1.8 in the moderate, and to 10.1 +/- 2.3 cm H2O in the severe OSA group. A high CPAP was defined as the mean + 1 standard deviation (SD;>or =12 cm H2O). The predictor variables included apnea-hypopnea index (AHI), age, sex, body mass index (BMI), Epworth Sleepiness Scale (ESS), and the Multiple Sleep Latency Test (MSLT). High CPAP was required in 2 (6.9%), 6 (5.8%), and 63 (28.6%) patients with mild, moderate, and severe OSA, respectively. On univariate analysis, AHI, BMI, ESS score, and the proportion of males were significantly higher in those needing high CPAP. They also have a lower MSLT mean. On logistic regression, the use of high CPAP was 5.90 times more frequent (95% confidence interval 2.67-13.1) in severe OSA patients after adjustment for the other variables. The area under the receiver operator curve was 72.4%, showing that the model was adequate."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "STUDY OBJECTIVES",
+      "context": "To investigate polysomnographic and anthropomorphic factors predicting need of high optimal continuous positive airway pressure (CPAP)."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Retrospective data analysis."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Three hundred fifty-three consecutive obstructive sleep apnea (OSA) patients who had a successful manual CPAP titration in our sleep disorders unit."
+    },
+    {
+      "label": "MEASUREMENTS AND RESULTS",
+      "context": "The mean optimal CPAP was 9.5 +/- 2.4 cm H2O. The optimal CPAP pressure increases with an increase in OSA severity from 7.79 +/- 2.2 in the mild, to 8.7 +/- 1.8 in the moderate, and to 10.1 +/- 2.3 cm H2O in the severe OSA group. A high CPAP was defined as the mean + 1 standard deviation (SD;>or =12 cm H2O). The predictor variables included apnea-hypopnea index (AHI), age, sex, body mass index (BMI), Epworth Sleepiness Scale (ESS), and the Multiple Sleep Latency Test (MSLT). High CPAP was required in 2 (6.9%), 6 (5.8%), and 63 (28.6%) patients with mild, moderate, and severe OSA, respectively. On univariate analysis, AHI, BMI, ESS score, and the proportion of males were significantly higher in those needing high CPAP. They also have a lower MSLT mean. On logistic regression, the use of high CPAP was 5.90 times more frequent (95% confidence interval 2.67-13.1) in severe OSA patients after adjustment for the other variables. The area under the receiver operator curve was 72.4%, showing that the model was adequate."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.88,\"reason_for_action\":\"Study results show optimal CPAP rises with OSA severity and severe OSA independently predicts high CPAP (adjusted OR 5.90, 95% CI 2.67–13.1; AUC 72.4%), so severity predicts need.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.88,
+      "reason_for_action": "Study results show optimal CPAP rises with OSA severity and severe OSA independently predicts high CPAP (adjusted OR 5.90, 95% CI 2.67–13.1; AUC 72.4%), so severity predicts need."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "overreaction",
+  "_elapsed_seconds": 9.109
+}

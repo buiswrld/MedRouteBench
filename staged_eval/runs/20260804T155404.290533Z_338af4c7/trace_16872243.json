@@ -1,0 +1,54 @@
+{
+  "pmid": "16872243",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "METHOD",
+      "context": "In this study, an expert panel assessed causality of adverse reports by using the WHO global introspection (GI) method. The same reports were independently assessed using 15 published algorithms. The causality assessment level 'possible' was considered the lower limit for a report to be considered to be drug related. For a given algorithm, sensitivity was determined by the proportion of reports simultaneously classified as drug related by the algorithm and the GI method. Specificity was measured as the proportion of reports simultaneously considered non-drug related. The analysis was performed for the total sample and within serious or unexpected events."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.40,\"reason_for_action\":\"No results are provided here. The study compares WHO global introspection to 15 algorithms using sensitivity/specificity, but without outcome data one cannot conclude whether algorithms can replace GI; it depends on their performance and context.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.4,
+      "reason_for_action": "No results are provided here. The study compares WHO global introspection to 15 algorithms using sensitivity/specificity, but without outcome data one cannot conclude whether algorithms can replace GI; it depends on their performance and context."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Five hundred adverse reports were studied. Algorithms presented high rates of sensitivity (average of 93%, positive predictive value of 89%) and low rates of specificity (average of 7%, negative predictive value of 31%)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "METHOD",
+      "context": "In this study, an expert panel assessed causality of adverse reports by using the WHO global introspection (GI) method. The same reports were independently assessed using 15 published algorithms. The causality assessment level 'possible' was considered the lower limit for a report to be considered to be drug related. For a given algorithm, sensitivity was determined by the proportion of reports simultaneously classified as drug related by the algorithm and the GI method. Specificity was measured as the proportion of reports simultaneously considered non-drug related. The analysis was performed for the total sample and within serious or unexpected events."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Five hundred adverse reports were studied. Algorithms presented high rates of sensitivity (average of 93%, positive predictive value of 89%) and low rates of specificity (average of 7%, negative predictive value of 31%)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.85,\"reason_for_action\":\"Algorithms showed high sensitivity (avg 93%, PPV 89%) but very low specificity (avg 7%, NPV 31%), meaning they overcall drug-related reports and cannot replace WHO global introspection for individual causality assessment.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.85,
+      "reason_for_action": "Algorithms showed high sensitivity (avg 93%, PPV 89%) but very low specificity (avg 7%, NPV 31%), meaning they overcall drug-related reports and cannot replace WHO global introspection for individual causality assessment."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.885
+}

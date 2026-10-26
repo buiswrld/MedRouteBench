@@ -1,0 +1,74 @@
+{
+  "pmid": "24352924",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The purpose of this study was to investigate the efficacy of ultrasonography to confirm Schanz pin placement in a cadaveric model, and the interobserver repeatability of the ultrasound methodology."
+    },
+    {
+      "label": "DESIGN",
+      "context": "This investigation is a repeated measures cadaveric study with multiple examiners."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Cadaveric preparation and observations were done by an orthopaedic traumatologist and resident, and two general surgery traumatologists."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "A total of 16 Schanz pins were equally placed in bilateral femora and tibiae. Four examiners took measurements of pin protrusion beyond the distal cortices using first ultrasonography and then by direct measurement after gross dissection.MAIN OUTCOME MEASURE(S): Distal Schanz pin protrusion length measurements from both ultrasonography and direct measurement post dissection."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Schanz pin protrusion measurements are underestimated by ultrasonography (p<0.01) by an average of 10 percent over the range of 5 to 18 mm, and they display a proportional bias that increases the under reporting as the magnitude of pin protrusion increases. Ultrasound data demonstrate good linear correlation and closely represent actual protrusion values in the 5 to 12 mm range. Interobserver repeatability analysis demonstrated that all examiners were not statistically different in their measurements despite minimal familiarity with the ultrasound methodology (p>0.8)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The purpose of this study was to investigate the efficacy of ultrasonography to confirm Schanz pin placement in a cadaveric model, and the interobserver repeatability of the ultrasound methodology."
+    },
+    {
+      "label": "DESIGN",
+      "context": "This investigation is a repeated measures cadaveric study with multiple examiners."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "Cadaveric preparation and observations were done by an orthopaedic traumatologist and resident, and two general surgery traumatologists."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "A total of 16 Schanz pins were equally placed in bilateral femora and tibiae. Four examiners took measurements of pin protrusion beyond the distal cortices using first ultrasonography and then by direct measurement after gross dissection.MAIN OUTCOME MEASURE(S): Distal Schanz pin protrusion length measurements from both ultrasonography and direct measurement post dissection."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Schanz pin protrusion measurements are underestimated by ultrasonography (p<0.01) by an average of 10 percent over the range of 5 to 18 mm, and they display a proportional bias that increases the under reporting as the magnitude of pin protrusion increases. Ultrasound data demonstrate good linear correlation and closely represent actual protrusion values in the 5 to 12 mm range. Interobserver repeatability analysis demonstrated that all examiners were not statistically different in their measurements despite minimal familiarity with the ultrasound methodology (p>0.8)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 6.262
+}

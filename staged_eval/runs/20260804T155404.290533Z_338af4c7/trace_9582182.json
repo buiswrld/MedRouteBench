@@ -1,0 +1,86 @@
+{
+  "pmid": "9582182",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To investigate the relevance of the Symptom Checklist 90-R Obsessive-Compulsive subscale to cognition in individuals with brain tumor."
+    },
+    {
+      "label": "DESIGN",
+      "context": "A prospective study of patients assessed with a neuropsychological test battery."
+    },
+    {
+      "label": "SETTING",
+      "context": "A university medical center."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Nineteen adults with biopsy-confirmed diagnoses of malignant brain tumors were assessed prior to aggressive chemotherapy."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Included in the assessment were the Mattis Dementia Rating Scale, California Verbal Learning Test, Trail Making Test B, Symptom Checklist 90-R, Mood Assessment Scale, Beck Anxiety Inventory, and Chronic Illness Problem Inventory."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.33,\"reason_for_action\":\"Insufficient information: the study design and measures are provided but no results are reported, so it’s unclear whether the SCL-90-R obsessive-compulsive scale identified cognitive impairments.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.33,
+      "reason_for_action": "Insufficient information: the study design and measures are provided but no results are reported, so it’s unclear whether the SCL-90-R obsessive-compulsive scale identified cognitive impairments."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The SCL 90-R Obsessive-Compulsive subscale was not related to objective measures of attention, verbal memory, or age. It was related significantly to symptoms of depression (r = .81, P<.005), anxiety (r = .66, P<.005), and subjective complaints of memory problems (r = .75, P<.005). Multivariate analyses indicated that reported symptoms of depression contributed 66% of the variance in predicting SCL 90-R Obsessive-Compulsive Scores, whereas symptoms of anxiety contributed an additional 6% (P<.0001)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To investigate the relevance of the Symptom Checklist 90-R Obsessive-Compulsive subscale to cognition in individuals with brain tumor."
+    },
+    {
+      "label": "DESIGN",
+      "context": "A prospective study of patients assessed with a neuropsychological test battery."
+    },
+    {
+      "label": "SETTING",
+      "context": "A university medical center."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "Nineteen adults with biopsy-confirmed diagnoses of malignant brain tumors were assessed prior to aggressive chemotherapy."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Included in the assessment were the Mattis Dementia Rating Scale, California Verbal Learning Test, Trail Making Test B, Symptom Checklist 90-R, Mood Assessment Scale, Beck Anxiety Inventory, and Chronic Illness Problem Inventory."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The SCL 90-R Obsessive-Compulsive subscale was not related to objective measures of attention, verbal memory, or age. It was related significantly to symptoms of depression (r = .81, P<.005), anxiety (r = .66, P<.005), and subjective complaints of memory problems (r = .75, P<.005). Multivariate analyses indicated that reported symptoms of depression contributed 66% of the variance in predicting SCL 90-R Obsessive-Compulsive Scores, whereas symptoms of anxiety contributed an additional 6% (P<.0001)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.86,\"reason_for_action\":\"Study found SCL-90-R Obsessive-Compulsive scores were not related to objective attention or verbal memory measures but correlated with depression/anxiety and subjective complaints, so it does not identify objective cognitive impairments.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.86,
+      "reason_for_action": "Study found SCL-90-R Obsessive-Compulsive scores were not related to objective attention or verbal memory measures but correlated with depression/anxiety and subjective complaints, so it does not identify objective cognitive impairments."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.326
+}

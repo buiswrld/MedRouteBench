@@ -1,0 +1,62 @@
+{
+  "pmid": "15223779",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study was conducted to investigate the expression and functional impact of the proto-oncogene c-kit in uveal melanoma."
+    },
+    {
+      "label": "METHODS",
+      "context": "Based on immunohistochemical (IHC) study of paraffin-embedded specimens from 134 uveal melanomas and Western blot analysis on eight fresh-frozen samples the expression of c-kit in uveal melanoma was studied. Furthermore, the phosphorylation of c-kit and the impact of the tyrosine kinase inhibitor STI571 was examined in the three uveal melanoma cell lines OCM-1, OCM-3, and 92-1."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.6,\"reason_for_action\":\"The study assessed c‑kit expression, phosphorylation and STI571 effects in uveal melanoma tissues and cell lines, but no results are provided here — potential exists but evidence is insufficient to conclude.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "The study assessed c‑kit expression, phosphorylation and STI571 effects in uveal melanoma tissues and cell lines, but no results are provided here — potential exists but evidence is insufficient to conclude."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Eighty-four of 134 paraffin-embedded samples and six of eight fresh-frozen samples expressed c-kit. c-Kit was strongly expressed and tyrosine phosphorylated in cultured uveal melanoma cells compared with cutaneous melanoma cells. Moreover, in contrast to cutaneous melanoma cell lines c-kit maintained a high phosphorylation level in serum-depleted uveal melanoma cells. No activation-related mutations in exon 11 of the KIT gene were found. On the contrary, expression of the stem cell growth factor (c-kit ligand) was detected in all three uveal melanoma cell lines, suggesting the presence of autocrine (paracrine) stimulation pathways. Treatment of uveal melanoma cell lines with STI571, which blocks c-kit autophosphorylation, resulted in cell death. The IC(50) of the inhibitory effects on c-kit phosphorylation and cell proliferation was of equal size and less than 2.5 microM."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study was conducted to investigate the expression and functional impact of the proto-oncogene c-kit in uveal melanoma."
+    },
+    {
+      "label": "METHODS",
+      "context": "Based on immunohistochemical (IHC) study of paraffin-embedded specimens from 134 uveal melanomas and Western blot analysis on eight fresh-frozen samples the expression of c-kit in uveal melanoma was studied. Furthermore, the phosphorylation of c-kit and the impact of the tyrosine kinase inhibitor STI571 was examined in the three uveal melanoma cell lines OCM-1, OCM-3, and 92-1."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Eighty-four of 134 paraffin-embedded samples and six of eight fresh-frozen samples expressed c-kit. c-Kit was strongly expressed and tyrosine phosphorylated in cultured uveal melanoma cells compared with cutaneous melanoma cells. Moreover, in contrast to cutaneous melanoma cell lines c-kit maintained a high phosphorylation level in serum-depleted uveal melanoma cells. No activation-related mutations in exon 11 of the KIT gene were found. On the contrary, expression of the stem cell growth factor (c-kit ligand) was detected in all three uveal melanoma cell lines, suggesting the presence of autocrine (paracrine) stimulation pathways. Treatment of uveal melanoma cell lines with STI571, which blocks c-kit autophosphorylation, resulted in cell death. The IC(50) of the inhibitory effects on c-kit phosphorylation and cell proliferation was of equal size and less than 2.5 microM."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.6,\"reason_for_action\":\"High c‑kit expression/phosphorylation, autocrine ligand presence, and STI571-induced cell death (IC50 <2.5µM) support therapeutic potential, but absence of activating mutations and only in vitro data leave clinical benefit uncertain.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "High c‑kit expression/phosphorylation, autocrine ligand presence, and STI571-induced cell death (IC50 <2.5µM) support therapeutic potential, but absence of activating mutations and only in vitro data leave clinical benefit uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.673
+}

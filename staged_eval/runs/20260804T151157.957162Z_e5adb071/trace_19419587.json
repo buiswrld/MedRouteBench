@@ -1,0 +1,58 @@
+{
+  "pmid": "19419587",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Sternal instability with mediastinitis is a very serious complication after median sternotomy. Biomechanical studies have suggested superiority of rigid plate fixation over wire cerclage for sternal fixation. This study tests the hypothesis that sternal closure stability can be improved by adding plate fixation in a human cadaver model."
+    },
+    {
+      "label": "METHODS",
+      "context": "Midline sternotomy was performed in 18 human cadavers. Four sternal closure techniques were tested: (1) approximation with six interrupted steel wires; (2) approximation with six interrupted cables; (3) closure 1 (wires) or 2 (cables) reinforced with a transverse sternal plate at the sixth rib; (4) Closure using 4 sternal plates alone. Intrathoracic pressure was increased in all techniques while sternal separation was measured by three pairs of sonomicrometry crystals fixed at the upper, middle and lower parts of the sternum until 2.0 mm separation was detected. Differences in displacement pressures were analyzed using repeated measures ANOVA and Regression Coefficients."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Intrathoracic pressure required to cause 2.0 mm separation increased significantly from 183.3 +/- 123.9 to 301.4 +/- 204.5 in wires/cables alone vs. wires/cables plus one plate respectively, and to 355.0 +/- 210.4 in the 4 plates group (p<0.05). Regression Coefficients (95% CI) were 120 (47-194) and 142 (66-219) respectively for the plate groups."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Sternal instability with mediastinitis is a very serious complication after median sternotomy. Biomechanical studies have suggested superiority of rigid plate fixation over wire cerclage for sternal fixation. This study tests the hypothesis that sternal closure stability can be improved by adding plate fixation in a human cadaver model."
+    },
+    {
+      "label": "METHODS",
+      "context": "Midline sternotomy was performed in 18 human cadavers. Four sternal closure techniques were tested: (1) approximation with six interrupted steel wires; (2) approximation with six interrupted cables; (3) closure 1 (wires) or 2 (cables) reinforced with a transverse sternal plate at the sixth rib; (4) Closure using 4 sternal plates alone. Intrathoracic pressure was increased in all techniques while sternal separation was measured by three pairs of sonomicrometry crystals fixed at the upper, middle and lower parts of the sternum until 2.0 mm separation was detected. Differences in displacement pressures were analyzed using repeated measures ANOVA and Regression Coefficients."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Intrathoracic pressure required to cause 2.0 mm separation increased significantly from 183.3 +/- 123.9 to 301.4 +/- 204.5 in wires/cables alone vs. wires/cables plus one plate respectively, and to 355.0 +/- 210.4 in the 4 plates group (p<0.05). Regression Coefficients (95% CI) were 120 (47-194) and 142 (66-219) respectively for the plate groups."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 4.712
+}

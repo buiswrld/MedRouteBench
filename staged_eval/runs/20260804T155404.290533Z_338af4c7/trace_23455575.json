@@ -1,0 +1,62 @@
+{
+  "pmid": "23455575",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "The so-called \"globulomaxillary cyst\", described as a fissural cyst, caused by entrapped epithelium between the nasal and maxillary process, is no longer considered for its own entity. Nevertheless, cystic lesions, which correspond to the previous image of globulomaxillary cysts, do still occur in daily practice. This raises the question to which entities pathological processes in this particular region actually belong to."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "In a retrospective study, 17 cases (12 men and 5 women, 12-59 years old) of primarily diagnosed globulomaxillary cysts are analysed according to clinical, radiological and histological aspects, catamnestic processed and assigned to a new entity. The results are compared with the international literature and draws conclusions on the diagnostic and therapeutic procedure."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"no\",\"confidence\":0.86,\"reason_for_action\":\"The report states the so‑called globulomaxillary cyst is no longer considered a distinct entity; lesions in that region occur but are reassigned to other diagnostic entities based on their analysis.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "no",
+      "confidence": 0.86,
+      "reason_for_action": "The report states the so‑called globulomaxillary cyst is no longer considered a distinct entity; lesions in that region occur but are reassigned to other diagnostic entities based on their analysis."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Seven lateral periodontal cysts, four radicular cysts, two keratocystic odontogenic tumours, one adenomatoid odontogenic tumour, one periapical granuloma, one residual cyst and one undefined jaw cyst were determined."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "The so-called \"globulomaxillary cyst\", described as a fissural cyst, caused by entrapped epithelium between the nasal and maxillary process, is no longer considered for its own entity. Nevertheless, cystic lesions, which correspond to the previous image of globulomaxillary cysts, do still occur in daily practice. This raises the question to which entities pathological processes in this particular region actually belong to."
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "In a retrospective study, 17 cases (12 men and 5 women, 12-59 years old) of primarily diagnosed globulomaxillary cysts are analysed according to clinical, radiological and histological aspects, catamnestic processed and assigned to a new entity. The results are compared with the international literature and draws conclusions on the diagnostic and therapeutic procedure."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Seven lateral periodontal cysts, four radicular cysts, two keratocystic odontogenic tumours, one adenomatoid odontogenic tumour, one periapical granuloma, one residual cyst and one undefined jaw cyst were determined."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"no\",\"confidence\":0.86,\"reason_for_action\":\"Retrospective analysis reassigned 17 presumed globulomaxillary cysts to known odontogenic cysts/tumours; the globulomaxillary cyst is no longer regarded as a distinct entity.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "no",
+      "confidence": 0.86,
+      "reason_for_action": "Retrospective analysis reassigned 17 presumed globulomaxillary cysts to known odontogenic cysts/tumours; the globulomaxillary cyst is no longer regarded as a distinct entity."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 8.798
+}

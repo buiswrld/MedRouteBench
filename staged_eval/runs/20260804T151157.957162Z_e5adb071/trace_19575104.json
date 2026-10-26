@@ -1,0 +1,58 @@
+{
+  "pmid": "19575104",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "UNLABELLED",
+      "context": "Fixation of foreign bodies (FB), in the mucosa, can favor its migration, giving origin to the popular saying: 'FB walk to the heart'.AIM: Describe the mechanisms involved in FB migration and how to diagnose them."
+    },
+    {
+      "label": "METHODOLOGY",
+      "context": "From a sample of 3,000 foreign bodies, during 40 years, we analyzed four which had extra-lumen migration. We analyzed clinical, radiologic, endoscopic and ultrasound data collected at the medical documentation service."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Three clinical histories are presented, describing two fish bones and one piece of fish cartilage. FB shifting was analyzed in all of them. Migration started in the esophagus in two, one going to the aorta and the other to the neck area. In the other two, migration started in the pharynx, and the FB moved towards the prevertebral fascia and the other externalized in the submandibular region. The mechanisms and the risks posed to the patient, by FB migration, and the way to diagnose them are hereby discussed."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "UNLABELLED",
+      "context": "Fixation of foreign bodies (FB), in the mucosa, can favor its migration, giving origin to the popular saying: 'FB walk to the heart'.AIM: Describe the mechanisms involved in FB migration and how to diagnose them."
+    },
+    {
+      "label": "METHODOLOGY",
+      "context": "From a sample of 3,000 foreign bodies, during 40 years, we analyzed four which had extra-lumen migration. We analyzed clinical, radiologic, endoscopic and ultrasound data collected at the medical documentation service."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Three clinical histories are presented, describing two fish bones and one piece of fish cartilage. FB shifting was analyzed in all of them. Migration started in the esophagus in two, one going to the aorta and the other to the neck area. In the other two, migration started in the pharynx, and the FB moved towards the prevertebral fascia and the other externalized in the submandibular region. The mechanisms and the risks posed to the patient, by FB migration, and the way to diagnose them are hereby discussed."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 5.264
+}

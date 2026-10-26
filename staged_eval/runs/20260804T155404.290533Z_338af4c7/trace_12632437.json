@@ -1,0 +1,62 @@
+{
+  "pmid": "12632437",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To investigate the association between primary systemic vasculitis (PSV) and environmental risk factors."
+    },
+    {
+      "label": "METHODS",
+      "context": "Seventy-five PSV cases and 273 controls (220 nonvasculitis, 19 secondary vasculitis, and 34 asthma controls) were interviewed using a structured questionnaire. Factors investigated were social class, occupational and residential history, smoking, pets, allergies, vaccinations, medications, hepatitis, tuberculosis, and farm exposure in the year before symptom onset (index year). The Standard Occupational Classification 2000 and job-exposure matrices were used to assess occupational silica, solvent, and metal exposure. Stepwise multiple logistic regression was used to calculate the odds ratio (OR) and 95% confidence interval (95% CI) adjusted for potential confounders. Total PSV, subgroups (47 Wegener's granulomatosis [WG], 12 microscopic polyangiitis, 16 Churg-Strauss syndrome [CSS]), and antineutrophil cytoplasmic antibody (ANCA)-positive cases were compared with control groups."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.50,\"reason_for_action\":\"The study investigated many environmental exposures in PSV cases versus controls using structured questionnaire and exposure matrices, but no results or effect estimates are provided here to confirm importance.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "The study investigated many environmental exposures in PSV cases versus controls using structured questionnaire and exposure matrices, but no results or effect estimates are provided here to confirm importance."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Farming in the index year was significantly associated with PSV (OR 2.3 [95% CI 1.2-4.6]), with WG (2.7 [1.2-5.8]), with MPA (6.3 [1.9-21.6]), and with perinuclear ANCA (pANCA) (4.3 [1.5-12.7]). Farming during working lifetime was associated with PSV (2.2 [1.2-3.8]) and with WG (2.7 [1.3-5.7]). Significant associations were found for high occupational silica exposure in the index year (with PSV 3.0 [1.0-8.4], with CSS 5.6 [1.3-23.5], and with ANCA 4.9 [1.3-18.6]), high occupational solvent exposure in the index year (with PSV 3.4 [0.9-12.5], with WG 4.8 [1.2-19.8], and with classic ANCA [cANCA] 3.9 [1.6-9.5]), high occupational solvent exposure during working lifetime (with PSV 2.7 [1.1-6.6], with WG 3.4 [1.3-8.9], and with cANCA 3.3 [1.0-10.8]), drug allergy (with PSV 3.6 [1.8-7.0], with WG 4.0 [1.8-8.7], and with cANCA 4.7 [1.9-11.7]), and allergy overall (with PSV 2.2 [1.2-3.9], with WG 2.7 [1.4-5.7]). No other significant associations were found."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To investigate the association between primary systemic vasculitis (PSV) and environmental risk factors."
+    },
+    {
+      "label": "METHODS",
+      "context": "Seventy-five PSV cases and 273 controls (220 nonvasculitis, 19 secondary vasculitis, and 34 asthma controls) were interviewed using a structured questionnaire. Factors investigated were social class, occupational and residential history, smoking, pets, allergies, vaccinations, medications, hepatitis, tuberculosis, and farm exposure in the year before symptom onset (index year). The Standard Occupational Classification 2000 and job-exposure matrices were used to assess occupational silica, solvent, and metal exposure. Stepwise multiple logistic regression was used to calculate the odds ratio (OR) and 95% confidence interval (95% CI) adjusted for potential confounders. Total PSV, subgroups (47 Wegener's granulomatosis [WG], 12 microscopic polyangiitis, 16 Churg-Strauss syndrome [CSS]), and antineutrophil cytoplasmic antibody (ANCA)-positive cases were compared with control groups."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Farming in the index year was significantly associated with PSV (OR 2.3 [95% CI 1.2-4.6]), with WG (2.7 [1.2-5.8]), with MPA (6.3 [1.9-21.6]), and with perinuclear ANCA (pANCA) (4.3 [1.5-12.7]). Farming during working lifetime was associated with PSV (2.2 [1.2-3.8]) and with WG (2.7 [1.3-5.7]). Significant associations were found for high occupational silica exposure in the index year (with PSV 3.0 [1.0-8.4], with CSS 5.6 [1.3-23.5], and with ANCA 4.9 [1.3-18.6]), high occupational solvent exposure in the index year (with PSV 3.4 [0.9-12.5], with WG 4.8 [1.2-19.8], and with classic ANCA [cANCA] 3.9 [1.6-9.5]), high occupational solvent exposure during working lifetime (with PSV 2.7 [1.1-6.6], with WG 3.4 [1.3-8.9], and with cANCA 3.3 [1.0-10.8]), drug allergy (with PSV 3.6 [1.8-7.0], with WG 4.0 [1.8-8.7], and with cANCA 4.7 [1.9-11.7]), and allergy overall (with PSV 2.2 [1.2-3.9], with WG 2.7 [1.4-5.7]). No other significant associations were found."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.86,\"reason_for_action\":\"Multiple significant associations were reported (farming, occupational silica and solvents, drug allergy/overall allergy) with PSV and subtypes, indicating environmental factors are important.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.86,
+      "reason_for_action": "Multiple significant associations were reported (farming, occupational silica and solvents, drug allergy/overall allergy) with PSV and subtypes, indicating environmental factors are important."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.73
+}

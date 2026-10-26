@@ -1,0 +1,62 @@
+{
+  "pmid": "21346501",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study was designed to determine whether preclerkship performance examinations could accurately identify medical students at risk for failing a senior clinical performance examination (CPE)."
+    },
+    {
+      "label": "METHOD",
+      "context": "This study used a retrospective case-control, multiyear design, with contingency table analyses, to examine the performance of 412 students in the classes of 2005 to 2010 at a midwestern medical school. During their second year, these students took four CPEs that each used three standardized patient (SP) cases, for a total of 12 cases. The authors correlated each student's average year 2 case score with the student's average case score on a senior (year 4) CPE. Contingency table analysis was carried out using performance on the year 2 CPEs and passing/failing the senior CPE. Similar analyses using each student's United States Medical Licensing Examination (USMLE) Step 1 scores were also performed. Sensitivity, specificity, odds ratio, and relative risk were calculated for two year 2 performance standards."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.40,\"reason_for_action\":\"The study design assessed correlations and diagnostic metrics (sensitivity, specificity, OR, RR) of year-2 CPE scores vs senior CPE failure, but no outcome results are provided here to confirm predictive ability.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.4,
+      "reason_for_action": "The study design assessed correlations and diagnostic metrics (sensitivity, specificity, OR, RR) of year-2 CPE scores vs senior CPE failure, but no outcome results are provided here to confirm predictive ability."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Students' low performances relative to their class on the year 2 CPEs were a strong predictor that they would fail the senior CPE. Their USMLE Step 1 scores also correlated with their performance on the senior CPE, although the predictive values for these scores were considerably weaker."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "This study was designed to determine whether preclerkship performance examinations could accurately identify medical students at risk for failing a senior clinical performance examination (CPE)."
+    },
+    {
+      "label": "METHOD",
+      "context": "This study used a retrospective case-control, multiyear design, with contingency table analyses, to examine the performance of 412 students in the classes of 2005 to 2010 at a midwestern medical school. During their second year, these students took four CPEs that each used three standardized patient (SP) cases, for a total of 12 cases. The authors correlated each student's average year 2 case score with the student's average case score on a senior (year 4) CPE. Contingency table analysis was carried out using performance on the year 2 CPEs and passing/failing the senior CPE. Similar analyses using each student's United States Medical Licensing Examination (USMLE) Step 1 scores were also performed. Sensitivity, specificity, odds ratio, and relative risk were calculated for two year 2 performance standards."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Students' low performances relative to their class on the year 2 CPEs were a strong predictor that they would fail the senior CPE. Their USMLE Step 1 scores also correlated with their performance on the senior CPE, although the predictive values for these scores were considerably weaker."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"Results state that low year-2 CPE performance was a strong predictor of failing the senior CPE (Step 1 correlated but was a weaker predictor).\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "Results state that low year-2 CPE performance was a strong predictor of failing the senior CPE (Step 1 correlated but was a weaker predictor)."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 6.836
+}

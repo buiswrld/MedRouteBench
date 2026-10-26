@@ -1,0 +1,58 @@
+{
+  "pmid": "9363244",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "To determine the effect of occupational exposure in a nuclear power plant in Griefswald, Germany on male and female fecundity."
+    },
+    {
+      "label": "METHODS",
+      "context": "The frequency of men and women exposed to ionizing radiation through work in a nuclear power plant among 270 infertile couples was retrospectively compared to a control fertile population using a pair-matched analysis. The total cumulative equivalent radiation dose was determined. In addition, the spermiograms of the male partners in both groups were compared and correlated to the degree of exposure."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "No differences were noted in the frequency of nuclear power plant exposure between sterile and fertile groups. There was a higher rate of anomalous spermiograms in nuclear power plant workers. However, abnormalities were temporary. No correlation was found between the cumulative equivalent radiation dose and abnormal spermiograms."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVES",
+      "context": "To determine the effect of occupational exposure in a nuclear power plant in Griefswald, Germany on male and female fecundity."
+    },
+    {
+      "label": "METHODS",
+      "context": "The frequency of men and women exposed to ionizing radiation through work in a nuclear power plant among 270 infertile couples was retrospectively compared to a control fertile population using a pair-matched analysis. The total cumulative equivalent radiation dose was determined. In addition, the spermiograms of the male partners in both groups were compared and correlated to the degree of exposure."
+    },
+    {
+      "label": "RESULTS",
+      "context": "No differences were noted in the frequency of nuclear power plant exposure between sterile and fertile groups. There was a higher rate of anomalous spermiograms in nuclear power plant workers. However, abnormalities were temporary. No correlation was found between the cumulative equivalent radiation dose and abnormal spermiograms."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.001
+}

@@ -1,0 +1,62 @@
+{
+  "pmid": "21823940",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Research on stroke survivors' driving safety has typically used either self-reports or government records, but the extent to which the 2 may differ is not known. We compared government records and self-reports of motor vehicle collisions and driving convictions in a sample of stroke survivors."
+    },
+    {
+      "label": "METHODS",
+      "context": "The 56 participants were originally recruited for a prospective study on driving and community re-integration post-stroke; the study population consisted of moderately impaired stroke survivors without severe communication disorders who had been referred for a driving assessment. The driving records of the 56 participants for the 5 years before study entry and the 1-year study period were acquired with written consent from the Ministry of Transportation of Ontario (MTO), Canada. Self-reports of collisions and convictions were acquired via a semistructured interview and then compared with the MTO records."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.65,\"reason_for_action\":\"The excerpt gives objective and methods but no results. Without outcome data comparing MTO records to self-reports, agreement cannot be determined from the provided information.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.65,
+      "reason_for_action": "The excerpt gives objective and methods but no results. Without outcome data comparing MTO records to self-reports, agreement cannot be determined from the provided information."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Forty-three participants completed the study. For 7 (13.5%) the MTO records did not match the self-reports regarding collision involvement, and for 9 (17.3%) the MTO records did not match self-reports regarding driving convictions. The kappa coefficient for the correlation between MTO records and self-reports was 0.52 for collisions and 0.47 for convictions (both in the moderate range of agreement). When both sources of data were consulted, up to 56 percent more accidents and up to 46 percent more convictions were identified in the study population in the 5 years before study entry compared to when either source was used alone."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "Research on stroke survivors' driving safety has typically used either self-reports or government records, but the extent to which the 2 may differ is not known. We compared government records and self-reports of motor vehicle collisions and driving convictions in a sample of stroke survivors."
+    },
+    {
+      "label": "METHODS",
+      "context": "The 56 participants were originally recruited for a prospective study on driving and community re-integration post-stroke; the study population consisted of moderately impaired stroke survivors without severe communication disorders who had been referred for a driving assessment. The driving records of the 56 participants for the 5 years before study entry and the 1-year study period were acquired with written consent from the Ministry of Transportation of Ontario (MTO), Canada. Self-reports of collisions and convictions were acquired via a semistructured interview and then compared with the MTO records."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Forty-three participants completed the study. For 7 (13.5%) the MTO records did not match the self-reports regarding collision involvement, and for 9 (17.3%) the MTO records did not match self-reports regarding driving convictions. The kappa coefficient for the correlation between MTO records and self-reports was 0.52 for collisions and 0.47 for convictions (both in the moderate range of agreement). When both sources of data were consulted, up to 56 percent more accidents and up to 46 percent more convictions were identified in the study population in the 5 years before study entry compared to when either source was used alone."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.65,\"reason_for_action\":\"Results show only moderate agreement (kappa 0.52 collisions, 0.47 convictions) with 13.5%–17.3% mismatches and many additional events found when combining sources, indicating partial agreement.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.65,
+      "reason_for_action": "Results show only moderate agreement (kappa 0.52 collisions, 0.47 convictions) with 13.5%–17.3% mismatches and many additional events found when combining sources, indicating partial agreement."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 9.25
+}

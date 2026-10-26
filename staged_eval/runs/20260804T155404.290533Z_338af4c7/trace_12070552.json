@@ -1,0 +1,62 @@
+{
+  "pmid": "12070552",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "A tonsillectomy audit was carried out and compared with other studies, to emphasize the role of antibiotics."
+    },
+    {
+      "label": "METHODS",
+      "context": "This study was carried out at North West Armed Forces Hospital, Tabuk, Kingdom of Saudi Arabia, during the year January 1999 through to December 1999. This is a retrospective study of patients who had tonsillectomy with or with adenoidectomy, the topics audited included indication for surgery, grade of surgeon, method of surgery, length of hospital stay, complications and the use of postoperative antibiotics."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.25,\"reason_for_action\":\"The provided evidence describes an audit of postoperative antibiotic use but gives no results on complications or morbidity, so effect of antibiotics cannot be determined from this information.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.25,
+      "reason_for_action": "The provided evidence describes an audit of postoperative antibiotic use but gives no results on complications or morbidity, so effect of antibiotics cannot be determined from this information."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A total of 185 patients underwent tonsillectomy with or without adenoidectomy. The patients age ranged between 2 years to 53 years and the majority were children. In our audit we found no difference with regard to grade of surgeons, method of hemostasis in the outcome of surgery. Moreover, postoperative antibiotics had no role in pain control, postoperative fever, secondary hemorrhage or reduction in hospital stay. The administration of analgesics on the basis of, as required, had poor pain control."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "A tonsillectomy audit was carried out and compared with other studies, to emphasize the role of antibiotics."
+    },
+    {
+      "label": "METHODS",
+      "context": "This study was carried out at North West Armed Forces Hospital, Tabuk, Kingdom of Saudi Arabia, during the year January 1999 through to December 1999. This is a retrospective study of patients who had tonsillectomy with or with adenoidectomy, the topics audited included indication for surgery, grade of surgeon, method of surgery, length of hospital stay, complications and the use of postoperative antibiotics."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A total of 185 patients underwent tonsillectomy with or without adenoidectomy. The patients age ranged between 2 years to 53 years and the majority were children. In our audit we found no difference with regard to grade of surgeons, method of hemostasis in the outcome of surgery. Moreover, postoperative antibiotics had no role in pain control, postoperative fever, secondary hemorrhage or reduction in hospital stay. The administration of analgesics on the basis of, as required, had poor pain control."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.90,\"reason_for_action\":\"The study's results state postoperative antibiotics had no role in pain control, fever, secondary hemorrhage, or reduction in hospital stay, indicating they do not decrease morbidity.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.9,
+      "reason_for_action": "The study's results state postoperative antibiotics had no role in pain control, fever, secondary hemorrhage, or reduction in hospital stay, indicating they do not decrease morbidity."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.623
+}

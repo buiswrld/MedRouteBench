@@ -1,0 +1,62 @@
+{
+  "pmid": "16816043",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine under what conditions lay people and health professionals find it acceptable for a physician to breach confidentiality to protect the wife of a patient with a sexually transmitted disease (STD)."
+    },
+    {
+      "label": "METHODS",
+      "context": "In a study in France, breaching confidentiality in 48 scenarios were accepted by 144 lay people, 10 psychologists and 7 physicians. The scenarios were all possible combinations of five factors: severity of the disease (severe, lethal); time taken to discuss this with (little time, much time); intent to inform the spouse about the disease (none, one of these days, immediately); intent to adopt protective behaviours (no intent, intent); and decision to consult an expert in STDs (yes, no), 2 x 2 x 3 x 2 x 2. The importance and interactions of each factor were determined, at the group level, by performing analyses of variance and constructing graphs."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.30,\"reason_for_action\":\"The supplied text gives study objective and methods (48 scenarios tested on lay people, psychologists, physicians) but reports no results or acceptance rates, so acceptability cannot be determined from this evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.3,
+      "reason_for_action": "The supplied text gives study objective and methods (48 scenarios tested on lay people, psychologists, physicians) but reports no results or acceptance rates, so acceptability cannot be determined from this evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The concept of breaching confidentiality to protect a wife from her husband's STD was favoured much more by lay people and psychologists than by physicians (mean ratings 11.76, 9.28 and 2.90, respectively, on a scale of 0-22). The patient's stated intentions to protect his wife and to inform her of the disease had the greatest impact on acceptability. A cluster analysis showed groups of lay participants who found breaching confidentiality \"always acceptable\" (n = 14), \"depending on the many circumstances\" (n = 87), requiring \"consultation with an expert\" (n = 30) and \"never acceptable (n = 13)\"."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To determine under what conditions lay people and health professionals find it acceptable for a physician to breach confidentiality to protect the wife of a patient with a sexually transmitted disease (STD)."
+    },
+    {
+      "label": "METHODS",
+      "context": "In a study in France, breaching confidentiality in 48 scenarios were accepted by 144 lay people, 10 psychologists and 7 physicians. The scenarios were all possible combinations of five factors: severity of the disease (severe, lethal); time taken to discuss this with (little time, much time); intent to inform the spouse about the disease (none, one of these days, immediately); intent to adopt protective behaviours (no intent, intent); and decision to consult an expert in STDs (yes, no), 2 x 2 x 3 x 2 x 2. The importance and interactions of each factor were determined, at the group level, by performing analyses of variance and constructing graphs."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The concept of breaching confidentiality to protect a wife from her husband's STD was favoured much more by lay people and psychologists than by physicians (mean ratings 11.76, 9.28 and 2.90, respectively, on a scale of 0-22). The patient's stated intentions to protect his wife and to inform her of the disease had the greatest impact on acceptability. A cluster analysis showed groups of lay participants who found breaching confidentiality \"always acceptable\" (n = 14), \"depending on the many circumstances\" (n = 87), requiring \"consultation with an expert\" (n = 30) and \"never acceptable (n = 13)\"."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.3,\"reason_for_action\":\"Stage 1 concluded the provided text lacked clear overall acceptability rates and group-level implications were insufficient to give a definitive yes/no, so retaining 'maybe'.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.3,
+      "reason_for_action": "Stage 1 concluded the provided text lacked clear overall acceptability rates and group-level implications were insufficient to give a definitive yes/no, so retaining 'maybe'."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 10.787
+}

@@ -1,0 +1,50 @@
+{
+  "pmid": "20602784",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "This paper investigates the impact of geographic scale (census tract, zip code, and county) on the detection of disparities in breast cancer mortality among three ethnic groups in Texas (period 1995-2005). Racial disparities were quantified using both relative (RR) and absolute (RD) statistics that account for the population size and correct for unreliable rates typically observed for minority groups and smaller geographic units. Results were then correlated with socio-economic status measured by the percentage of habitants living below the poverty level."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "African-American and Hispanic women generally experience higher mortality than White non-Hispanics, and these differences are especially significant in the southeast metropolitan areas and southwest border of Texas. The proportion and location of significant racial disparities however changed depending on the type of statistic (RR versus RD) and the geographic level. The largest proportion of significant results was observed for the RD statistic and census tract data. Geographic regions with significant racial disparities for African-Americans and Hispanics frequently had a poverty rate above 10.00%."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "This paper investigates the impact of geographic scale (census tract, zip code, and county) on the detection of disparities in breast cancer mortality among three ethnic groups in Texas (period 1995-2005). Racial disparities were quantified using both relative (RR) and absolute (RD) statistics that account for the population size and correct for unreliable rates typically observed for minority groups and smaller geographic units. Results were then correlated with socio-economic status measured by the percentage of habitants living below the poverty level."
+    },
+    {
+      "label": "RESULTS",
+      "context": "African-American and Hispanic women generally experience higher mortality than White non-Hispanics, and these differences are especially significant in the southeast metropolitan areas and southwest border of Texas. The proportion and location of significant racial disparities however changed depending on the type of statistic (RR versus RD) and the geographic level. The largest proportion of significant results was observed for the RD statistic and census tract data. Geographic regions with significant racial disparities for African-Americans and Hispanics frequently had a poverty rate above 10.00%."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 4.879
+}

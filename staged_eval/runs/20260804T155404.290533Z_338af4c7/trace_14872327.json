@@ -1,0 +1,62 @@
+{
+  "pmid": "14872327",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To study the prevalence of pain and risk factors for pain in psychiatric patients in a psychiatric hospital."
+    },
+    {
+      "label": "METHODS",
+      "context": "Using a questionnaire we investigated in a cross-sectional study the prevalence of pain, duration of pain, impairment and unfitness for work due to pain in 106 patients primarily diagnosed with a psychiatric disorder in the field of general adult psychiatry. Potential risk factors were explored."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.25,\"reason_for_action\":\"The provided text gives only the study objective and methods (a questionnaire of 106 psychiatric patients) but no results. Without outcome data, one cannot determine whether pain is clinically relevant in this population.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.25,
+      "reason_for_action": "The provided text gives only the study objective and methods (a questionnaire of 106 psychiatric patients) but no results. Without outcome data, one cannot determine whether pain is clinically relevant in this population."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The point prevalence of pain was about 50%, the 6-month prevalence 75.5% and the 12-month prevalence 76.5%. The patients' most frequent complaints were low back pain, headache and shoulder and neck pain. Patients with affective disorders most frequently had pain complaints, followed by those with neurotic, stress-related and somatoform disorders and those with psychotic disorders such as schizophrenia, schizotypic and delusional disorders. Almost 10% of all patients reported pain continuing at least 3 months in the past year. Impairment and unfitness for work were related to specific psychiatric diagnosis. Statistically significant risk factors for pain were depression (OR=6.05) and the number of past admissions to psychiatric hospitals (OR=3.609)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To study the prevalence of pain and risk factors for pain in psychiatric patients in a psychiatric hospital."
+    },
+    {
+      "label": "METHODS",
+      "context": "Using a questionnaire we investigated in a cross-sectional study the prevalence of pain, duration of pain, impairment and unfitness for work due to pain in 106 patients primarily diagnosed with a psychiatric disorder in the field of general adult psychiatry. Potential risk factors were explored."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The point prevalence of pain was about 50%, the 6-month prevalence 75.5% and the 12-month prevalence 76.5%. The patients' most frequent complaints were low back pain, headache and shoulder and neck pain. Patients with affective disorders most frequently had pain complaints, followed by those with neurotic, stress-related and somatoform disorders and those with psychotic disorders such as schizophrenia, schizotypic and delusional disorders. Almost 10% of all patients reported pain continuing at least 3 months in the past year. Impairment and unfitness for work were related to specific psychiatric diagnosis. Statistically significant risk factors for pain were depression (OR=6.05) and the number of past admissions to psychiatric hospitals (OR=3.609)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.88,\"reason_for_action\":\"Study results show high pain prevalence (≈50% point; 75–76% 6–12 month), chronic pain and related impairment, and strong risk factors (depression OR=6.05), indicating pain is clinically relevant.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.88,
+      "reason_for_action": "Study results show high pain prevalence (≈50% point; 75–76% 6–12 month), chronic pain and related impairment, and strong risk factors (depression OR=6.05), indicating pain is clinically relevant."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.483
+}

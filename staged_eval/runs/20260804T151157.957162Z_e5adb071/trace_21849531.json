@@ -1,0 +1,74 @@
+{
+  "pmid": "21849531",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "CONTEXT",
+      "context": "Adults with GH deficiency (GHD) have a decreased life expectancy. The effect of GH treatment on mortality remains to be established."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "This nationwide cohort study investigates the effect of GH treatment on all-cause and cause-specific mortality and analyzes patient characteristics influencing mortality in GHD adults."
+    },
+    {
+      "label": "DESIGN SETTING AND PATIENTS",
+      "context": "Patients in the Dutch National Registry of Growth Hormone Treatment in Adults were retrospectively monitored (1985-2009) and subdivided into treatment (n = 2229), primary (untreated, n = 109), and secondary control (partly treated, n = 356) groups."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Standardized mortality ratios (SMR) were calculated for all-cause, malignancy, and cardiovascular disease (CVD) mortality. Expected mortality was obtained from cause, sex, calendar year, and age-specific death rates from national death and population counts."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "In the treatment group, 95 patients died compared to 74.6 expected [SMR 1.27 (95% confidence interval, 1.04-1.56)]. Mortality was higher in women than in men. After exclusion of high-risk patients, the SMR for CVD mortality remained increased in women. Mortality due to malignancies was not elevated. In the control groups mortality was not different from the background population. Univariate analyses demonstrated sex, GHD onset, age, and underlying diagnosis as influencing factors."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "CONTEXT",
+      "context": "Adults with GH deficiency (GHD) have a decreased life expectancy. The effect of GH treatment on mortality remains to be established."
+    },
+    {
+      "label": "OBJECTIVE",
+      "context": "This nationwide cohort study investigates the effect of GH treatment on all-cause and cause-specific mortality and analyzes patient characteristics influencing mortality in GHD adults."
+    },
+    {
+      "label": "DESIGN SETTING AND PATIENTS",
+      "context": "Patients in the Dutch National Registry of Growth Hormone Treatment in Adults were retrospectively monitored (1985-2009) and subdivided into treatment (n = 2229), primary (untreated, n = 109), and secondary control (partly treated, n = 356) groups."
+    },
+    {
+      "label": "MAIN OUTCOME MEASURES",
+      "context": "Standardized mortality ratios (SMR) were calculated for all-cause, malignancy, and cardiovascular disease (CVD) mortality. Expected mortality was obtained from cause, sex, calendar year, and age-specific death rates from national death and population counts."
+    },
+    {
+      "label": "RESULTS",
+      "context": "In the treatment group, 95 patients died compared to 74.6 expected [SMR 1.27 (95% confidence interval, 1.04-1.56)]. Mortality was higher in women than in men. After exclusion of high-risk patients, the SMR for CVD mortality remained increased in women. Mortality due to malignancies was not elevated. In the control groups mortality was not different from the background population. Univariate analyses demonstrated sex, GHD onset, age, and underlying diagnosis as influencing factors."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 5.924
+}

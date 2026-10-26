@@ -1,0 +1,54 @@
+{
+  "pmid": "21256734",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "METHODS",
+      "context": "A secondary analysis of one-hundred-sixty-seven patients referred for treatment of cancer-related pain was conducted. Pain intensity at admission was recorded and patients were divided in three categories of pain intensity: mild, moderate and severe. Patients were offered a treatment with opioid dose titration, according to department policy. Data regarding opioid doses and pain intensity were collected after dose titration was completed. Four levels of opioid response were considered: (a) good pain control, with minimal opioid escalation and without relevant adverse effects; (b) good pain control requiring more aggressive opioid escalation, for example doubling the doses in four days; (c) adequate pain control associated with the occurrence of adverse effects; (d) poor pain control with adverse effects."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.20,\"reason_for_action\":\"Only the study methods are provided (patient groups and outcomes defined) but no results or data are given, so it is not possible to determine whether pain intensity predicts poor opioid response.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.2,
+      "reason_for_action": "Only the study methods are provided (patient groups and outcomes defined) but no results or data are given, so it is not possible to determine whether pain intensity predicts poor opioid response."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Seventy-six, forty-four, forty-one and six patients showed a response a, b, c, and d, respectively. No correlation between baseline pain intensity categories and opioid response was found. Patients with response 'b' and 'd' showed higher values of OEImg."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "METHODS",
+      "context": "A secondary analysis of one-hundred-sixty-seven patients referred for treatment of cancer-related pain was conducted. Pain intensity at admission was recorded and patients were divided in three categories of pain intensity: mild, moderate and severe. Patients were offered a treatment with opioid dose titration, according to department policy. Data regarding opioid doses and pain intensity were collected after dose titration was completed. Four levels of opioid response were considered: (a) good pain control, with minimal opioid escalation and without relevant adverse effects; (b) good pain control requiring more aggressive opioid escalation, for example doubling the doses in four days; (c) adequate pain control associated with the occurrence of adverse effects; (d) poor pain control with adverse effects."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Seventy-six, forty-four, forty-one and six patients showed a response a, b, c, and d, respectively. No correlation between baseline pain intensity categories and opioid response was found. Patients with response 'b' and 'd' showed higher values of OEImg."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.90,\"reason_for_action\":\"Results state no correlation between baseline pain intensity categories and opioid response, so pain intensity does not predict a poor opioid response.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.9,
+      "reason_for_action": "Results state no correlation between baseline pain intensity categories and opioid response, so pain intensity does not predict a poor opioid response."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 6.252
+}

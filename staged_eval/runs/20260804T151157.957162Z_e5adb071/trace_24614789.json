@@ -1,0 +1,50 @@
+{
+  "pmid": "24614789",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "METHODS",
+      "context": "Postoperative CSF fistulas were described in 16 of 198 patients (8%) who underwent spine surgery between 2009 and 2010. The choice of the therapeutic strategy was based on the clinical condition of the patients, taking into account the possibility to maintain the prone position continuously and the risk of morbidity due to prolonged bed rest. Six patients were treated conservatively (position prone for three weeks), ten patients were treated by positioning an external CSF lumbar drainage for ten days. The mean follow-up period was ten months."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "All patients healed their wound properly and no adverse events were recorded. Patients treated conservatively were cured in a mean period of 30 days, while patients treated with CSF drainage were cured in a mean period of 10 days."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "METHODS",
+      "context": "Postoperative CSF fistulas were described in 16 of 198 patients (8%) who underwent spine surgery between 2009 and 2010. The choice of the therapeutic strategy was based on the clinical condition of the patients, taking into account the possibility to maintain the prone position continuously and the risk of morbidity due to prolonged bed rest. Six patients were treated conservatively (position prone for three weeks), ten patients were treated by positioning an external CSF lumbar drainage for ten days. The mean follow-up period was ten months."
+    },
+    {
+      "label": "RESULTS",
+      "context": "All patients healed their wound properly and no adverse events were recorded. Patients treated conservatively were cured in a mean period of 30 days, while patients treated with CSF drainage were cured in a mean period of 10 days."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 6.012
+}

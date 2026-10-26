@@ -1,0 +1,1306 @@
+{
+  "schema_version": 1,
+  "dataset": {
+    "name": "IVUL-KAUST/MedCTA",
+    "license": "apache-2.0",
+    "source_page": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA",
+    "source_url": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/raw/dataset.json",
+    "source_revision": "0be777092121a18ba2a85a0c4145a9d4fe8ed7db",
+    "image_base_url": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db"
+  },
+  "selected_case_ids": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10"
+  ],
+  "cases": [
+    {
+      "case_id": "0",
+      "question": "Based on the CT image, what type of venous thrombosis is present?",
+      "image_path": "image/image_1.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_1.jpg",
+      "available_tools": [
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "RegionAttributeDescription",
+          "description": "Describe the attribute of a region of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "bbox",
+              "description": "The bbox coordinate in the format of `(x1, y1, x2, y2)`",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "attribute",
+              "description": "The attribute to describe",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_1.jpg"
+          },
+          "reference_observation": "Axial contrast-enhanced CT of the upper abdomen at the level of the liver and porta hepatis. The liver is on the left and the spleen on the right. Contrast-enhanced venous structures are visible near the porta hepatis and mesenteric root, with areas of low attenuation suggesting intraluminal filling defects.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "RegionAttributeDescription",
+          "reference_arguments": {
+            "image": "image/image_1.jpg",
+            "bbox": "(central upper abdomen at the porta hepatis and mesenteric venous confluence)",
+            "attribute": "presence of intraluminal filling defects consistent with venous thrombosis and possible extension into mesenteric veins"
+          },
+          "reference_observation": "Low-attenuation intraluminal material is seen within the portal venous system, consistent with portal vein thrombosis. The thrombus extends into the superior mesenteric vein, indicating associated superior mesenteric vein thrombosis.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "Portal vein thrombosis, superior mesenteric vein thrombosis."
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "Portal vein thrombosis, superior mesenteric vein thrombosis."
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "1",
+      "question": "Are any measurement labels visible in the image? Also, find the mass size and identify its abdominal quadrant.",
+      "image_path": "image/image_2.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_2.jpg",
+      "available_tools": [
+        {
+          "name": "OCR",
+          "description": "This tool can recognize all text on the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "RegionAttributeDescription",
+          "description": "Describe the attribute of a region of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "bbox",
+              "description": "The bbox coordinate in the format of `(x1, y1, x2, y2)`",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "attribute",
+              "description": "The attribute to describe",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_2.jpg"
+          },
+          "reference_observation": "",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_2.jpg"
+          },
+          "reference_observation": "Axial abdominal CT image demonstrates a large, well-defined heterogeneous mass occupying much of the upper abdomen, with displacement of adjacent organs, particularly near the stomach and liver.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "RegionAttributeDescription",
+          "reference_arguments": {
+            "image": "image/image_2.jpg",
+            "bbox": "(upper abdominal region containing the mass)",
+            "attribute": "approximate size of the mass and its location relative to abdominal quadrants"
+          },
+          "reference_observation": "The mass is large, measuring approximately 12 × 8 × 8 cm based on its extent within the abdomen. It is predominantly located in the left upper quadrant, adjacent to the stomach and left hepatic lobe.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "No, left upper quadrant, 12 x 8 x 8 cm."
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "No, left upper quadrant, 12 x 8 x 8 cm."
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "2",
+      "question": "Identify the organs shown?",
+      "image_path": "image/image_3.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_3.jpg",
+      "available_tools": [
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "OCR",
+          "description": "A tool that can extract text from images.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "GoogleSearch",
+          "description": "The tool can search the input query text from Google and return the related results.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "query",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "int",
+              "name": "k",
+              "description": "Select the first k results",
+              "optional": true,
+              "default": 10,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_3.jpg"
+          },
+          "reference_observation": "A multi-panel bar graph with three stacked panels showing the number of neutrophils (PMNs) per field. Each panel represents a different organ, and bars compare control wild-type, hemorrhage wild-type, and hemorrhage P-selectin (-/-) groups with significance annotations.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_3.jpg"
+          },
+          "reference_observation": "Lung\nLiver\nIntestine\nNumber of PMNs / Field\nControl Wild-Type\nHemorrhage Wild-Type\nHemorrhage P-selectin (-/-)\np<0.01",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "P-selectin role in neutrophil recruitment hemorrhagic shock inflammation",
+            "k": 5
+          },
+          "reference_observation": "P-selectin mediates leukocyte rolling and adhesion on activated endothelium and platelets, facilitating neutrophil recruitment during inflammation. Experimental models show that P-selectin deficiency or blockade reduces neutrophil infiltration and organ injury after hemorrhagic shock or ischemia-reperfusion.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "lung, liver, and intestine"
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "lung, liver, and intestine"
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "3",
+      "question": "Identify the tissue, determine the stain in it.",
+      "image_path": "image/image_4.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_4.jpg",
+      "available_tools": [
+        {
+          "name": "RegionAttributeDescription",
+          "description": "Describe the attribute of a region of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "bbox",
+              "description": "The bbox coordinate in the format of `(x1, y1, x2, y2)`",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "attribute",
+              "description": "The attribute to describe",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "OCR",
+          "description": "This tool can recognize all text on the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "ImageDescription",
+          "description": "Generate a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "GoogleSearch",
+          "description": "Search the web for relevant information.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "query",
+              "description": "The search query.",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "number",
+              "name": "k",
+              "description": "The number of top search results to return.",
+              "optional": true,
+              "default": 4,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_4.jpg"
+          },
+          "reference_observation": "A two-panel histology figure showing embryo heart tissue sections. The panels appear to compare two genotypes (left vs right). The tissue shows thick muscular walls and trabeculated regions consistent with myocardium/ventricular wall architecture.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_4.jpg"
+          },
+          "reference_observation": " crt +/-\n crt -/-",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "RegionAttributeDescription",
+          "reference_arguments": {
+            "image": "image/image_4.jpg",
+            "attribute": "dominant stain colors and appearance (e.g., pink cytoplasm, purple/blue nuclei) indicative of histology stain"
+          },
+          "reference_observation": "The sections show predominantly pink/red cytoplasm and extracellular matrix with purple/blue nuclei, consistent with a hematoxylin-and-eosin (H&E) color pattern rather than DAB immunostaining or trichrome.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "H&E stain appearance blue purple nuclei pink cytoplasm eosin hematoxylin",
+            "k": 4
+          },
+          "reference_observation": "H&E staining: hematoxylin stains nuclei blue-purple and eosin stains cytoplasm/extracellular matrix pink; this is the classic routine histology color pattern.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 4,
+          "action": "CALL_TOOL",
+          "tool_name": "RegionAttributeDescription",
+          "reference_arguments": {
+            "image": "image/image_4.jpg",
+            "bbox": "",
+            "attribute": "compare ventricular wall thickness, compact layer growth, and fenestration/trabeculation between crt+/- (left) and crt-/- (right)"
+          },
+          "reference_observation": "Compared with the crt+/- panel, the crt-/- panel shows a thinner ventricular wall with reduced/attenuated compact layer development and more prominent trabeculation with increased fenestration/porous spaces in the myocardium.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 5,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "myocardial tissue, H&E."
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "myocardial tissue, H&E. "
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "4",
+      "question": "Compare Gpc3 +/+ and Gpc3 −/ embryonic kidneys across E12.0, E13.5, and E16.5, focusing on ureteric bud branching, kidney size, and cortical–medullary architecture.",
+      "image_path": "image/image_5.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_5.jpg",
+      "available_tools": [
+        {
+          "name": "GoogleSearch",
+          "description": "The tool can search the input query text from Google and return the related results.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "query",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "int",
+              "name": "k",
+              "description": "Select the first k results",
+              "optional": true,
+              "default": 10,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "OCR",
+          "description": "A tool that extracts and returns text from the input image using Optical Character Recognition (OCR).",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "RegionAttributeDescription",
+          "description": "Describe the attribute of a region of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "bbox",
+              "description": "The bbox coordinate in the format of `(x1, y1, x2, y2)`",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "attribute",
+              "description": "The attribute to describe",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "Gpc3 knockout embryonic kidney development ureteric bud branching cystic dysplasia",
+            "k": 5
+          },
+          "reference_observation": "Gpc3 (glypican-3) loss in mouse embryos is associated with organ overgrowth, enhanced ureteric bud branching at early stages, increased kidney size at mid-gestation, and later cystic and architectural abnormalities in the cortex and medulla.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_5.jpg"
+          },
+          "reference_observation": "A multi-row histology figure of embryonic mouse kidneys comparing Gpc3 +/+ (left column) and Gpc3 −/ (right column) across stages E12.0, E13.5, E16.5, and E18.5. Arrowheads highlight structures in early stages, and later panels label cortex (C), medulla (M), and cysts (Cy).",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_5.jpg"
+          },
+          "reference_observation": "Gpc3 +/+   Gpc3 -/\nE12.0\nE13.5\nE16.5\nE18.5\nC  M  Cy",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "CALL_TOOL",
+          "tool_name": "RegionAttributeDescription",
+          "reference_arguments": {
+            "image": "image/image_5.jpg",
+            "attribute": "compare ureteric bud branching at E12.0, kidney size at E13.5, and cortical–medullary organization and cysts at E16.5 between Gpc3 +/+ and Gpc3 -/"
+          },
+          "reference_observation": "At E12.0, the Gpc3 −/ kidney shows more numerous and complex ureteric bud branches compared with Gpc3 +/+. At E13.5, the Gpc3 −/ kidney is noticeably larger than the control but retains broadly normal developing renal architecture. By E16.5, the Gpc3 −/ kidney shows disorganized cortical structures, reduced tubular organization in the medulla, and the presence of cystic spaces.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 4,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "At E12.0, Gpc3 −/ embryos show enhanced ureteric bud branching, At E13.5, the mutant kidney is enlarged and by E16.5, the Gpc3 −/ kidney exhibits abnormal cortical organization"
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "At E12.0, Gpc3 −/ embryos show enhanced ureteric bud branching, At E13.5, the mutant kidney is enlarged and by E16.5, the Gpc3 −/ kidney exhibits abnormal cortical organization"
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "5",
+      "question": "Identify the organ shown and state whether this anatomical variant is common or rare.",
+      "image_path": "image/image_6.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_6.jpg",
+      "available_tools": [
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "GoogleSearch",
+          "description": "A tool that performs a Google search and returns the top k results.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "query",
+              "description": "The search query string.",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "integer",
+              "name": "k",
+              "description": "The number of top search results to return.",
+              "optional": true,
+              "default": 3,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_6.jpg"
+          },
+          "reference_observation": "Gross specimen photograph showing an elongated sac-like organ consistent with a gallbladder, along with a smaller separate sac-like structure in the foreground, suggesting a duplicated or accessory biliary structure. A scale/ruler is present below the specimen.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "accessory gallbladder incidence rare congenital anomaly",
+            "k": 3
+          },
+          "reference_observation": "Accessory or duplicated gallbladder is a rare congenital biliary anomaly, reported in a very small percentage of the population and often discovered incidentally during imaging or surgery.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "Gallbladder, Rare"
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "Gallbladder, Rare"
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "6",
+      "question": "Determine the imaging plane or view of the image?",
+      "image_path": "image/image_7.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_7.jpg",
+      "available_tools": [
+        {
+          "name": "OCR",
+          "description": "This tool can recognize all text on the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "GoogleSearch",
+          "description": "The tool can search the input query text from Google and return the related results.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "query",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "int",
+              "name": "k",
+              "description": "Select the first k results",
+              "optional": true,
+              "default": 10,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "RegionAttributeDescription",
+          "description": "Describe the attribute of a region of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "bbox",
+              "description": "The bbox coordinate in the format of `(x1, y1, x2, y2)`",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "attribute",
+              "description": "The attribute to describe",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_7.jpg"
+          },
+          "reference_observation": "Se:4/4\n Im:1/30\n Ax:8.0\n 09/17/97\n 08:59\n R\n L\nTR:4350\n TE:34/61\n FOV:38x38",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_7.jpg"
+          },
+          "reference_observation": "Grayscale MRI slice showing a symmetric cross-sectional anatomy with left and right soft tissues and muscle groups, and a central round airway-like structure; an arrow points to a lesion/mass near the midline. Orientation markers R and L appear on the sides.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "MRI planes how to distinguish axial coronal sagittal by symmetry left right R L markers",
+            "k": 5
+          },
+          "reference_observation": "1) Radiopaedia: MRI planes (axial, coronal, sagittal) and how to recognize them by anatomy orientation.\n2) MRIquestions: Imaging planes—axial/transverse vs coronal vs sagittal with common viewing conventions.\n3) Kenhub/Anatomy resources: Cross-sectional (axial) anatomy shows bilateral symmetry and round airway/lumen.\n4) University radiology teaching file: Recognizing axial neck MRI by paired muscles and central airway.\n5) StatPearls/Imaging basics: R/L markers and slice appearance across standard planes.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "CALL_TOOL",
+          "tool_name": "RegionAttributeDescription",
+          "reference_arguments": {
+            "image": "image/image_7.jpg",
+            "attribute": "presence and appearance of a central airway-like structure"
+          },
+          "reference_observation": "The image contains a centrally located, roughly circular dark lumen surrounded by soft tissue, consistent with an airway or trachea seen in cross-section.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 4,
+          "action": "CALL_TOOL",
+          "tool_name": "RegionAttributeDescription",
+          "reference_arguments": {
+            "image": "image/image_7.jpg",
+            "attribute": "bilateral symmetry of lateral cervical soft tissues"
+          },
+          "reference_observation": "Lateral soft tissues and muscle groups appear symmetrically distributed on both sides of the image, supporting a coronal imaging plane.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 5,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "coronal MRI view"
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "coronal MRI view"
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "7",
+      "question": "From the gross specimen photo, what procedure was used to remove the mass?",
+      "image_path": "image/image_8.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_8.jpg",
+      "available_tools": [
+        {
+          "name": "OCR",
+          "description": "This tool can recognize all text on the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_8.jpg"
+          },
+          "reference_observation": "1 2 3 4\nDEVON\n IN",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_8.jpg"
+          },
+          "reference_observation": "Black-and-white gross photograph of an irregular soft tissue mass placed on a measuring ruler (centimeter scale visible). No clinical caption is present in the image.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "hysteroscopic procedure"
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "hysteroscopic procedure"
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "8",
+      "question": "Identify the type of tissue shown in the biopsy?",
+      "image_path": "image/image_9.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_9.jpg",
+      "available_tools": [
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "OCR",
+          "description": "This tool can recognize all text on the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "RegionAttributeDescription",
+          "description": "Describe the attribute of a region of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "bbox",
+              "description": "The bbox coordinate in the format of `(x1, y1, x2, y2)`",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "text",
+              "name": "attribute",
+              "description": "The attribute to describe",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "GoogleSearch",
+          "description": "The tool can search the input query text from Google and return the related results.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "query",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "int",
+              "name": "k",
+              "description": "Select the first k results",
+              "optional": true,
+              "default": 10,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_9.jpg"
+          },
+          "reference_observation": "Histology micrograph showing elongated, parallel fibers arranged in bundles with intervening pale connective tissue spaces; no glandular or epithelial structures are seen.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_9.jpg"
+          },
+          "reference_observation": "",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "skeletal muscle histology parallel fibers fascicles connective tissue septa biopsy",
+            "k": 4
+          },
+          "reference_observation": "Histology references describe skeletal muscle as composed of long, cylindrical fibers arranged in parallel fascicles separated by connective tissue (endomysium and perimysium).",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "../images/10461429_f3-kjim-14-2-78-12.jpg"
+          },
+          "reference_observation": "Histology micrograph showing small blood vessel profiles surrounded by clusters of dark-staining inflammatory cells forming cuffs around the vessels.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 4,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "perivascular infiltration pathology definition inflammatory cells around blood vessels",
+            "k": 5
+          },
+          "reference_observation": "Pathology sources define perivascular infiltration as the accumulation of inflammatory cells, such as lymphocytes or neutrophils, surrounding blood vessels, commonly seen in inflammatory or immune-mediated conditions.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 5,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "muscle tissue"
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "muscle tissue"
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "9",
+      "question": "Specify the epithelial cell type of interest, and staining technique used?",
+      "image_path": "image/image_10.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_10.jpg",
+      "available_tools": [
+        {
+          "name": "OCR",
+          "description": "This tool can recognize all text on the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "GoogleSearch",
+          "description": "A tool to search the web for relevant information.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "query",
+              "description": "The search query.",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            },
+            {
+              "type": "number",
+              "name": "k",
+              "description": "The number of search results to return.",
+              "optional": true,
+              "default": 5,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "image/image_10.jpg"
+          },
+          "reference_observation": "Mock Ab\n 50 µm",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "image/image_10.jpg"
+          },
+          "reference_observation": "Histology micrograph showing intestinal mucosa with crypt–villus architecture. The epithelium is composed of columnar cells, with numerous pale, mucin-filled cells interspersed. Nuclei stain dark blue to black, and mucin-rich areas stain prominently blue.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "GoogleSearch",
+          "reference_arguments": {
+            "query": "intestinal goblet cells histology PAS Alcian blue mucin staining appearance",
+            "k": 5
+          },
+          "reference_observation": "1) Goblet cells are mucin-secreting epithelial cells in intestinal crypts and villi, appearing pale on routine stains.\n2) Alcian blue stains acidic mucins blue; PAS stains neutral mucins magenta.\n3) PAS–Alcian blue is commonly used to highlight intestinal goblet cells.\n4) H&E typically shows pink cytoplasm, which is absent in mucin-rich cells.\n5) Pathology atlases describe strong blue mucin staining in goblet cells with PAS–Alcian blue.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "goblet cells, periodic acid–Schiff–Alcian blue stain."
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "goblet cells, periodic acid–Schiff–Alcian blue stain."
+        ],
+        "blacklist": null
+      }
+    },
+    {
+      "case_id": "10",
+      "question": "Extract the numerical values of the bars in the top pane and difference between the highest and lowest bar values.",
+      "image_path": "image/image_11.jpg",
+      "image_reference": "https://huggingface.co/datasets/IVUL-KAUST/MedCTA/resolve/0be777092121a18ba2a85a0c4145a9d4fe8ed7db/image/image_11.jpg",
+      "available_tools": [
+        {
+          "name": "OCR",
+          "description": "This tool can recognize all text on the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "ImageDescription",
+          "description": "A useful tool that returns a brief description of the input image.",
+          "inputs": [
+            {
+              "type": "image",
+              "name": "image",
+              "description": null,
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        },
+        {
+          "name": "Calculator",
+          "description": "A tool that can perform basic arithmetic calculations.",
+          "inputs": [
+            {
+              "type": "text",
+              "name": "expression",
+              "description": "The arithmetic expression to calculate, e.g., '2 + 2 * 3'.",
+              "optional": false,
+              "default": null,
+              "filetype": null
+            }
+          ]
+        }
+      ],
+      "reference_steps": [
+        {
+          "step_index": 0,
+          "action": "CALL_TOOL",
+          "tool_name": "ImageDescription",
+          "reference_arguments": {
+            "image": "../images/7e110f34-d0eb-402e-a448-b81db4ced1cb.png"
+          },
+          "reference_observation": "A multi-panel bar chart with four stacked panels. Each panel shows five vertical bars with error bars. The top panel has a y-axis ranging approximately from 0 to 30.",
+          "reference_answer": null
+        },
+        {
+          "step_index": 1,
+          "action": "CALL_TOOL",
+          "tool_name": "OCR",
+          "reference_arguments": {
+            "image": "../images/7e110f34-d0eb-402e-a448-b81db4ced1cb.png"
+          },
+          "reference_observation": "0\n10\n20\n30",
+          "reference_answer": null
+        },
+        {
+          "step_index": 2,
+          "action": "CALL_TOOL",
+          "tool_name": "Calculator",
+          "reference_arguments": {
+            "expression": "26 - 1"
+          },
+          "reference_observation": "25",
+          "reference_answer": null
+        },
+        {
+          "step_index": 3,
+          "action": "FINAL_ANSWER",
+          "tool_name": null,
+          "reference_arguments": null,
+          "reference_observation": null,
+          "reference_answer": "25"
+        }
+      ],
+      "ground_truth": {
+        "accepted_answers": [
+          "25"
+        ],
+        "blacklist": null
+      }
+    }
+  ]
+}

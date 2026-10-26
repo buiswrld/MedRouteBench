@@ -1,0 +1,86 @@
+{
+  "pmid": "12094116",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The purpose of this study was to identify the relationships between leg muscle power and sprinting speed with changes of direction."
+    },
+    {
+      "label": "EXPERIMENTAL DESIGN",
+      "context": "the study was designed to describe relationships between physical qualities and a component of sports performance."
+    },
+    {
+      "label": "SETTING",
+      "context": "testing was conducted in an indoor sports hall and a biomechanics laboratory."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "15 male participants were required to be free of injury and have recent experience competing in sports involving sprints with changes of direction."
+    },
+    {
+      "label": "MEASURES",
+      "context": "subjects were timed in 8 m sprints in a straight line and with various changes of direction. They were also tested for bilateral and unilateral leg extensor muscle concentric power output by an isokinetic squat and reactive strength by a drop jump."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"The study aimed to identify relationships and collected relevant measures (sprint times with direction changes and leg power tests), but no outcome data or results are provided in the supplied evidence to confirm or refute a relationship.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "The study aimed to identify relationships and collected relevant measures (sprint times with direction changes and leg power tests), but no outcome data or results are provided in the supplied evidence to confirm or refute a relationship."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The correlations between concentric power and straight sprinting speed were non-significant whereas the relationships between reactive strength and straight speed were statistically significant. Correlations between muscle power and speed while changing direction were generally low and non-significant for concentric leg power with some moderate and significant (p<0.05) coefficients found for reactive strength. The participants who turned faster to one side tended to have a reactive strength dominance in the leg responsible for the push-off action."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "The purpose of this study was to identify the relationships between leg muscle power and sprinting speed with changes of direction."
+    },
+    {
+      "label": "EXPERIMENTAL DESIGN",
+      "context": "the study was designed to describe relationships between physical qualities and a component of sports performance."
+    },
+    {
+      "label": "SETTING",
+      "context": "testing was conducted in an indoor sports hall and a biomechanics laboratory."
+    },
+    {
+      "label": "PARTICIPANTS",
+      "context": "15 male participants were required to be free of injury and have recent experience competing in sports involving sprints with changes of direction."
+    },
+    {
+      "label": "MEASURES",
+      "context": "subjects were timed in 8 m sprints in a straight line and with various changes of direction. They were also tested for bilateral and unilateral leg extensor muscle concentric power output by an isokinetic squat and reactive strength by a drop jump."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The correlations between concentric power and straight sprinting speed were non-significant whereas the relationships between reactive strength and straight speed were statistically significant. Correlations between muscle power and speed while changing direction were generally low and non-significant for concentric leg power with some moderate and significant (p<0.05) coefficients found for reactive strength. The participants who turned faster to one side tended to have a reactive strength dominance in the leg responsible for the push-off action."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.70,\"reason_for_action\":\"Results are mixed: concentric leg power generally showed low/non-significant correlations with change-of-direction speed, but reactive strength had some moderate, significant associations, so the relationship is uncertain.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.7,
+      "reason_for_action": "Results are mixed: concentric leg power generally showed low/non-significant correlations with change-of-direction speed, but reactive strength had some moderate, significant associations, so the relationship is uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.336
+}

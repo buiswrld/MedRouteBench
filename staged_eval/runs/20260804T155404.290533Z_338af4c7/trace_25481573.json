@@ -1,0 +1,62 @@
+{
+  "pmid": "25481573",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To assess the extent to which the title and font of participant information sheets (PISs) can influence pregnant women's and trainee midwives' perceptions of an antenatal intervention."
+    },
+    {
+      "label": "METHODS",
+      "context": "Pregnant women (n=35) and trainee midwives (n=36) were randomly presented with one of four PISs where the title and font of the PIS had been manipulated to create four experimental conditions (i.e., Double Fluent; Double Awkward; Fluent Title-Awkward Font; Awkward Title-Fluent Font). After reading the PIS, participants rated their perceptions of the intervention (i.e., Attractiveness, Complexity, Expected Risk, Required Effort) using five-point Likert scales."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.60,\"reason_for_action\":\"The study randomized pregnant women and trainee midwives to PISs with manipulated title and font and measured perceived attractiveness, complexity, risk and effort—factors that could affect recruitment—but no outcome data are provided here.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "The study randomized pregnant women and trainee midwives to PISs with manipulated title and font and measured perceived attractiveness, complexity, risk and effort—factors that could affect recruitment—but no outcome data are provided here."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A 4×2 factorial multivariate analysis of variance revealed that pregnant women rated the Double Awkward condition as significantly more complex than the Double Fluent (p=.024) and Awkward Title-Fluent Font (p=.021) conditions."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To assess the extent to which the title and font of participant information sheets (PISs) can influence pregnant women's and trainee midwives' perceptions of an antenatal intervention."
+    },
+    {
+      "label": "METHODS",
+      "context": "Pregnant women (n=35) and trainee midwives (n=36) were randomly presented with one of four PISs where the title and font of the PIS had been manipulated to create four experimental conditions (i.e., Double Fluent; Double Awkward; Fluent Title-Awkward Font; Awkward Title-Fluent Font). After reading the PIS, participants rated their perceptions of the intervention (i.e., Attractiveness, Complexity, Expected Risk, Required Effort) using five-point Likert scales."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A 4×2 factorial multivariate analysis of variance revealed that pregnant women rated the Double Awkward condition as significantly more complex than the Double Fluent (p=.024) and Awkward Title-Fluent Font (p=.021) conditions."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.6,\"reason_for_action\":\"PIS title and font influenced perceptions (Double Awkward rated more complex than Double Fluent and AwkwardTitle-FluentFont), but only perceptions were measured—not actual recruitment/participation—so impact is uncertain.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "PIS title and font influenced perceptions (Double Awkward rated more complex than Double Fluent and AwkwardTitle-FluentFont), but only perceptions were measured—not actual recruitment/participation—so impact is uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 8.124
+}

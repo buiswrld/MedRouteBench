@@ -1,0 +1,62 @@
+{
+  "pmid": "26923375",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND AND AIM",
+      "context": "Esophageal varices are present in 30% to 40% of patients in compensated cirrhosis (Child-Pugh class A) and in 60% to 85% of patients in decompensated cirrhosis (Child-Pugh classes B and C). It is important to identify patients with compensated cirrhosis at risk for esophageal varix development. We evaluated the accuracy of a duplex Doppler ultrasonographic index for predicting the presence or absence of esophageal varices in patients with compensated hepatic cirrhosis (Child-Pugh class A) by using endoscopy as the reference standard."
+    },
+    {
+      "label": "METHODS",
+      "context": "Fifty-six enrolled patients underwent duplex Doppler ultrasonography followed by screening endoscopy. Mean portal vein velocity (PVV), splenic index (SI), splenoportal index (SPI), hepatic and splenic arterial resistive, and pulsatility indices (hepatic artery resistive index [HARI], hepatic artery pulsatility index [HAPI], splenic artery resistive index [SARI], splenic artery pulsatility index [SAPI]) were recorded. Univariate logistic regression analysis was followed by receiver operating characteristic (ROC) curve construction for the indices that were significant."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.50,\"reason_for_action\":\"The provided snippets describe aim and methods evaluating Doppler indices against endoscopy but give no results or accuracy metrics; thus feasibility cannot be determined from available evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "The provided snippets describe aim and methods evaluating Doppler indices against endoscopy but give no results or accuracy metrics; thus feasibility cannot be determined from available evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The indices HARI, HAPI, SARI, SAPI were not helpful (p > 0.05). Mean PVV, SI, and SPI were all predictive of the presence of esophageal varices (p < 0.05) and SPI was found to be the most accurate parameter. Of the various cut-off levels of SPI evaluated, a cut-off value of SPI at 5.0, offered the highest diagnostic accuracy (88%). For the 28 patients with SPI<5.0, the absence of esophageal varices in 27 of them could be correctly diagnosed using only SPI without invasive screening endoscopy, with high negative predictive value (96%) and sensitivity (96%). Of the remaining 28 patients with SPI ≥5.0, presence of esophageal varices could be similarly correctly diagnosed in 22 of them by using SPI without screening endoscopy, with high positive predictive value (79%) and specificity (82%)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND AND AIM",
+      "context": "Esophageal varices are present in 30% to 40% of patients in compensated cirrhosis (Child-Pugh class A) and in 60% to 85% of patients in decompensated cirrhosis (Child-Pugh classes B and C). It is important to identify patients with compensated cirrhosis at risk for esophageal varix development. We evaluated the accuracy of a duplex Doppler ultrasonographic index for predicting the presence or absence of esophageal varices in patients with compensated hepatic cirrhosis (Child-Pugh class A) by using endoscopy as the reference standard."
+    },
+    {
+      "label": "METHODS",
+      "context": "Fifty-six enrolled patients underwent duplex Doppler ultrasonography followed by screening endoscopy. Mean portal vein velocity (PVV), splenic index (SI), splenoportal index (SPI), hepatic and splenic arterial resistive, and pulsatility indices (hepatic artery resistive index [HARI], hepatic artery pulsatility index [HAPI], splenic artery resistive index [SARI], splenic artery pulsatility index [SAPI]) were recorded. Univariate logistic regression analysis was followed by receiver operating characteristic (ROC) curve construction for the indices that were significant."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The indices HARI, HAPI, SARI, SAPI were not helpful (p > 0.05). Mean PVV, SI, and SPI were all predictive of the presence of esophageal varices (p < 0.05) and SPI was found to be the most accurate parameter. Of the various cut-off levels of SPI evaluated, a cut-off value of SPI at 5.0, offered the highest diagnostic accuracy (88%). For the 28 patients with SPI<5.0, the absence of esophageal varices in 27 of them could be correctly diagnosed using only SPI without invasive screening endoscopy, with high negative predictive value (96%) and sensitivity (96%). Of the remaining 28 patients with SPI ≥5.0, presence of esophageal varices could be similarly correctly diagnosed in 22 of them by using SPI without screening endoscopy, with high positive predictive value (79%) and specificity (82%)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"The study found the splenoportal index (SPI) with cutoff 5.0 had 88% accuracy, 96% sensitivity and NPV, and 82% specificity, supporting non-invasive diagnosis by duplex Doppler in many patients.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "The study found the splenoportal index (SPI) with cutoff 5.0 had 88% accuracy, 96% sensitivity and NPV, and 82% specificity, supporting non-invasive diagnosis by duplex Doppler in many patients."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.123
+}

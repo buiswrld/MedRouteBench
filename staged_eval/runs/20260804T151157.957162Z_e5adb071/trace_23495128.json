@@ -1,0 +1,58 @@
+{
+  "pmid": "23495128",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The aim of the present study was to explore patients' views on the acceptability and feasibility of using colour to describe osteoarthritis (OA) pain, and whether colour could be used to communicate pain to healthcare professionals."
+    },
+    {
+      "label": "METHODS",
+      "context": "Six group interviews were conducted with 17 patients with knee OA. Discussion topics included first impressions about using colour to describe pain, whether participants could associate their pain with colour, how colours related to changes to intensity and different pain qualities, and whether they could envisage using colour to describe pain to healthcare professionals."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The group interviews indicated that, although the idea of using colour was generally acceptable, it did not suit all participants as a way of describing their pain. The majority of participants chose red to describe high-intensity pain; the reasons given were because red symbolized inflammation, fire, anger and the stop signal in a traffic light system. Colours used to describe the absence of pain were chosen because of their association with positive emotional feelings, such as purity, calmness and happiness. A range of colours was chosen to represent changes in pain intensity. Aching pain was consistently identified as being associated with colours such as grey or black, whereas sharp pain was described using a wider selection of colours. The majority of participants thought that they would be able to use colour to describe their pain to healthcare professionals, although issues around the interpretability and standardization of colour were raised."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The aim of the present study was to explore patients' views on the acceptability and feasibility of using colour to describe osteoarthritis (OA) pain, and whether colour could be used to communicate pain to healthcare professionals."
+    },
+    {
+      "label": "METHODS",
+      "context": "Six group interviews were conducted with 17 patients with knee OA. Discussion topics included first impressions about using colour to describe pain, whether participants could associate their pain with colour, how colours related to changes to intensity and different pain qualities, and whether they could envisage using colour to describe pain to healthcare professionals."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The group interviews indicated that, although the idea of using colour was generally acceptable, it did not suit all participants as a way of describing their pain. The majority of participants chose red to describe high-intensity pain; the reasons given were because red symbolized inflammation, fire, anger and the stop signal in a traffic light system. Colours used to describe the absence of pain were chosen because of their association with positive emotional feelings, such as purity, calmness and happiness. A range of colours was chosen to represent changes in pain intensity. Aching pain was consistently identified as being associated with colours such as grey or black, whereas sharp pain was described using a wider selection of colours. The majority of participants thought that they would be able to use colour to describe their pain to healthcare professionals, although issues around the interpretability and standardization of colour were raised."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 4.453
+}

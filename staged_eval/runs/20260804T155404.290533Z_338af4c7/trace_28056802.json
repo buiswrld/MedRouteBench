@@ -1,0 +1,62 @@
+{
+  "pmid": "28056802",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "It has recently been shown that non-high density lipoprotein cholesterol (non-HDL-C) may be a better predictor of cardiovascular risk than low density lipoprotein cholesterol (LDL-C). Based on known ethic differences in lipid parameters and cardiovascular risk prediction, we sought to study the predictability of attaining non-HDL-C target and long-term major adverse cardiovascular event (MACE) in Thai patients after acute myocardial infarction (AMI) compared to attaining LDL-C target."
+    },
+    {
+      "label": "METHODS",
+      "context": "We retrospectively obtained the data of all patients who were admitted at Maharaj Nakorn Chiang Mai hospital due to AMI during 2006-2013. The mean non-HDL-C and LDL-C during long-term follow-up were used to predict MACE at each time point. The patients were classified as target attainment if non-HDL-C <100 mg/dl and/or LDL-C <70 mg/dl. The MACE was defined as combination of all-cause death, nonfatal coronary event and nonfatal stroke."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.12,\"reason_for_action\":\"Insufficient evidence provided: only background and methods are given, no results comparing non-HDL-C vs LDL-C predictive power for long-term MACE after AMI.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.12,
+      "reason_for_action": "Insufficient evidence provided: only background and methods are given, no results comparing non-HDL-C vs LDL-C predictive power for long-term MACE after AMI."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "During mean follow-up of 2.6 ± 1.6 years among 868 patients after AMI, 34.4% achieved non-HDL-C target, 23.7% achieved LDL-C target and 21.2% experienced MACEs. LDL-C and non-HDL-C were directly compared in Cox regression model. Compared with non-HDL-C <100 mg/dl, patients with non-HDL-C of>130 mg/dl had higher incidence of MACEs (HR 3.15, 95% CI 1.46-6.80, P = 0.003). Surprisingly, LDL-C >100 mg/dl was associated with reduced risk of MACE as compared to LDL <70 mg/dl (HR 0.42, 95% CI 0.18-0.98, p = 0.046) after direct pairwise comparison with non-HDL-C level."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "It has recently been shown that non-high density lipoprotein cholesterol (non-HDL-C) may be a better predictor of cardiovascular risk than low density lipoprotein cholesterol (LDL-C). Based on known ethic differences in lipid parameters and cardiovascular risk prediction, we sought to study the predictability of attaining non-HDL-C target and long-term major adverse cardiovascular event (MACE) in Thai patients after acute myocardial infarction (AMI) compared to attaining LDL-C target."
+    },
+    {
+      "label": "METHODS",
+      "context": "We retrospectively obtained the data of all patients who were admitted at Maharaj Nakorn Chiang Mai hospital due to AMI during 2006-2013. The mean non-HDL-C and LDL-C during long-term follow-up were used to predict MACE at each time point. The patients were classified as target attainment if non-HDL-C <100 mg/dl and/or LDL-C <70 mg/dl. The MACE was defined as combination of all-cause death, nonfatal coronary event and nonfatal stroke."
+    },
+    {
+      "label": "RESULTS",
+      "context": "During mean follow-up of 2.6 ± 1.6 years among 868 patients after AMI, 34.4% achieved non-HDL-C target, 23.7% achieved LDL-C target and 21.2% experienced MACEs. LDL-C and non-HDL-C were directly compared in Cox regression model. Compared with non-HDL-C <100 mg/dl, patients with non-HDL-C of>130 mg/dl had higher incidence of MACEs (HR 3.15, 95% CI 1.46-6.80, P = 0.003). Surprisingly, LDL-C >100 mg/dl was associated with reduced risk of MACE as compared to LDL <70 mg/dl (HR 0.42, 95% CI 0.18-0.98, p = 0.046) after direct pairwise comparison with non-HDL-C level."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\",\"confidence\":0.65,\"reason_for_action\":\"Study shows non-HDL-C >130 mg/dl strongly predicts higher MACE (HR 3.15), while LDL-C had a paradoxical association; conflicting results and retrospective design leave uncertainty, so 'maybe' is appropriate.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe",
+      "confidence": 0.65,
+      "reason_for_action": "Study shows non-HDL-C >130 mg/dl strongly predicts higher MACE (HR 3.15), while LDL-C had a paradoxical association; conflicting results and retrospective design leave uncertainty, so 'maybe' is appropriate."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 10.56
+}

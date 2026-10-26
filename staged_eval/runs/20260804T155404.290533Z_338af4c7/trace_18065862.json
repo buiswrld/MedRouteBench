@@ -1,0 +1,70 @@
+{
+  "pmid": "18065862",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE OF THE STUDY",
+      "context": "We searched for factors present preoperatively which could be used to predict the intensity of postoperative pain."
+    },
+    {
+      "label": "MATERIAL AND METHODS",
+      "context": "We undertook a prospective study among all patients aged over 18 years who underwent shoulder surgery from January to September 2004 in our unit. The study included 86 patients for which the following data were noted preoperatively: past history of pain, intensity and duration of prior pain, triggering factors, localization, psychological context. The intensity of the postoperative pain was measured on a visual analog scale (VAS); measurements were noted up to 24 hours postop then at one month. Data processing was performed with Statview5.5."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.5,\"reason_for_action\":\"The provided text describes a study design collecting preoperative factors and postoperative VAS pain but gives no results or conclusions, so prediction capability cannot be determined from this evidence.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "The provided text describes a study design collecting preoperative factors and postoperative VAS pain but gives no results or conclusions, so prediction capability cannot be determined from this evidence."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Significant postoperative pain was correlated with a prior history of surgical pain, with duration of prior pain, with intensity of preoperative pain, and with depression."
+    },
+    {
+      "label": "DISCUSSION",
+      "context": "Significant sustained preoperative pain can favor memory of pain leading to postoperative sensitivization of nociception neurons. Intense postoperative pain can favor the development of refractory chronic pain."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE OF THE STUDY",
+      "context": "We searched for factors present preoperatively which could be used to predict the intensity of postoperative pain."
+    },
+    {
+      "label": "MATERIAL AND METHODS",
+      "context": "We undertook a prospective study among all patients aged over 18 years who underwent shoulder surgery from January to September 2004 in our unit. The study included 86 patients for which the following data were noted preoperatively: past history of pain, intensity and duration of prior pain, triggering factors, localization, psychological context. The intensity of the postoperative pain was measured on a visual analog scale (VAS); measurements were noted up to 24 hours postop then at one month. Data processing was performed with Statview5.5."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Significant postoperative pain was correlated with a prior history of surgical pain, with duration of prior pain, with intensity of preoperative pain, and with depression."
+    },
+    {
+      "label": "DISCUSSION",
+      "context": "Significant sustained preoperative pain can favor memory of pain leading to postoperative sensitivization of nociception neurons. Intense postoperative pain can favor the development of refractory chronic pain."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"The study reports significant correlations between postoperative pain and preoperative factors (prior surgical pain, duration/intensity of prior pain, depression), supporting that prediction is possible.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "The study reports significant correlations between postoperative pain and preoperative factors (prior surgical pain, duration/intensity of prior pain, depression), supporting that prediction is possible."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.07
+}

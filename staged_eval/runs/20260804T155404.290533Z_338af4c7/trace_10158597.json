@@ -1,0 +1,94 @@
+{
+  "pmid": "10158597",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To evaluate the effectiveness of the role of a discharge coordinator whose sole responsibility was to plan and coordinate the discharge of patients from medical wards."
+    },
+    {
+      "label": "DESIGN",
+      "context": "An intervention study in which the quality of discharge planning was assessed before and after the introduction of a discharge coordinator. Patients were interviewed on the ward before discharge and seven to 10 days after being discharged home."
+    },
+    {
+      "label": "SETTING",
+      "context": "The three medical wards at the Homerton Hospital in Hackney, East London."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "600 randomly sampled adult patients admitted to the medical wards of the study hospital, who were resident in the district (but not in institutions), were under the care of physicians (excluding psychiatry), and were discharged home from one of the medical wards. The sampling was conducted in three study phases, over 18 months."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "Phase I comprised base line data collection; in phase II data were collected after the introduction of the district discharge planning policy and a discharge form (checklist) for all patients; in phase III data were collected after the introduction of the discharge coordinator."
+    },
+    {
+      "label": "MAIN MEASURES",
+      "context": "The quality and out come of discharge planning. Readmission rates, duration of stay, appropriateness of days of care, patients' health and satisfaction, problems after discharge, and receipt of services."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.33,\"reason_for_action\":\"The provided text describes the before/after study design assessing a discharge coordinator but gives no outcome results, so effectiveness cannot be determined from this evidence alone.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.33,
+      "reason_for_action": "The provided text describes the before/after study design assessing a discharge coordinator but gives no outcome results, so effectiveness cannot be determined from this evidence alone."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The discharge coordinator resulted in an improved discharge planning process, and there was a reduction in problems experienced by patients after discharge, and in perceived need for medical and healthcare services. There was no evidence that the discharge coordinator resulted in a more timely or effective provision of community services after discharge, or that the appropriateness or efficiency of bed use was improved."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To evaluate the effectiveness of the role of a discharge coordinator whose sole responsibility was to plan and coordinate the discharge of patients from medical wards."
+    },
+    {
+      "label": "DESIGN",
+      "context": "An intervention study in which the quality of discharge planning was assessed before and after the introduction of a discharge coordinator. Patients were interviewed on the ward before discharge and seven to 10 days after being discharged home."
+    },
+    {
+      "label": "SETTING",
+      "context": "The three medical wards at the Homerton Hospital in Hackney, East London."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "600 randomly sampled adult patients admitted to the medical wards of the study hospital, who were resident in the district (but not in institutions), were under the care of physicians (excluding psychiatry), and were discharged home from one of the medical wards. The sampling was conducted in three study phases, over 18 months."
+    },
+    {
+      "label": "INTERVENTIONS",
+      "context": "Phase I comprised base line data collection; in phase II data were collected after the introduction of the district discharge planning policy and a discharge form (checklist) for all patients; in phase III data were collected after the introduction of the discharge coordinator."
+    },
+    {
+      "label": "MAIN MEASURES",
+      "context": "The quality and out come of discharge planning. Readmission rates, duration of stay, appropriateness of days of care, patients' health and satisfaction, problems after discharge, and receipt of services."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The discharge coordinator resulted in an improved discharge planning process, and there was a reduction in problems experienced by patients after discharge, and in perceived need for medical and healthcare services. There was no evidence that the discharge coordinator resulted in a more timely or effective provision of community services after discharge, or that the appropriateness or efficiency of bed use was improved."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.72,\"reason_for_action\":\"Study found the discharge coordinator improved the discharge planning process and reduced patient problems after discharge and perceived need for services, though not all outcomes (community service timeliness, bed efficiency) improved.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.72,
+      "reason_for_action": "Study found the discharge coordinator improved the discharge planning process and reduced patient problems after discharge and perceived need for services, though not all outcomes (community service timeliness, bed efficiency) improved."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 9.213
+}

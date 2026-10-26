@@ -1,0 +1,82 @@
+{
+  "pmid": "12484580",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To ascertain whether a written information sheet is acceptable to patients and improves recall of the consent interview."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Prospective randomised controlled study using questionnaires, comparing a group of patients given information in a written sheet with appropriate explanation to a group given verbal information alone."
+    },
+    {
+      "label": "SETTING",
+      "context": "A specialist orthopaedic surgery unit."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "The test group was 126 patients undergoing revision or primary total hip arthroplasty; 65 patients were given information verbally, 61 patients were given written information."
+    },
+    {
+      "label": "OUTCOME MEASURE",
+      "context": "Patients' recall of information given, tested with a questionnaire completed on admission (mean of 18 days later)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The patients receiving written information scored significantly higher (48% correct answers) than the patients receiving verbal information (38% correct answers)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To ascertain whether a written information sheet is acceptable to patients and improves recall of the consent interview."
+    },
+    {
+      "label": "DESIGN",
+      "context": "Prospective randomised controlled study using questionnaires, comparing a group of patients given information in a written sheet with appropriate explanation to a group given verbal information alone."
+    },
+    {
+      "label": "SETTING",
+      "context": "A specialist orthopaedic surgery unit."
+    },
+    {
+      "label": "PATIENTS",
+      "context": "The test group was 126 patients undergoing revision or primary total hip arthroplasty; 65 patients were given information verbally, 61 patients were given written information."
+    },
+    {
+      "label": "OUTCOME MEASURE",
+      "context": "Patients' recall of information given, tested with a questionnaire completed on admission (mean of 18 days later)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The patients receiving written information scored significantly higher (48% correct answers) than the patients receiving verbal information (38% correct answers)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 5.592
+}

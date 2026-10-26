@@ -1,0 +1,58 @@
+{
+  "pmid": "22497340",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To clarify whether horizontal canal ocular reflex is influenced by otolith organs input."
+    },
+    {
+      "label": "METHODS",
+      "context": "The subjects were seven healthy humans. The right ear was stimulated using ice-water. Each subject was kept in a left-ear-down position for 20 s and then repositioned to a prone position, a right-ear-down position and a supine position with 20 s intervals. Nystagmus was analysed using three-dimensional video-oculography."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Eye movements in the supine position and the prone position were not in a symmetric fashion. Nystagmus in the left-ear-down position and the right-ear-down position were not symmetric either. These phenomena indicate that the axis of the eyeball rotation was affected by the shift of the direction of gravity exerted on the head."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To clarify whether horizontal canal ocular reflex is influenced by otolith organs input."
+    },
+    {
+      "label": "METHODS",
+      "context": "The subjects were seven healthy humans. The right ear was stimulated using ice-water. Each subject was kept in a left-ear-down position for 20 s and then repositioned to a prone position, a right-ear-down position and a supine position with 20 s intervals. Nystagmus was analysed using three-dimensional video-oculography."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Eye movements in the supine position and the prone position were not in a symmetric fashion. Nystagmus in the left-ear-down position and the right-ear-down position were not symmetric either. These phenomena indicate that the axis of the eyeball rotation was affected by the shift of the direction of gravity exerted on the head."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 6.546
+}

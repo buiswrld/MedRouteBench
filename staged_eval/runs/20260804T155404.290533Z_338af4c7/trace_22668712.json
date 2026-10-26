@@ -1,0 +1,62 @@
+{
+  "pmid": "22668712",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The aim of this study was to assess the diagnostic value of articular sounds, standardized clinical examination, and standardized articular ultrasound in the detection of internal derangements of the temporomandibular joint."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "Forty patients and 20 asymptomatic volunteers underwent a standardized interview, physical examination, and static and dynamic articular ultrasound. Sensitivity, specificity, and predictive values were calculated using magnetic resonance as the reference test."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.5,\"reason_for_action\":\"The study describes assessing ultrasound vs MRI for TMJ internal derangement but provides no results here (sensitivity/specificity unknown), so a definite conclusion cannot be drawn.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.5,
+      "reason_for_action": "The study describes assessing ultrasound vs MRI for TMJ internal derangement but provides no results here (sensitivity/specificity unknown), so a definite conclusion cannot be drawn."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "A total of 120 temporomandibular joints were examined. Based on our findings, the presence of articular sounds and physical signs are often insufficient to detect disk displacement. Imaging by static and dynamic high-resolution ultrasound demonstrates considerably lower sensitivity when compared with magnetic resonance. Some of the technical difficulties resulted from a limited access because of the presence of surrounding bone structures."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "The aim of this study was to assess the diagnostic value of articular sounds, standardized clinical examination, and standardized articular ultrasound in the detection of internal derangements of the temporomandibular joint."
+    },
+    {
+      "label": "STUDY DESIGN",
+      "context": "Forty patients and 20 asymptomatic volunteers underwent a standardized interview, physical examination, and static and dynamic articular ultrasound. Sensitivity, specificity, and predictive values were calculated using magnetic resonance as the reference test."
+    },
+    {
+      "label": "RESULTS",
+      "context": "A total of 120 temporomandibular joints were examined. Based on our findings, the presence of articular sounds and physical signs are often insufficient to detect disk displacement. Imaging by static and dynamic high-resolution ultrasound demonstrates considerably lower sensitivity when compared with magnetic resonance. Some of the technical difficulties resulted from a limited access because of the presence of surrounding bone structures."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\",\"confidence\":0.82,\"reason_for_action\":\"Study results report static and dynamic high-resolution ultrasound has considerably lower sensitivity than MRI and technical limitations from surrounding bone limit access, so its role is limited.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no",
+      "confidence": 0.82,
+      "reason_for_action": "Study results report static and dynamic high-resolution ultrasound has considerably lower sensitivity than MRI and technical limitations from surrounding bone limit access, so its role is limited."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.136
+}

@@ -1,0 +1,58 @@
+{
+  "pmid": "23761381",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Testosterone measurement by liquid chromatography tandem mass spectrometry (LC-MS/MS) is well accepted as the preferred technique for the analysis of testosterone. Variation is seen between assays and this may be due to differences in calibration as commercial calibrators for this assay are not readily available. We investigated the effects calibration in routine clinical LC-MS/MS assays."
+    },
+    {
+      "label": "METHODS",
+      "context": "All LC-MS/MS users that were registered with the UKNEQAS external quality assurance scheme for testosterone were invited to take part in the study. A set of seven serum samples and serum-based calibrators were sent to all laboratories that expressed an interest. The laboratories were instructed to analyse all samples using there own calibrators and return the results and a method questionnaire for analysis."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Fifteen laboratories took part in the study. There was no consensus on supplier of testosterone or matrix for the preparation of calibrators and all were prepared in-house. Also, a wide variety of mass spectrometers, internal standards, chromatography conditions and sample extractions were used. The variation in results did not improve when the results were corrected with a common calibrator."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Testosterone measurement by liquid chromatography tandem mass spectrometry (LC-MS/MS) is well accepted as the preferred technique for the analysis of testosterone. Variation is seen between assays and this may be due to differences in calibration as commercial calibrators for this assay are not readily available. We investigated the effects calibration in routine clinical LC-MS/MS assays."
+    },
+    {
+      "label": "METHODS",
+      "context": "All LC-MS/MS users that were registered with the UKNEQAS external quality assurance scheme for testosterone were invited to take part in the study. A set of seven serum samples and serum-based calibrators were sent to all laboratories that expressed an interest. The laboratories were instructed to analyse all samples using there own calibrators and return the results and a method questionnaire for analysis."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Fifteen laboratories took part in the study. There was no consensus on supplier of testosterone or matrix for the preparation of calibrators and all were prepared in-house. Also, a wide variety of mass spectrometers, internal standards, chromatography conditions and sample extractions were used. The variation in results did not improve when the results were corrected with a common calibrator."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 4.942
+}

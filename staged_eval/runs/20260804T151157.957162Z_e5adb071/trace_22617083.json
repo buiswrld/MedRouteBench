@@ -1,0 +1,58 @@
+{
+  "pmid": "22617083",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To examine age-related differences in the relationship between personality and coping strategies in an Australian population of psychiatric inpatients."
+    },
+    {
+      "label": "METHOD",
+      "context": "Consenting eligible adults (N=238) from 18-100 years of age consecutively admitted to inpatient psychiatry units were assessed using the SCID I and II, the Coping Orientations to Problems Experienced Scale (COPE), the Brief Psychiatric Rating Scale (BPRS), the Global Assessment of Functioning Scale (GAF), the Social and Occupational Functioning Assessment Scale (SOFAS), the 12 Item Short-Form Heath Survey (SF12), the Sarason Social Support Questionnaire, and the NEO Five Factor Inventory (NEO-FFI) (cognitively impaired, and non-English speaking patients were excluded)."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Older adults reported less symptomatology than younger patients and younger patients described more personality dysfunction than older patients. As assessed by the COPE, older adults reported lower levels of dysfunctional coping strategies than younger adults. Personality traits, social supports, gender, and age predicted coping strategies, while Axis I diagnosis, education, personality disorder, and symptom severity were not significant predictors of coping strategies."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "OBJECTIVE",
+      "context": "To examine age-related differences in the relationship between personality and coping strategies in an Australian population of psychiatric inpatients."
+    },
+    {
+      "label": "METHOD",
+      "context": "Consenting eligible adults (N=238) from 18-100 years of age consecutively admitted to inpatient psychiatry units were assessed using the SCID I and II, the Coping Orientations to Problems Experienced Scale (COPE), the Brief Psychiatric Rating Scale (BPRS), the Global Assessment of Functioning Scale (GAF), the Social and Occupational Functioning Assessment Scale (SOFAS), the 12 Item Short-Form Heath Survey (SF12), the Sarason Social Support Questionnaire, and the NEO Five Factor Inventory (NEO-FFI) (cognitively impaired, and non-English speaking patients were excluded)."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Older adults reported less symptomatology than younger patients and younger patients described more personality dysfunction than older patients. As assessed by the COPE, older adults reported lower levels of dysfunctional coping strategies than younger adults. Personality traits, social supports, gender, and age predicted coping strategies, while Axis I diagnosis, education, personality disorder, and symptom severity were not significant predictors of coping strategies."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 5.96
+}

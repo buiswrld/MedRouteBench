@@ -1,0 +1,62 @@
+{
+  "pmid": "22825590",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Longitudinal cohort studies in sub-Saharan Africa are urgently needed to understand cardiovascular disease development. We, therefore, explored health behaviours and conventional risk factors of African individuals with optimal blood pressure (BP) (≤ 120/80 mm Hg), and their 5-year prediction for the development of hypertension."
+    },
+    {
+      "label": "METHODS",
+      "context": "The Prospective Urban Rural Epidemiology study in the North West Province, South Africa, started in 2005 and included African volunteers (n = 1994; aged>30 years) from a sample of 6000 randomly selected households in rural and urban areas."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.35,\"reason_for_action\":\"Insufficient evidence provided—only study background and methods are given (cohort design), with no results on behavioural risk factors or rates of conversion to hypertension, so no definitive conclusion.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.35,
+      "reason_for_action": "Insufficient evidence provided—only study background and methods are given (cohort design), with no results on behavioural risk factors or rates of conversion to hypertension, so no definitive conclusion."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "At baseline, 48% of the participants were hypertensive (≥ 140/90 mmHg). Those with optimal BP (n = 478) were followed at a success rate of 70% for 5 years (213 normotensive, 68 hypertensive, 57 deceased). Africans that became hypertensive smoked more than the normotensive individuals (68.2% vs 49.8%), and they also had a greater waist circumference [ratio of geometric means of 0.94 cm (95% CI: 0.86-0.99)] and greater amount of γ-glutamyltransferase [0.74 U/l (95% CI: 0.62-0.88)]at baseline. The 5-year change in BP was independently explained by baseline γ-glutamyltransferase [R(2) = 0.23, β = 0.13 U/l (95% CI: 0.01-0.19)]. Alcohol intake also predicted central systolic BP and carotid cross-sectional wall area (CSWA) at follow-up. Waist circumference was another predictor of BP changes [β = 0.18 cm (95% CI: 0.05-0.24)]and CSWA. HIV infection was inversely associated with increased BP."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Longitudinal cohort studies in sub-Saharan Africa are urgently needed to understand cardiovascular disease development. We, therefore, explored health behaviours and conventional risk factors of African individuals with optimal blood pressure (BP) (≤ 120/80 mm Hg), and their 5-year prediction for the development of hypertension."
+    },
+    {
+      "label": "METHODS",
+      "context": "The Prospective Urban Rural Epidemiology study in the North West Province, South Africa, started in 2005 and included African volunteers (n = 1994; aged>30 years) from a sample of 6000 randomly selected households in rural and urban areas."
+    },
+    {
+      "label": "RESULTS",
+      "context": "At baseline, 48% of the participants were hypertensive (≥ 140/90 mmHg). Those with optimal BP (n = 478) were followed at a success rate of 70% for 5 years (213 normotensive, 68 hypertensive, 57 deceased). Africans that became hypertensive smoked more than the normotensive individuals (68.2% vs 49.8%), and they also had a greater waist circumference [ratio of geometric means of 0.94 cm (95% CI: 0.86-0.99)] and greater amount of γ-glutamyltransferase [0.74 U/l (95% CI: 0.62-0.88)]at baseline. The 5-year change in BP was independently explained by baseline γ-glutamyltransferase [R(2) = 0.23, β = 0.13 U/l (95% CI: 0.01-0.19)]. Alcohol intake also predicted central systolic BP and carotid cross-sectional wall area (CSWA) at follow-up. Waist circumference was another predictor of BP changes [β = 0.18 cm (95% CI: 0.05-0.24)]and CSWA. HIV infection was inversely associated with increased BP."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"Baseline smokers were more likely to become hypertensive; alcohol predicted central systolic BP and carotid changes; waist circumference and γ‑GT predicted 5‑year BP change — behavioural factors implicated.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "Baseline smokers were more likely to become hypertensive; alcohol predicted central systolic BP and carotid changes; waist circumference and γ‑GT predicted 5‑year BP change — behavioural factors implicated."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 10.525
+}

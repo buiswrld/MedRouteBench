@@ -1,0 +1,58 @@
+{
+  "pmid": "12913878",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND AND OBJECTIVES",
+      "context": "Nd:YAG laser-induced thermo therapy (LITT) of rat brains is associated with blood-brain barrier (BBB) permeability changes. We address the question of whether LITT-induced locoregional disruption of the BBB could possibly allow a locoregional passage of chemotherapeutic agents into brain tissue to treat malignant glioma.STUDY DESIGN/"
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "CD Fischer rats were subject to LITT of the left forebrain. Disruption of the BBB was analyzed using Evans blue and immunohistochemistry (IH). Animals were perfused with paclitaxel, and high-pressure liquid chromatography (HPLC) was employed to analyze the content of paclitaxel in brain and plasma samples."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "LITT induces an opening of the BBB as demonstrated by locoregional extravasation of Evans blue, C3C, fibrinogen, and IgM. HPLC proved the passage of paclitaxel across the disrupted BBB."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND AND OBJECTIVES",
+      "context": "Nd:YAG laser-induced thermo therapy (LITT) of rat brains is associated with blood-brain barrier (BBB) permeability changes. We address the question of whether LITT-induced locoregional disruption of the BBB could possibly allow a locoregional passage of chemotherapeutic agents into brain tissue to treat malignant glioma.STUDY DESIGN/"
+    },
+    {
+      "label": "MATERIALS AND METHODS",
+      "context": "CD Fischer rats were subject to LITT of the left forebrain. Disruption of the BBB was analyzed using Evans blue and immunohistochemistry (IH). Animals were perfused with paclitaxel, and high-pressure liquid chromatography (HPLC) was employed to analyze the content of paclitaxel in brain and plasma samples."
+    },
+    {
+      "label": "RESULTS",
+      "context": "LITT induces an opening of the BBB as demonstrated by locoregional extravasation of Evans blue, C3C, fibrinogen, and IgM. HPLC proved the passage of paclitaxel across the disrupted BBB."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 7.208
+}

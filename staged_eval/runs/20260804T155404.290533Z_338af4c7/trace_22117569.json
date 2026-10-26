@@ -1,0 +1,70 @@
+{
+  "pmid": "22117569",
+  "pubmedqa_gold_label": "yes",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "An effective advance care planning programme involves an organizational wide commitment and preparedness for health service reform to embed advance care planning into routine practice. Internationally, such programmes have been implemented predominantly in aged and acute care with more recent work in primary care."
+    },
+    {
+      "label": "METHODS",
+      "context": "A multi-site action research was conducted over a 16-month period in 2007-2009 with three Victorian community palliative care services. Using mixed method data collection strategies to assess feasibility, we conducted a baseline audit of staff and clients; analysed relevant documents (client records, policies, procedures and quality improvement strategies) pre-implementation and post-implementation and conducted key informant interviews (n = 9)."
+    },
+    {
+      "label": "SETTINGS AND PARTICIPANTS",
+      "context": "Three community palliative care services: one regional and two metropolitan services in Victoria, Australia."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\",\"confidence\":0.60,\"reason_for_action\":\"The provided text describes a multi-site feasibility study in community palliative care but gives no outcome data. Feasibility likely depends on organizational commitment and readiness, so conclusions are uncertain.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe",
+      "confidence": 0.6,
+      "reason_for_action": "The provided text describes a multi-site feasibility study in community palliative care but gives no outcome data. Feasibility likely depends on organizational commitment and readiness, so conclusions are uncertain."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "The services demonstrated that it was feasible to embed the Model into their organizational structures. Advance care planning conversations and involvement of family was an important outcome measure rather than completion rate of advance care planning documents in community settings. Services adapted and applied their own concept of community, which widened the impact of the model. Changes to quality audit processes were essential to consolidate the model into routine palliative care practice."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "An effective advance care planning programme involves an organizational wide commitment and preparedness for health service reform to embed advance care planning into routine practice. Internationally, such programmes have been implemented predominantly in aged and acute care with more recent work in primary care."
+    },
+    {
+      "label": "METHODS",
+      "context": "A multi-site action research was conducted over a 16-month period in 2007-2009 with three Victorian community palliative care services. Using mixed method data collection strategies to assess feasibility, we conducted a baseline audit of staff and clients; analysed relevant documents (client records, policies, procedures and quality improvement strategies) pre-implementation and post-implementation and conducted key informant interviews (n = 9)."
+    },
+    {
+      "label": "SETTINGS AND PARTICIPANTS",
+      "context": "Three community palliative care services: one regional and two metropolitan services in Victoria, Australia."
+    },
+    {
+      "label": "RESULTS",
+      "context": "The services demonstrated that it was feasible to embed the Model into their organizational structures. Advance care planning conversations and involvement of family was an important outcome measure rather than completion rate of advance care planning documents in community settings. Services adapted and applied their own concept of community, which widened the impact of the model. Changes to quality audit processes were essential to consolidate the model into routine palliative care practice."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"yes\",\"confidence\":0.85,\"reason_for_action\":\"Results state the services demonstrated it was feasible to embed the ACP model into organizational structures; ACP conversations, family involvement and audit changes consolidated its routine use in community palliative care.\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "yes",
+      "confidence": 0.85,
+      "reason_for_action": "Results state the services demonstrated it was feasible to embed the ACP model into organizational structures; ACP conversations, family involvement and audit changes consolidated its routine use in community palliative care."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 8.837
+}

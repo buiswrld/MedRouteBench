@@ -1,0 +1,66 @@
+{
+  "pmid": "21252642",
+  "pubmedqa_gold_label": "no",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Oncology literature cites that only 2% to 4% of patients participate in research. Up to 85% of patients are unaware that clinical trials research is being conducted at their treatment facility or that they might be eligible to participate."
+    },
+    {
+      "label": "OBJECTIVES",
+      "context": "It was hypothesized that patients' satisfaction with information regarding clinical trials would improve after targeted educational interventions, and accruals to clinical trials would increase in the year following those interventions."
+    },
+    {
+      "label": "METHODS",
+      "context": "All new patients referred to the cancer center over a 4-month period were mailed a baseline survey to assess their knowledge of clinical research. Subsequently, educational interventions were provided, including an orientation session highlighting clinical trials, a pamphlet, and a reference to a clinical trials Web site. A postintervention survey was sent to the responders of the initial survey 3 months after the initial mailing."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Patient satisfaction with information significantly increased after the interventions. There was no increase in subsequent enrollment in clinical trials. Patients who indicated an inclination to participate in clinical trials tended to have greater satisfaction with the information they received."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "BACKGROUND",
+      "context": "Oncology literature cites that only 2% to 4% of patients participate in research. Up to 85% of patients are unaware that clinical trials research is being conducted at their treatment facility or that they might be eligible to participate."
+    },
+    {
+      "label": "OBJECTIVES",
+      "context": "It was hypothesized that patients' satisfaction with information regarding clinical trials would improve after targeted educational interventions, and accruals to clinical trials would increase in the year following those interventions."
+    },
+    {
+      "label": "METHODS",
+      "context": "All new patients referred to the cancer center over a 4-month period were mailed a baseline survey to assess their knowledge of clinical research. Subsequently, educational interventions were provided, including an orientation session highlighting clinical trials, a pamphlet, and a reference to a clinical trials Web site. A postintervention survey was sent to the responders of the initial survey 3 months after the initial mailing."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Patient satisfaction with information significantly increased after the interventions. There was no increase in subsequent enrollment in clinical trials. Patients who indicated an inclination to participate in clinical trials tended to have greater satisfaction with the information they received."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"REVISE_ANSWER\",\"answer\":\"no\"}",
+    "parsed": {
+      "action": "REVISE_ANSWER",
+      "answer": "no"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "successful_revision",
+  "_elapsed_seconds": 4.934
+}

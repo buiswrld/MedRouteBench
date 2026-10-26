@@ -1,0 +1,62 @@
+{
+  "pmid": "26037986",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "AIMS",
+      "context": "Emergency surgery is associated with poorer outcomes and higher mortality with recent studies suggesting the 30-day mortality to be 14-15%. The aim of this study was to analyse the 30-day mortality, age-related 30-day mortality and 1-year mortality following emergency laparotomy. We hope this will encourage prospective data collection, improvement of care and initiate strategies to establish best practice in this area."
+    },
+    {
+      "label": "METHODS",
+      "context": "This was a retrospective study of patients who underwent emergency laparotomy from June 2010 to May 2012. The primary end point of the study was 30-day mortality, age-related 30-day mortality and 1-year all-cause mortality."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"yes\",\"confidence\":0.86,\"reason_for_action\":\"Preliminary evidence reports high 30‑day mortality (~14–15%) after emergency laparotomy and the study explicitly aims to analyze 30‑day and 1‑year mortality to encourage data collection and improvement, indicating concern and need for improvement.\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "yes",
+      "confidence": 0.86,
+      "reason_for_action": "Preliminary evidence reports high 30‑day mortality (~14–15%) after emergency laparotomy and the study explicitly aims to analyze 30‑day and 1‑year mortality to encourage data collection and improvement, indicating concern and need for improvement."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "477 laparotomies were performed in 446 patients. 57% were aged<70 and 43% aged>70 years. 30-day mortality was 12, 4% in those aged<70 years and 22% in those>70 years (p<0.001). 1-year mortality was 25, 15% in those aged under 70 years and 38% in those aged>70 years (p<0.001)."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "AIMS",
+      "context": "Emergency surgery is associated with poorer outcomes and higher mortality with recent studies suggesting the 30-day mortality to be 14-15%. The aim of this study was to analyse the 30-day mortality, age-related 30-day mortality and 1-year mortality following emergency laparotomy. We hope this will encourage prospective data collection, improvement of care and initiate strategies to establish best practice in this area."
+    },
+    {
+      "label": "METHODS",
+      "context": "This was a retrospective study of patients who underwent emergency laparotomy from June 2010 to May 2012. The primary end point of the study was 30-day mortality, age-related 30-day mortality and 1-year all-cause mortality."
+    },
+    {
+      "label": "RESULTS",
+      "context": "477 laparotomies were performed in 446 patients. 57% were aged<70 and 43% aged>70 years. 30-day mortality was 12, 4% in those aged<70 years and 22% in those>70 years (p<0.001). 1-year mortality was 25, 15% in those aged under 70 years and 38% in those aged>70 years (p<0.001)."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"yes\",\"confidence\":0.86,\"reason_for_action\":\"Study reports substantial 30-day (12% overall; 22% if >70) and 1-year (25% overall; 38% if >70) mortality and explicitly calls for improved data collection and care—supporting 'yes'.\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "yes",
+      "confidence": 0.86,
+      "reason_for_action": "Study reports substantial 30-day (12% overall; 22% if >70) and 1-year (25% overall; 38% if >70) mortality and explicitly calls for improved data collection and care—supporting 'yes'."
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "missed_revision",
+  "_elapsed_seconds": 10.97
+}

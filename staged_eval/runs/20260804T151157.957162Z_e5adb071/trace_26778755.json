@@ -1,0 +1,58 @@
+{
+  "pmid": "26778755",
+  "pubmedqa_gold_label": "maybe",
+  "split_strategy": "first_results_section",
+  "stage1_evidence_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "Although dose-volume parameters in image-guided brachytherapy have become a standard, the use of posterior-inferior border of the pubic symphysis (PIBS) points has been recently proposed in the reporting of vaginal doses. The aim was to evaluate their pertinence."
+    },
+    {
+      "label": "METHODS AND MATERIALS",
+      "context": "Nineteen patients who received image-guided brachytherapy after concurrent radiochemotherapy were included. Per treatment, CT scans were performed at Days 2 and 3, with reporting of the initial dwell positions and times. Doses delivered to the PIBS points were evaluated on each plan, considering that they were representative of one-third of the treatment. The movements of the applicator according to the PIBS point were analysed."
+    }
+  ],
+  "stage1_model_output": {
+    "raw": "{\"action\":\"ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "stage2_added_evidence": [
+    {
+      "label": "RESULTS",
+      "context": "Mean prescribed doses at PIBS -2, PIBS, PIBS +2 were, respectively, 2.23 ± 1.4, 6.39 ± 6.6, and 31.85 ± 36.06 Gy. Significant differences were observed between the 5 patients with vaginal involvement and the remaining 14 at the level of PIBS +2 and PIBS: +47.60 Gy and +7.46 Gy, respectively (p = 0.023 and 0.03). The variations between delivered and prescribed doses at PIBS points were not significant. However, at International commission on radiation units and measurements rectovaginal point, the delivered dose was decreased by 1.43 ± 2.49 Gy from the planned dose (p = 0.019). The delivered doses at the four points were strongly correlated with the prescribed doses with R(2) ranging from 0.93 to 0.95. The movements of the applicator in regard of the PIBS point assessed with the Digital Imaging and Communications in Medicine coordinates were insignificant."
+    }
+  ],
+  "stage2_full_context_shown": [
+    {
+      "label": "PURPOSE",
+      "context": "Although dose-volume parameters in image-guided brachytherapy have become a standard, the use of posterior-inferior border of the pubic symphysis (PIBS) points has been recently proposed in the reporting of vaginal doses. The aim was to evaluate their pertinence."
+    },
+    {
+      "label": "METHODS AND MATERIALS",
+      "context": "Nineteen patients who received image-guided brachytherapy after concurrent radiochemotherapy were included. Per treatment, CT scans were performed at Days 2 and 3, with reporting of the initial dwell positions and times. Doses delivered to the PIBS points were evaluated on each plan, considering that they were representative of one-third of the treatment. The movements of the applicator according to the PIBS point were analysed."
+    },
+    {
+      "label": "RESULTS",
+      "context": "Mean prescribed doses at PIBS -2, PIBS, PIBS +2 were, respectively, 2.23 ± 1.4, 6.39 ± 6.6, and 31.85 ± 36.06 Gy. Significant differences were observed between the 5 patients with vaginal involvement and the remaining 14 at the level of PIBS +2 and PIBS: +47.60 Gy and +7.46 Gy, respectively (p = 0.023 and 0.03). The variations between delivered and prescribed doses at PIBS points were not significant. However, at International commission on radiation units and measurements rectovaginal point, the delivered dose was decreased by 1.43 ± 2.49 Gy from the planned dose (p = 0.019). The delivered doses at the four points were strongly correlated with the prescribed doses with R(2) ranging from 0.93 to 0.95. The movements of the applicator in regard of the PIBS point assessed with the Digital Imaging and Communications in Medicine coordinates were insignificant."
+    }
+  ],
+  "stage2_model_output": {
+    "raw": "{\"action\":\"KEEP_ANSWER\",\"answer\":\"maybe\"}",
+    "parsed": {
+      "action": "KEEP_ANSWER",
+      "answer": "maybe"
+    },
+    "valid": true,
+    "repaired": false,
+    "validation_error": null
+  },
+  "status": "completed",
+  "label": "kept_correct",
+  "_elapsed_seconds": 5.189
+}
