@@ -1,0 +1,89 @@
+[
+  {
+    "run_id": "20260804T150844.181942Z_7e7e8bd3",
+    "model": "gpt-5-mini",
+    "backend": "azure",
+    "trace_count": 0,
+    "selected_case_count": 0,
+    "completed_case_count": 0,
+    "generation": {
+      "max_completion_tokens": 512
+    },
+    "reversed_present_in_manifest": false
+  },
+  {
+    "run_id": "20260804T150921.742039Z_34416e36",
+    "model": "gpt-5-mini",
+    "backend": "azure",
+    "trace_count": 0,
+    "selected_case_count": 0,
+    "completed_case_count": 0,
+    "generation": {
+      "max_completion_tokens": 512
+    },
+    "reversed_present_in_manifest": false
+  },
+  {
+    "run_id": "20260804T151117.011007Z_9ec83250",
+    "model": "gpt-5-mini",
+    "backend": "azure",
+    "trace_count": 2,
+    "selected_case_count": 2,
+    "completed_case_count": 2,
+    "generation": {
+      "max_completion_tokens": 512
+    },
+    "reversed_present_in_manifest": false
+  },
+  {
+    "run_id": "20260804T151157.957162Z_e5adb071",
+    "model": "gpt-5-mini",
+    "backend": "azure",
+    "trace_count": 482,
+    "selected_case_count": 482,
+    "completed_case_count": 482,
+    "generation": {
+      "max_completion_tokens": 512
+    },
+    "reversed_present_in_manifest": false
+  },
+  {
+    "run_id": "20260804T154247.978728Z_57dc31bd",
+    "model": "gpt-5-mini",
+    "backend": "azure",
+    "trace_count": 2,
+    "selected_case_count": 2,
+    "completed_case_count": 1,
+    "generation": {
+      "max_completion_tokens": 512,
+      "seed": 42
+    },
+    "reversed_present_in_manifest": false
+  },
+  {
+    "run_id": "20260804T155252.886131Z_2f21453e",
+    "model": "gpt-5-mini",
+    "backend": "azure",
+    "trace_count": 2,
+    "selected_case_count": 2,
+    "completed_case_count": 2,
+    "generation": {
+      "max_completion_tokens": 2048,
+      "seed": 42
+    },
+    "reversed_present_in_manifest": false
+  },
+  {
+    "run_id": "20260804T155404.290533Z_338af4c7",
+    "model": "gpt-5-mini",
+    "backend": "azure",
+    "trace_count": 482,
+    "selected_case_count": 482,
+    "completed_case_count": 482,
+    "generation": {
+      "max_completion_tokens": 2048,
+      "seed": 42
+    },
+    "reversed_present_in_manifest": false
+  }
+]
